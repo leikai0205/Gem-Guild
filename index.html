@@ -125,7 +125,7 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
-            <!-- 左欄：寶可夢夥伴（原貴族）與銀行寶石 -->
+            <!-- 左欄：寶可夢夥伴與銀行寶石 -->
             <div class="lg:col-span-3 space-y-3.5">
                 <section class="glass-panel rounded-2xl p-3.5">
                     <div class="flex items-center justify-between mb-2.5">
@@ -248,7 +248,7 @@
             </div>
             <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
                 <p><strong class="text-amber-300">🎯 勝利條件：</strong>先達 <strong>15 點聲望</strong>者觸發最終局，最高分者成為寶可夢大師！</p>
-                <p><strong class="text-amber-300">⭐ 稀有寶可夢：</strong>當收集足夠對應顏色的資源卡時，稀有寶可夢（成龍、超夢、夢幻等）會自動來訪並提供 +3 分！</p>
+                <p><strong class="text-amber-300">⭐ 稀有寶可夢：</strong>當收集足夠對應顏色的資源卡時，稀有寶可夢夥伴會自動來訪並提供 +3 分！</p>
             </div>
             <button onclick="toggleRulesModal(false)" class="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-sm cursor-pointer">我瞭解了</button>
         </div>
@@ -271,7 +271,7 @@
             gold: { name: '黃金', short: '金', css: 'gem-gold', text: 'text-amber-300' }
         };
 
-        // 你指定的 10 隻寶可夢夥伴（貴族池）
+        // 你指定的 10 隻寶可夢夥伴（完全對應你給的圖片與名稱）
         const POKEMON_NOBLES = [
             { id: 'n131', name: '成龍', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/131.png', req: { ruby: 4, emerald: 4 } },
             { id: 'n132', name: '百變怪', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/132.png', req: { sapphire: 4, diamond: 4 } },
@@ -483,7 +483,6 @@
             updateStatusBanner();
         }
 
-        // 自動檢查是否有玩家達成稀有寶可夢夥伴的拜訪條件
         function checkNoblesVisit() {
             let updated = false;
             gameState.players.forEach(p => {
@@ -709,6 +708,7 @@
             document.getElementById('discard-gems-list').innerHTML = ALL_GEMS.map(g => player.gems[g] > 0 ? `
                 <button onclick="discardOneGem('${g}')" class="px-3 py-2 rounded-xl bg-slate-800 text-xs text-white">捨棄 ${GEM_INFO[g].name}</button>
             ` : '').join('');
+            document.getElementById('discard-modal').classList.add('hidden'); // Fix modal toggle
             document.getElementById('discard-modal').classList.remove('hidden');
         }
 
