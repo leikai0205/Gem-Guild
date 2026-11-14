@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pokémon Guild - 精靈球與進化石對戰版</title>
+    <title>Pokémon Guild - 進化石與精靈球對戰版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
@@ -36,16 +36,15 @@
                 <h1 class="font-title text-3xl sm:text-4xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
                     POKÉMON GUILD
                 </h1>
-                <p class="text-slate-400 text-sm mt-2">收集精靈球兌換進化石，吸引傳說寶可夢來訪！</p>
+                <p class="text-slate-400 text-sm mt-2">收集進化石兌換精靈球，吸引傳說寶可夢來訪！</p>
             </div>
 
             <div class="flex justify-center gap-3 mb-7">
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" class="w-7 h-7 object-contain drop-shadow" title="紅白球" />
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png" class="w-7 h-7 object-contain drop-shadow" title="超級球" />
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png" class="w-7 h-7 object-contain drop-shadow" title="高級球" />
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png" class="w-7 h-7 object-contain drop-shadow" title="大師球" />
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/luxury-ball.png" class="w-7 h-7 object-contain drop-shadow" title="豪華球" />
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/nugget.png" class="w-7 h-7 object-contain drop-shadow" title="金珠" />
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/fire-stone.png" class="w-8 h-8 object-contain drop-shadow" title="火之石" />
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/water-stone.png" class="w-8 h-8 object-contain drop-shadow" title="水之石" />
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/thunder-stone.png" class="w-8 h-8 object-contain drop-shadow" title="雷之石" />
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/leaf-stone.png" class="w-8 h-8 object-contain drop-shadow" title="葉之石" />
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/moon-stone.png" class="w-8 h-8 object-contain drop-shadow" title="月之石" />
             </div>
 
             <div class="space-y-4">
@@ -67,9 +66,9 @@
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">遊戲上限人數</label>
                     <select id="input-max-players" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-amber-400 focus:outline-none text-sm text-amber-200">
-                        <option value="2">2 人對戰局（每種精靈球 4 個）</option>
-                        <option value="3">3 人局（每種精靈球 5 個）</option>
-                        <option value="4" selected>4 人局（每種精靈球 7 個）</option>
+                        <option value="2">2 人對戰局（每種進化石 4 個）</option>
+                        <option value="3">3 人局（每種進化石 5 個）</option>
+                        <option value="4" selected>4 人局（每種進化石 7 個）</option>
                     </select>
                 </div>
 
@@ -118,7 +117,7 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
-            <!-- 左欄：寶可夢夥伴與精靈球銀行 -->
+            <!-- 左欄：寶可夢夥伴與進化石銀行 -->
             <div class="lg:col-span-3 space-y-3.5">
                 <section class="glass-panel rounded-2xl p-3.5">
                     <div class="flex items-center justify-between mb-2.5">
@@ -132,7 +131,7 @@
                 <section class="glass-panel rounded-2xl p-3.5">
                     <div class="flex items-center justify-between mb-2">
                         <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-                            <span>🎒</span> 精靈球與金珠銀行
+                            <span>💎</span> 進化石與金珠銀行
                         </h2>
                         <span id="bank-limit-hint" class="text-[11px] text-slate-400">依人數自動調整</span>
                     </div>
@@ -140,11 +139,11 @@
                     
                     <div class="mt-3 pt-3 border-t border-slate-700/70">
                         <div class="flex items-center justify-between text-xs text-slate-300 mb-2">
-                            <span>本回合已選精靈球：</span>
+                            <span>本回合已選進化石：</span>
                             <span id="selected-gems-hint" class="text-[11px] text-amber-400">可選 3 異色 或 2 同色</span>
                         </div>
                         <div id="selected-gems-preview" class="min-h-[42px] flex items-center justify-center gap-2 bg-slate-950/60 rounded-xl p-1.5 border border-slate-800 mb-2.5">
-                            <span class="text-xs text-slate-500">點擊上方精靈球進行拿取</span>
+                            <span class="text-xs text-slate-500">點擊上方進化石進行拿取</span>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <button id="btn-clear-gems" onclick="clearSelectedGems()" disabled class="py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-medium text-slate-300 transition cursor-pointer">清空重選</button>
@@ -154,11 +153,11 @@
                 </section>
             </div>
 
-            <!-- 中欄：進化石卡片市場 -->
+            <!-- 中欄：精靈球資源卡市場 -->
             <main class="lg:col-span-5 glass-panel rounded-2xl p-3.5 space-y-3">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-                        <span>🃏</span> 進化石資源卡市場
+                        <span>🃏</span> 精靈球資源卡市場
                     </h2>
                     <span class="text-[11px] text-slate-400">先達 15 聲望觸發終局</span>
                 </div>
@@ -197,13 +196,13 @@
     <div id="card-action-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel max-w-sm w-full rounded-3xl p-5 border border-amber-400/50 space-y-4">
             <div class="flex items-center justify-between">
-                <h3 class="font-bold text-base text-amber-300">選擇進化石卡行動</h3>
+                <h3 class="font-bold text-base text-amber-300">選擇精靈球卡行動</h3>
                 <button onclick="closeCardModal()" class="text-slate-400 hover:text-white text-lg cursor-pointer">✕</button>
             </div>
             <div id="modal-card-preview" class="flex justify-center py-2"></div>
             <div id="modal-cost-breakdown" class="bg-slate-900/90 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800"></div>
             <div class="grid grid-cols-1 gap-2.5 pt-1">
-                <button id="modal-btn-buy" onclick="executeBuyCard()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow transition cursor-pointer">獲取此進化石卡</button>
+                <button id="modal-btn-buy" onclick="executeBuyCard()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow transition cursor-pointer">獲取此精靈球卡</button>
                 <button id="modal-btn-reserve" onclick="executeReserveCard()" class="w-full py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 text-amber-200 font-bold text-sm transition cursor-pointer">保留卡片（+1 金珠萬用）</button>
                 <button onclick="closeCardModal()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-medium transition cursor-pointer">取消返回</button>
             </div>
@@ -213,8 +212,8 @@
     <div id="discard-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-rose-400/60 space-y-4 text-center">
             <div class="text-3xl">⚖️</div>
-            <h3 class="font-bold text-lg text-rose-300">精靈球超過上限（最多 10 個）</h3>
-            <p class="text-xs text-slate-300">你目前擁有 <b id="discard-current-count" class="text-amber-400 text-sm">11</b> 個精靈球，請點擊下方精靈球捨棄多餘數量：</p>
+            <h3 class="font-bold text-lg text-rose-300">進化石超過上限（最多 10 個）</h3>
+            <p class="text-xs text-slate-300">你目前擁有 <b id="discard-current-count" class="text-amber-400 text-sm">11</b> 個進化石，請點擊下方進化石捨棄多餘數量：</p>
             <div id="discard-gems-list" class="flex flex-wrap justify-center gap-3 py-3"></div>
         </div>
     </div>
@@ -241,7 +240,7 @@
             </div>
             <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
                 <p><strong class="text-amber-300">🎯 勝利條件：</strong>先達 <strong>15 點聲望</strong>者觸發最終局，最高分者成為寶可夢大師！</p>
-                <p><strong class="text-amber-300">⭐ 稀有寶可夢：</strong>當收集足夠對應屬性的進化石卡片時，稀有寶可夢夥伴會自動來訪並提供 +3 分！</p>
+                <p><strong class="text-amber-300">⭐ 稀有寶可夢：</strong>當收集足夠對應屬性的精靈球資源卡時，稀有寶可夢夥伴會自動來訪並提供 +3 分！</p>
             </div>
             <button onclick="toggleRulesModal(false)" class="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-sm cursor-pointer">我瞭解了</button>
         </div>
@@ -256,23 +255,23 @@
         const GEM_TYPES = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx'];
         const ALL_GEMS = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'];
         
-        // 1. 銀行區維持：精靈球道具 (PokeBall / GreatBall / UltraBall / MasterBall / LuxuryBall / Nugget)
+        // 1. 左下角銀行區：五大進化石 + 金珠 (使用穩定的 PokeAPI 進化石與金珠圖片)
         const BANK_ITEMS = {
+            ruby: { name: '火之石', short: '火', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/fire-stone.png', text: 'text-rose-300' },
+            emerald: { name: '葉之石', short: '草', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/leaf-stone.png', text: 'text-emerald-300' },
+            sapphire: { name: '水之石', short: '水', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/water-stone.png', text: 'text-blue-300' },
+            diamond: { name: '雷之石', short: '電', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/thunder-stone.png', text: 'text-amber-200' },
+            onyx: { name: '月之石', short: '月', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/moon-stone.png', text: 'text-purple-300' },
+            gold: { name: '金珠', short: '金', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/nugget.png', text: 'text-amber-300' }
+        };
+
+        // 2. 中間市場與產源區：精靈球資源卡 (紅白球 / 超級球 / 高級球 / 大師球 / 豪華球)
+        const BALL_ITEMS = {
             ruby: { name: '紅白球', short: '紅', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png', text: 'text-rose-300' },
             emerald: { name: '超級球', short: '綠', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png', text: 'text-emerald-300' },
             sapphire: { name: '高級球', short: '藍', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png', text: 'text-blue-300' },
             diamond: { name: '大師球', short: '白', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png', text: 'text-slate-100' },
             onyx: { name: '豪華球', short: '黑', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/luxury-ball.png', text: 'text-slate-300' },
-            gold: { name: '金珠', short: '金', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/nugget.png', text: 'text-amber-300' }
-        };
-
-        // 2. 市場卡片與產源區維持：五大進化石 (火之石 / 水之石 / 雷之石 / 葉之石 / 月之石)
-        const STONE_ITEMS = {
-            ruby: { name: '火之石', short: '火', img: 'https://s1.52poke.com/wiki/thumb/8/8f/Bag_%E7%81%AB%E4%B9%8B%E7%9F%B3_ZA_Sprite.png/30px-Bag_%E7%81%AB%E4%B9%8B%E7%9F%B3_ZA_Sprite.png', text: 'text-rose-300' },
-            emerald: { name: '葉之石', short: '草', img: 'https://s1.52poke.com/wiki/thumb/b/b3/Bag_%E5%8F%B6%E4%B9%8B%E7%9F%B3_ZA_Sprite.png/30px-Bag_%E5%8F%B6%E4%B9%8B%E7%9F%B3_ZA_Sprite.png', text: 'text-emerald-300' },
-            sapphire: { name: '水之石', short: '水', img: 'https://s1.52poke.com/wiki/thumb/0/0d/Bag_%E6%B0%B4%E4%B9%8B%E7%9F%B3_ZA_Sprite.png/30px-Bag_%E6%B0%B4%E4%B9%8B%E7%9F%B3_ZA_Sprite.png', text: 'text-blue-300' },
-            diamond: { name: '雷之石', short: '電', img: 'https://s1.52poke.com/wiki/thumb/1/17/Bag_%E9%9B%B7%E4%B9%8B%E7%9F%B3_ZA_Sprite.png/30px-Bag_%E9%9B%B7%E4%B9%8B%E7%9F%B3_ZA_Sprite.png', text: 'text-amber-200' },
-            onyx: { name: '月之石', short: '月', img: 'https://s1.52poke.com/wiki/thumb/6/64/Bag_%E6%9C%88%E4%B9%8B%E7%9F%B3_ZA_Sprite.png/30px-Bag_%E6%9C%88%E4%B9%8B%E7%9F%B3_ZA_Sprite.png', text: 'text-purple-300' },
             gold: { name: '金珠', short: '金', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/nugget.png', text: 'text-amber-300' }
         };
 
@@ -540,7 +539,7 @@
                             <span class="px-2 py-0.5 rounded-lg bg-amber-500 text-slate-950 font-black text-xs">+${n.points}分</span>
                         </div>
                         <div class="flex flex-wrap gap-1 mt-1 text-[10px] text-slate-400">
-                            ${Object.entries(n.req).map(([gem, count]) => `<span class="px-1 rounded bg-slate-900 border border-slate-700">${STONE_ITEMS[gem].name}${count}張</span>`).join('')}
+                            ${Object.entries(n.req).map(([gem, count]) => `<span class="px-1 rounded bg-slate-900 border border-slate-700">${BALL_ITEMS[gem].name}${count}張</span>`).join('')}
                         </div>
                     </div>
                 </div>
@@ -564,7 +563,7 @@
                         <span class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-black text-[11px] flex items-center justify-center shadow-md border border-amber-300">
                             ${remaining}
                         </span>
-                        <!-- 精靈球圖片置中 -->
+                        <!-- 進化石圖片置中 -->
                         <img src="${info.img}" alt="${info.name}" class="w-10 h-10 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] my-1" />
                         <span class="text-xs font-bold ${info.text} mt-1">${info.name}</span>
                     </div>
@@ -593,7 +592,7 @@
             const btnClear = document.getElementById('btn-clear-gems');
             const btnConfirm = document.getElementById('btn-confirm-gems');
             if (selectedGemsBuffer.length === 0) {
-                preview.innerHTML = `<span class="text-xs text-slate-500">點擊上方精靈球進行拿取</span>`;
+                preview.innerHTML = `<span class="text-xs text-slate-500">點擊上方進化石進行拿取</span>`;
                 btnClear.disabled = true; btnConfirm.disabled = true; return;
             }
             preview.innerHTML = selectedGemsBuffer.map(g => `<img src="${BANK_ITEMS[g].img}" class="w-7 h-7 object-contain drop-shadow" />`).join('');
@@ -617,12 +616,12 @@
                 const container = document.getElementById(`market-row-${level}`);
                 container.innerHTML = gameState.market[level].map((card, idx) => {
                     if (!card) return `<div class="h-28 rounded-xl border border-dashed border-slate-800 flex items-center justify-center text-xs text-slate-600">已售罄</div>`;
-                    const stoneInfo = STONE_ITEMS[card.bonus];
+                    const ballInfo = BALL_ITEMS[card.bonus];
                     return `
                         <div onclick="openCardModal('market', ${level}, ${idx})" class="glass-card rounded-xl p-2.5 h-28 flex flex-col justify-between cursor-pointer relative overflow-hidden">
                             <div class="flex justify-between items-center z-10">
                                 <span class="font-title font-black text-base text-amber-300">${card.points > 0 ? '+' + card.points : ''}</span>
-                                <img src="${stoneInfo.img}" class="w-6 h-6 object-contain drop-shadow" title="${stoneInfo.name}" />
+                                <img src="${ballInfo.img}" class="w-6 h-6 object-contain drop-shadow" title="${ballInfo.name}" />
                             </div>
                             <div class="space-y-1 z-10 text-[10px]">
                                 ${Object.entries(card.cost).map(([g, c]) => `<div class="flex justify-between text-slate-300 font-medium"><span>${BANK_ITEMS[g].name}</span><span class="font-bold">${c}</span></div>`).join('')}
@@ -650,7 +649,7 @@
                             ${ALL_GEMS.map(g => `<div><div class="text-[10px] text-slate-400">${BANK_ITEMS[g].short}</div><div class="${BANK_ITEMS[g].text} font-bold">${p.gems[g]}</div></div>`).join('')}
                         </div>
                         <div class="flex flex-wrap gap-1 pt-1">
-                            ${GEM_TYPES.map(g => `<span class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] ${STONE_ITEMS[g].text}">產${STONE_ITEMS[g].name} ${p.bonuses[g]}</span>`).join('')}
+                            ${GEM_TYPES.map(g => `<span class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] ${BALL_ITEMS[g].text}">產${BALL_ITEMS[g].name} ${p.bonuses[g]}</span>`).join('')}
                         </div>
                     </div>
                 `;
@@ -662,7 +661,7 @@
             const card = source === 'market' ? gameState.market[level][idx] : gameState.players[myPlayerIndex].reserved[idx];
             if (!card) return;
             activeCardSelection = { card, source, level, idx };
-            document.getElementById('modal-card-preview').innerHTML = `<div class="text-sm font-bold text-amber-300">Lv.${card.level} 進化石卡（+${card.points}分 / 產 ${STONE_ITEMS[card.bonus].name}）</div>`;
+            document.getElementById('modal-card-preview').innerHTML = `<div class="text-sm font-bold text-amber-300">Lv.${card.level} 精靈球卡（+${card.points}分 / 產 ${BALL_ITEMS[card.bonus].name}）</div>`;
             document.getElementById('modal-cost-breakdown').innerHTML = Object.entries(card.cost).map(([g, c]) => `<div class="flex justify-between"><span>需要 ${BANK_ITEMS[g].name}</span><span class="font-bold text-amber-300">${c} 個</span></div>`).join('');
             document.getElementById('card-action-modal').classList.remove('hidden');
         }
