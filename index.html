@@ -446,7 +446,7 @@
                 .subscribe();
         }
 
-        async function backToLobby() {
+async function backToLobby() {
             if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
 
             if (gameState && currentRoomId !== null && myPlayerIndex !== null) {
@@ -457,7 +457,6 @@
                     // 情況 B：其他玩家離開 -> 將該座位恢復為「等待玩家」
                     gameState.players[myPlayerIndex] = createPlayerObj(myPlayerIndex, `等待玩家 ${myPlayerIndex + 1}...`);
                     
-                    // 檢查房間內是否已經沒有任何真實玩家
                     const activeCount = gameState.players.filter(p => !p.name.startsWith('等待玩家')).length;
                     if (activeCount === 0) {
                         await supabaseClient.from('rooms').delete().eq('room_id', currentRoomId);
