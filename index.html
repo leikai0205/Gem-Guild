@@ -31,12 +31,12 @@
         @keyframes pulseGold { 0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.4); } 50% { box-shadow: 0 0 24px rgba(251, 191, 36, 0.85); } }
         .btn-gold-glow { animation: pulseGold 2.2s infinite; }
 
-        /* 高質感 3D 寶石水晶樣式 */
-        .gem-ruby { background: radial-gradient(circle at 35% 30%, #fecdd3 0%, #e11d48 35%, #881337 75%, #4c0519 100%); box-shadow: inset -2px -4px 6px rgba(0,0,0,0.6), inset 2px 2px 4px rgba(255,255,255,0.8), 0 0 10px rgba(225,29,72,0.5); border: 1px solid #fda4af; }
-        .gem-sapphire { background: radial-gradient(circle at 35% 30%, #bae6fd 0%, #0284c7 35%, #0369a1 75%, #0c4a6e 100%); box-shadow: inset -2px -4px 6px rgba(0,0,0,0.6), inset 2px 2px 4px rgba(255,255,255,0.8), 0 0 10px rgba(2,132,199,0.5); border: 1px solid #7dd3fc; }
-        .gem-emerald { background: radial-gradient(circle at 35% 30%, #a7f3d0 0%, #059669 35%, #047857 75%, #064e3b 100%); box-shadow: inset -2px -4px 6px rgba(0,0,0,0.6), inset 2px 2px 4px rgba(255,255,255,0.8), 0 0 10px rgba(5,150,105,0.5); border: 1px solid #6ee7b7; }
-        .gem-diamond { background: radial-gradient(circle at 35% 30%, #ffffff 0%, #fef08a 35%, #eab308 75%, #713f12 100%); box-shadow: inset -2px -4px 6px rgba(0,0,0,0.6), inset 2px 2px 4px rgba(255,255,255,0.9), 0 0 10px rgba(234,179,8,0.5); border: 1px solid #fef08a; }
-        .gem-onyx { background: radial-gradient(circle at 35% 30%, #e9d5ff 0%, #7e22ce 35%, #3b0764 75%, #090514 100%); box-shadow: inset -2px -4px 6px rgba(0,0,0,0.8), inset 2px 2px 4px rgba(255,255,255,0.6), 0 0 10px rgba(126,34,206,0.5); border: 1px solid #c084fc; }
+        /* 純淨立體寶石樣式（無白光條） */
+        .gem-ruby { background: radial-gradient(circle at 35% 30%, #fca5a5 0%, #dc2626 40%, #7f1d1d 80%, #450a0a 100%); box-shadow: inset -3px -3px 6px rgba(0,0,0,0.6), inset 2px 2px 4px rgba(255,255,255,0.4), 0 0 10px rgba(220,38,38,0.5); border: 1px solid #f87171; }
+        .gem-sapphire { background: radial-gradient(circle at 35% 30%, #7dd3fc 0%, #0284c7 40%, #0369a1 80%, #082f49 100%); box-shadow: inset -3px -3px 6px rgba(0,0,0,0.6), inset 2px 2px 4px rgba(255,255,255,0.4), 0 0 10px rgba(2,132,199,0.5); border: 1px solid #38bdf8; }
+        .gem-emerald { background: radial-gradient(circle at 35% 30%, #6ee7b7 0%, #059669 40%, #047857 80%, #022c22 100%); box-shadow: inset -3px -3px 6px rgba(0,0,0,0.6), inset 2px 2px 4px rgba(255,255,255,0.4), 0 0 10px rgba(5,150,105,0.5); border: 1px solid #34d399; }
+        .gem-diamond { background: radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 40%, #ca8a04 80%, #422006 100%); box-shadow: inset -3px -3px 6px rgba(0,0,0,0.6), inset 2px 2px 4px rgba(255,255,255,0.5), 0 0 10px rgba(234,179,8,0.5); border: 1px solid #fde047; }
+        .gem-onyx { background: radial-gradient(circle at 35% 30%, #d8b4fe 0%, #7e22ce 40%, #581c87 80%, #1e1b4b 100%); box-shadow: inset -3px -3px 6px rgba(0,0,0,0.7), inset 2px 2px 4px rgba(255,255,255,0.3), 0 0 10px rgba(126,34,206,0.5); border: 1px solid #a855f7; }
     </style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
@@ -55,11 +55,11 @@
             </div>
 
             <div class="flex justify-center gap-4 mb-7">
-                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full gem-ruby relative"><div class="absolute top-1 left-2 w-2 h-1 bg-white/70 rounded-full blur-[0.3px]"></div></div><span class="text-[10px] text-rose-300 mt-1 font-bold">火之石</span></div>
-                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full gem-sapphire relative"><div class="absolute top-1 left-2 w-2 h-1 bg-white/70 rounded-full blur-[0.3px]"></div></div><span class="text-[10px] text-blue-300 mt-1 font-bold">水之石</span></div>
-                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full gem-emerald relative"><div class="absolute top-1 left-2 w-2 h-1 bg-white/70 rounded-full blur-[0.3px]"></div></div><span class="text-[10px] text-emerald-300 mt-1 font-bold">葉之石</span></div>
-                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full gem-diamond relative"><div class="absolute top-1 left-2 w-2 h-1 bg-white/80 rounded-full blur-[0.3px]"></div></div><span class="text-[10px] text-amber-200 mt-1 font-bold">雷之石</span></div>
-                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full gem-onyx relative"><div class="absolute top-1 left-2 w-2 h-1 bg-white/60 rounded-full blur-[0.3px]"></div></div><span class="text-[10px] text-purple-300 mt-1 font-bold">月之石</span></div>
+                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full gem-ruby"></div><span class="text-[10px] text-rose-300 mt-1 font-bold">火之石</span></div>
+                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full gem-sapphire"></div><span class="text-[10px] text-blue-300 mt-1 font-bold">水之石</span></div>
+                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full gem-emerald"></div><span class="text-[10px] text-emerald-300 mt-1 font-bold">葉之石</span></div>
+                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full gem-diamond"></div><span class="text-[10px] text-amber-200 mt-1 font-bold">雷之石</span></div>
+                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full gem-onyx"></div><span class="text-[10px] text-purple-300 mt-1 font-bold">月之石</span></div>
             </div>
 
             <div class="space-y-4">
@@ -300,29 +300,19 @@
 
         const ALL_GEMS = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'];
         
-        // 經典高質感 3D 水晶寶石產生器
+        // 純淨立體寶石產生器（無反光條）
         function getGemOrbHTML(gem, sizeClass = 'w-9 h-9') {
             switch(gem) {
                 case 'ruby': // 紅寶石 / 火之石
-                    return `<div class="${sizeClass} rounded-full gem-ruby relative flex items-center justify-center shrink-0">
-                        <div class="absolute top-1 left-2 w-2 h-1 bg-white/70 rounded-full blur-[0.3px]"></div>
-                    </div>`;
+                    return `<div class="${sizeClass} rounded-full gem-ruby shrink-0"></div>`;
                 case 'sapphire': // 藍寶石 / 水之石
-                    return `<div class="${sizeClass} rounded-full gem-sapphire relative flex items-center justify-center shrink-0">
-                        <div class="absolute top-1 left-2 w-2 h-1 bg-white/70 rounded-full blur-[0.3px]"></div>
-                    </div>`;
+                    return `<div class="${sizeClass} rounded-full gem-sapphire shrink-0"></div>`;
                 case 'emerald': // 祖母綠 / 葉之石
-                    return `<div class="${sizeClass} rounded-full gem-emerald relative flex items-center justify-center shrink-0">
-                        <div class="absolute top-1 left-2 w-2 h-1 bg-white/70 rounded-full blur-[0.3px]"></div>
-                    </div>`;
+                    return `<div class="${sizeClass} rounded-full gem-emerald shrink-0"></div>`;
                 case 'diamond': // 鑽石 / 雷之石
-                    return `<div class="${sizeClass} rounded-full gem-diamond relative flex items-center justify-center shrink-0">
-                        <div class="absolute top-1 left-2 w-2 h-1 bg-white/80 rounded-full blur-[0.3px]"></div>
-                    </div>`;
+                    return `<div class="${sizeClass} rounded-full gem-diamond shrink-0"></div>`;
                 case 'onyx': // 黑瑪瑙 / 月之石
-                    return `<div class="${sizeClass} rounded-full gem-onyx relative flex items-center justify-center shrink-0">
-                        <div class="absolute top-1 left-2 w-2 h-1 bg-white/60 rounded-full blur-[0.3px]"></div>
-                    </div>`;
+                    return `<div class="${sizeClass} rounded-full gem-onyx shrink-0"></div>`;
                 case 'gold': // 大師球 (指定網址圖片)
                     return `<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbWkcWsQqjpflROiOjbEMKU1Q_NPjfAlwdlE9PyWxQ0Q&s=10" class="${sizeClass} object-contain rounded-full drop-shadow-[0_0_8px_rgba(251,191,36,0.6)] shrink-0" />`;
                 default:
@@ -1018,7 +1008,7 @@
                     <span class="font-title font-black">${pl.points} 分</span>
                 </div>
             `).join('');
-            document.getElementById('victory-modal').classList.remove('hidden');
+            document.getElementById('victory-modal').classList.add('hidden');
         }
 
         function toggleRulesModal(show) {
