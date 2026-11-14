@@ -1,1137 +1,685 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gem Guild - 奇幻珠寶工坊版</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Noto Sans TC', sans-serif;
-      background: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #0f172a 45%, #090d16 100%);
-      color: #f8fafc;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    .font-title {
-      font-family: 'Cinzel', 'Noto Sans TC', serif;
-    }
-
-    /* 深色玻璃擬態卡片與容器 */
-    .glass-panel {
-      background: rgba(15, 23, 42, 0.72);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(251, 191, 36, 0.22);
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    }
-
-    .glass-card {
-      background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
-      border: 1px solid rgba(251, 191, 36, 0.35);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
-      transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-
-    .glass-card:hover {
-      transform: translateY(-4px) scale(1.02);
-      border-color: rgba(251, 191, 36, 0.85);
-      box-shadow: 0 14px 28px rgba(251, 191, 36, 0.22), 0 0 15px rgba(251, 191, 36, 0.15);
-    }
-
-    /* 立體珠寶球體質感 */
-    .gem-orb {
-      position: relative;
-      border-radius: 9999px;
-      box-shadow:
-        inset -4px -4px 10px rgba(0, 0, 0, 0.65),
-        inset 3px 3px 8px rgba(255, 255, 255, 0.65),
-        0 6px 14px rgba(0, 0, 0, 0.5);
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    .gem-orb::after {
-      content: '';
-      position: absolute;
-      top: 14%;
-      left: 18%;
-      width: 28%;
-      height: 18%;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.75);
-      transform: rotate(-30deg);
-      pointer-events: none;
-    }
-
-    .gem-orb-btn:hover:not(:disabled) {
-      transform: translateY(-3px) scale(1.07);
-      box-shadow:
-        inset -4px -4px 10px rgba(0, 0, 0, 0.65),
-        inset 3px 3px 8px rgba(255, 255, 255, 0.8),
-        0 0 18px rgba(251, 191, 36, 0.55);
-    }
-
-    .gem-orb-btn:active:not(:disabled) {
-      transform: scale(0.95);
-    }
-
-    /* 寶石顏色定義 */
-    .gem-ruby { background: radial-gradient(circle at 35% 35%, #ff6b81, #e11d48 55%, #881337 100%); }
-    .gem-sapphire { background: radial-gradient(circle at 35% 35%, #60a5fa, #2563eb 55%, #1e3a8a 100%); }
-    .gem-emerald { background: radial-gradient(circle at 35% 35%, #34d399, #059669 55%, #064e3b 100%); }
-    .gem-diamond { background: radial-gradient(circle at 35% 35%, #ffffff, #e2e8f0 60%, #94a3b8 100%); color: #0f172a; }
-    .gem-onyx { background: radial-gradient(circle at 35% 35%, #64748b, #1e293b 55%, #020617 100%); border: 1px solid rgba(148,163,184,0.4); }
-    .gem-gold { background: radial-gradient(circle at 35% 35%, #fef08a, #eab308 55%, #a16207 100%); color: #422006; }
-
-    /* 卡牌頂部花紋漸層 */
-    .card-header-ruby { background: linear-gradient(90deg, rgba(225,29,72,0.85), rgba(136,19,55,0.45)); }
-    .card-header-sapphire { background: linear-gradient(90deg, rgba(37,99,235,0.85), rgba(30,58,138,0.45)); }
-    .card-header-emerald { background: linear-gradient(90deg, rgba(5,150,105,0.85), rgba(6,78,59,0.45)); }
-    .card-header-diamond { background: linear-gradient(90deg, rgba(226,232,240,0.85), rgba(148,163,184,0.35)); }
-    .card-header-onyx { background: linear-gradient(90deg, rgba(51,65,85,0.95), rgba(15,23,42,0.6)); }
-
-    /* 目前回合玩家發光外框 */
-    .active-turn-glow {
-      border-color: #fbbf24 !important;
-      box-shadow: 0 0 25px rgba(251, 191, 36, 0.35), inset 0 0 12px rgba(251, 191, 36, 0.15);
-    }
-
-    @keyframes pulseGold {
-      0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.4); }
-      50% { box-shadow: 0 0 24px rgba(251, 191, 36, 0.85); }
-    }
-    .btn-gold-glow {
-      animation: pulseGold 2.2s infinite;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gem Guild - 線上即時對戰版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Supabase 即時連線 SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; background: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #0f172a 45%, #090d16 100%); color: #f8fafc; min-height: 100vh; overflow-x: hidden; }
+        .font-title { font-family: 'Cinzel', 'Noto Sans TC', serif; }
+        .glass-panel { background: rgba(15, 23, 42, 0.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(251, 191, 36, 0.22); box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+        .glass-card { background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95)); border: 1px solid rgba(251, 191, 36, 0.35); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55); transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .glass-card:hover { transform: translateY(-4px) scale(1.02); border-color: rgba(251, 191, 36, 0.85); box-shadow: 0 14px 28px rgba(251, 191, 36, 0.22), 0 0 15px rgba(251, 191, 36, 0.15); }
+        .gem-orb { position: relative; border-radius: 9999px; box-shadow: inset -4px -4px 10px rgba(0, 0, 0, 0.65), inset 3px 3px 8px rgba(255, 255, 255, 0.65), 0 6px 14px rgba(0, 0, 0, 0.5); transition: transform 0.18s ease, box-shadow 0.18s ease; }
+        .gem-orb::after { content: ''; position: absolute; top: 14%; left: 18%; width: 28%; height: 18%; border-radius: 50%; background: rgba(255, 255, 255, 0.75); transform: rotate(-30deg); pointer-events: none; }
+        .gem-orb-btn:hover:not(:disabled) { transform: translateY(-3px) scale(1.07); box-shadow: inset -4px -4px 10px rgba(0, 0, 0, 0.65), inset 3px 3px 8px rgba(255, 255, 255, 0.8), 0 0 18px rgba(251, 191, 36, 0.55); }
+        .gem-orb-btn:active:not(:disabled) { transform: scale(0.95); }
+        .gem-ruby { background: radial-gradient(circle at 35% 35%, #ff6b81, #e11d48 55%, #881337 100%); }
+        .gem-sapphire { background: radial-gradient(circle at 35% 35%, #60a5fa, #2563eb 55%, #1e3a8a 100%); }
+        .gem-emerald { background: radial-gradient(circle at 35% 35%, #34d399, #059669 55%, #064e3b 100%); }
+        .gem-diamond { background: radial-gradient(circle at 35% 35%, #ffffff, #e2e8f0 60%, #94a3b8 100%); color: #0f172a; }
+        .gem-onyx { background: radial-gradient(circle at 35% 35%, #64748b, #1e293b 55%, #020617 100%); border: 1px solid rgba(148,163,184,0.4); }
+        .gem-gold { background: radial-gradient(circle at 35% 35%, #fef08a, #eab308 55%, #a16207 100%); color: #422006; }
+        .card-header-ruby { background: linear-gradient(90deg, rgba(225,29,72,0.85), rgba(136,19,55,0.45)); }
+        .card-header-sapphire { background: linear-gradient(90deg, rgba(37,99,235,0.85), rgba(30,58,138,0.45)); }
+        .card-header-emerald { background: linear-gradient(90deg, rgba(5,150,105,0.85), rgba(6,78,59,0.45)); }
+        .card-header-diamond { background: linear-gradient(90deg, rgba(226,232,240,0.85), rgba(148,163,184,0.35)); }
+        .card-header-onyx { background: linear-gradient(90deg, rgba(51,65,85,0.95), rgba(15,23,42,0.6)); }
+        .active-turn-glow { border-color: #fbbf24 !important; box-shadow: 0 0 25px rgba(251, 191, 36, 0.35), inset 0 0 12px rgba(251, 191, 36, 0.15); }
+        @keyframes pulseGold { 0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.4); } 50% { box-shadow: 0 0 24px rgba(251, 191, 36, 0.85); } }
+        .btn-gold-glow { animation: pulseGold 2.2s infinite; }
+    </style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
-  <!-- ==================== 1. 大廳登入畫面 ==================== -->
-  <div id="lobby-screen" class="min-h-screen flex items-center justify-center p-4">
-    <div class="glass-panel max-w-lg w-full rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-      <!-- 背景裝飾光暈 -->
-      <div class="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="text-center mb-8">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-medium tracking-wider mb-3">
-          <span>✦</span> 線上桌遊工坊原型 <span>✦</span>
-        </div>
-        <h1 class="font-title text-3xl sm:text-4xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
-          GEM GUILD
-        </h1>
-        <p class="text-slate-400 text-sm mt-2">文藝復興珠寶商的聲望與財富競逐</p>
-      </div>
-
-      <!-- 裝飾寶石列 -->
-      <div class="flex justify-center gap-3 mb-7">
-        <div class="w-7 h-7 gem-orb gem-diamond"></div>
-        <div class="w-7 h-7 gem-orb gem-sapphire"></div>
-        <div class="w-7 h-7 gem-orb gem-emerald"></div>
-        <div class="w-7 h-7 gem-orb gem-ruby"></div>
-        <div class="w-7 h-7 gem-orb gem-onyx"></div>
-        <div class="w-7 h-7 gem-orb gem-gold"></div>
-      </div>
-
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-medium text-amber-300/90 mb-1.5">房間號碼（預留多人連線代碼）</label>
-          <div class="flex gap-2">
-            <input id="input-room-id" type="text" value="8888" maxlength="8"
-              class="w-full px-4 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-amber-400 focus:outline-none text-amber-200 font-bold tracking-widest text-center text-lg"
-              placeholder="輸入房號如 8888" />
-            <button onclick="generateRandomRoom()" type="button"
-              class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 text-xs font-medium whitespace-nowrap transition">
-              隨機房號
-            </button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">玩家 1 暱稱</label>
-            <input id="input-p1-name" type="text" value="首席珠寶匠" maxlength="10"
-              class="w-full px-3.5 py-2 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-amber-400 focus:outline-none text-sm text-white" />
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">玩家 2 暱稱</label>
-            <input id="input-p2-name" type="text" value="威尼斯富商" maxlength="10"
-              class="w-full px-3.5 py-2 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-amber-400 focus:outline-none text-sm text-white" />
-          </div>
-        </div>
-
-        <div class="pt-3 space-y-2.5">
-          <button onclick="startGame()"
-            class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-base tracking-wide shadow-lg btn-gold-glow transition transform active:scale-98 cursor-pointer">
-            進入雙人同樂測試模式
-          </button>
-          <button onclick="toggleRulesModal(true)"
-            class="w-full py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 text-xs font-medium transition cursor-pointer">
-            查看繁體中文遊戲規則
-          </button>
-        </div>
-
-        <p class="text-[11px] text-center text-slate-500 pt-1">
-          * 目前為同機雙人輪流切換視角原型，未來接上 Supabase 即時資料庫即可憑房號遠端連線。
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== 2. 主遊戲桌面 ==================== -->
-  <div id="game-screen" class="hidden max-w-[1440px] mx-auto p-2.5 sm:p-4 space-y-3">
-
-    <!-- 頂部狀態資訊列 -->
-    <header class="glass-panel rounded-2xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <span class="font-title font-black text-lg sm:text-xl text-amber-400 tracking-wider">GEM GUILD</span>
-        <span class="px-2.5 py-0.5 rounded-lg bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-bold">
-          房號 #<span id="display-room-id">8888</span>
-        </span>
-        <span id="final-round-badge" class="hidden px-2.5 py-0.5 rounded-lg bg-rose-500/20 border border-rose-400 text-rose-300 text-xs font-bold animate-pulse">
-          最終回合！
-        </span>
-      </div>
-
-      <!-- 中央動態提示訊息 -->
-      <div id="status-banner" class="flex-1 min-w-[240px] text-center px-3 py-1.5 rounded-xl bg-slate-900/90 border border-amber-500/30 text-xs sm:text-sm font-medium text-amber-100">
-        輪到 <span class="text-amber-400 font-bold">玩家 1</span> 行動：請拿取寶石或點擊購買/保留發展卡
-      </div>
-
-      <!-- 右側功能按鈕 -->
-      <div class="flex items-center gap-2">
-        <button onclick="toggleRulesModal(true)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-medium text-slate-200 transition cursor-pointer">
-          規則說明
-        </button>
-        <button onclick="resetMatch()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-rose-900/60 border border-slate-600 hover:border-rose-500/50 text-xs font-medium text-slate-200 transition cursor-pointer">
-          重新開局
-        </button>
-        <button onclick="backToLobby()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-medium text-slate-400 transition cursor-pointer">
-          回大廳
-        </button>
-      </div>
-    </header>
-
-    <!-- 主體三欄式佈局（桌面版：左銀行與貴族 / 中發展卡市場 / 右雙方玩家面板） -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
-
-      <!-- 【左欄 3格】：貴族板塊區 + 銀行寶石籌碼區 -->
-      <div class="lg:col-span-3 space-y-3.5">
-
-        <!-- 貴族區 -->
-        <section class="glass-panel rounded-2xl p-3.5">
-          <div class="flex items-center justify-between mb-2.5">
-            <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-              <span>👑</span> 皇家貴族（自動拜訪 +3分）
-            </h2>
-          </div>
-          <div id="nobles-container" class="grid grid-cols-3 lg:grid-cols-1 gap-2">
-            <!-- JS 動態生成貴族 -->
-          </div>
-        </section>
-
-        <!-- 銀行寶石區 -->
-        <section class="glass-panel rounded-2xl p-3.5">
-          <div class="flex items-center justify-between mb-2">
-            <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-              <span>💎</span> 銀行寶石庫
-            </h2>
-            <span class="text-[11px] text-slate-400">雙人局各 4 顆</span>
-          </div>
-
-          <div id="bank-gems-container" class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-2 gap-2.5 my-2">
-            <!-- JS 動態生成 6 種寶石按鈕 -->
-          </div>
-
-          <!-- 已選取寶石暫存確認區 -->
-          <div class="mt-3 pt-3 border-t border-slate-700/70">
-            <div class="flex items-center justify-between text-xs text-slate-300 mb-2">
-              <span>本回合已選寶石：</span>
-              <span id="selected-gems-hint" class="text-[11px] text-amber-400">可選 3 異色 或 2 同色</span>
-            </div>
-            <div id="selected-gems-preview" class="min-h-[36px] flex items-center justify-center gap-2 bg-slate-950/60 rounded-xl p-1.5 border border-slate-800 mb-2.5">
-              <span class="text-xs text-slate-500">點擊上方寶石進行拿取</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <button id="btn-clear-gems" onclick="clearSelectedGems()" disabled
-                class="py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-medium text-slate-300 transition cursor-pointer">
-                清空重選
-              </button>
-              <button id="btn-confirm-gems" onclick="confirmTakeGems()" disabled
-                class="py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 disabled:opacity-40 text-slate-950 font-bold text-xs shadow transition cursor-pointer">
-                確認拿取
-              </button>
-            </div>
-          </div>
-        </section>
-
-      </div>
-
-      <!-- 【中欄 6格】：三階發展卡市場 -->
-      <main class="lg:col-span-6 glass-panel rounded-2xl p-3.5 space-y-3">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-            <span>🃏</span> 珠寶發展卡市場（點擊卡片購買或保留）
-          </h2>
-          <span class="text-[11px] text-slate-400">先達 15 聲望觸發終局</span>
-        </div>
-
-        <!-- Level 3 -->
-        <div class="space-y-1.5">
-          <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 text-[10px] font-bold">LEVEL 3 高階</span>
-            <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-3" class="text-slate-200">0</b> 張</span>
-          </div>
-          <div id="market-row-3" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
-        </div>
-
-        <!-- Level 2 -->
-        <div class="space-y-1.5">
-          <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] font-bold">LEVEL 2 中階</span>
-            <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-2" class="text-slate-200">0</b> 張</span>
-          </div>
-          <div id="market-row-2" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
-        </div>
-
-        <!-- Level 1 -->
-        <div class="space-y-1.5">
-          <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-bold">LEVEL 1 初階</span>
-            <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-1" class="text-slate-200">0</b> 張</span>
-          </div>
-          <div id="market-row-1" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
-        </div>
-      </main>
-
-      <!-- 【右欄 3格】：玩家 1 與 玩家 2 狀態面板 -->
-      <aside class="lg:col-span-3 space-y-3.5" id="players-container">
-        <!-- JS 動態渲染玩家 1 與 玩家 2 面板 -->
-      </aside>
-
-    </div>
-  </div>
-
-  <!-- ==================== 3. 卡片操作彈窗（購買 / 保留） ==================== -->
-  <div id="card-action-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-panel max-w-sm w-full rounded-3xl p-5 border border-amber-400/50 space-y-4">
-      <div class="flex items-center justify-between">
-        <h3 class="font-bold text-base text-amber-300">選擇發展卡行動</h3>
-        <button onclick="closeCardModal()" class="text-slate-400 hover:text-white text-lg cursor-pointer">✕</button>
-      </div>
-
-      <!-- 卡片預覽區 -->
-      <div id="modal-card-preview" class="flex justify-center py-2"></div>
-
-      <!-- 費用計算明細 -->
-      <div id="modal-cost-breakdown" class="bg-slate-900/90 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800"></div>
-
-      <div class="grid grid-cols-1 gap-2.5 pt-1">
-        <button id="modal-btn-buy" onclick="executeBuyCard()"
-          class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-black text-sm shadow transition cursor-pointer">
-          購買此發展卡
-        </button>
-        <button id="modal-btn-reserve" onclick="executeReserveCard()"
-          class="w-full py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 disabled:opacity-40 disabled:cursor-not-allowed text-amber-200 font-bold text-sm transition cursor-pointer">
-          保留卡片（並獲得 1 顆黃金萬用幣）
-        </button>
-        <button onclick="closeCardModal()"
-          class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-medium transition cursor-pointer">
-          取消返回
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== 4. 寶石超過 10 顆捨棄彈窗 ==================== -->
-  <div id="discard-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-rose-400/60 space-y-4 text-center">
-      <div class="text-3xl">⚖️</div>
-      <h3 class="font-bold text-lg text-rose-300">手牌寶石超過上限（最多 10 顆）</h3>
-      <p class="text-xs text-slate-300">
-        你目前擁有 <b id="discard-current-count" class="text-amber-400 text-sm">11</b> 顆寶石，請點擊下方寶石捨棄多餘的數量，直到剩餘 10 顆為止。
-      </p>
-      <div id="discard-gems-list" class="flex flex-wrap justify-center gap-3 py-3"></div>
-    </div>
-  </div>
-
-  <!-- ==================== 5. 遊戲勝利結算彈窗 ==================== -->
-  <div id="victory-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="glass-panel max-w-md w-full rounded-3xl p-7 border-2 border-amber-400 text-center space-y-5 relative overflow-hidden">
-      <div class="text-5xl">🏆</div>
-      <div>
-        <p class="text-xs font-bold tracking-widest text-amber-400 uppercase">ROYAL VICTORY</p>
-        <h2 id="victory-winner-title" class="text-2xl sm:text-3xl font-black text-white mt-1">首席珠寶匠 獲勝！</h2>
-      </div>
-      <div id="victory-scoreboard" class="bg-slate-900/90 rounded-2xl p-4 space-y-2 border border-slate-700 text-sm"></div>
-      <div class="flex gap-3 pt-2">
-        <button onclick="resetMatch()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-black text-sm shadow-lg cursor-pointer">
-          再來一局
-        </button>
-        <button onclick="backToLobby()" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm cursor-pointer">
-          返回大廳
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== 6. 繁體中文規則說明彈窗 ==================== -->
-  <div id="rules-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-panel max-w-xl w-full rounded-3xl p-6 max-h-[85vh] overflow-y-auto space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-        <h3 class="font-bold text-lg text-amber-300">📜 Gem Guild 簡易規則</h3>
-        <button onclick="toggleRulesModal(false)" class="text-slate-400 hover:text-white text-lg cursor-pointer">✕</button>
-      </div>
-      <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
-        <p><strong class="text-amber-300">🎯 勝利條件：</strong>當任一玩家獲得 <strong>15 點聲望分數</strong>時，會完成該輪（確保雙方行動次數相同），最後分數最高者獲勝（同分則比較發展卡數量較少者勝）。</p>
-        <p><strong class="text-amber-300">🔄 每回合三選一行動：</strong></p>
-        <ul class="list-disc pl-5 space-y-1.5 text-slate-300">
-          <li><strong>拿取寶石：</strong>可從銀行拿取「<strong>3 顆不同顏色</strong>」的基礎寶石；或者當某種基礎寶石在銀行<strong>剩餘 ≥ 4 顆</strong>時，拿取「<strong>2 顆相同顏色</strong>」。每人手頭上限 10 顆（含黃金）。</li>
-          <li><strong>購買發展卡：</strong>支付卡片左下角標示的寶石數量即可購買。你已擁有的發展卡會提供<strong>永久顏色折扣</strong>（每張同色卡折抵 1 顆），不足的數量可用「黃金萬用幣」代替。</li>
-          <li><strong>保留發展卡：</strong>將場上一張卡片放入自己的保留區（上限 3 張），並從銀行拿取 <strong>1 顆黃金萬用幣</strong>（若銀行還有黃金）。之後輪到你時可隨時購買自己保留的卡片。</li>
-        </ul>
-        <p><strong class="text-amber-300">👑 皇家貴族拜訪：</strong>回合結束時，若你擁有的<strong>永久發展卡顏色數量</strong>達到某位貴族的要求，該貴族會自動拜訪你並直接獲得 <strong>+3 分</strong>（每回合最多吸引 1 位貴族）。</p>
-      </div>
-      <button onclick="toggleRulesModal(false)" class="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-sm cursor-pointer">
-        我瞭解了，開始遊戲！
-      </button>
-    </div>
-  </div>
-
-  <!-- ==================== JavaScript 完整遊戲核心邏輯 ==================== -->
-  <script>
-    // 寶石基礎設定
-    const GEM_TYPES = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx'];
-    const ALL_GEMS = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'];
-
-    const GEM_INFO = {
-      diamond:  { name: '鑽石',   short: '白', css: 'gem-diamond',  header: 'card-header-diamond', text: 'text-slate-100' },
-      sapphire: { name: '藍寶石', short: '藍', css: 'gem-sapphire', header: 'card-header-sapphire', text: 'text-blue-300' },
-      emerald:  { name: '祖母綠', short: '綠', css: 'gem-emerald',  header: 'card-header-emerald', text: 'text-emerald-300' },
-      ruby:     { name: '紅寶石', short: '紅', css: 'gem-ruby',     header: 'card-header-ruby', text: 'text-rose-300' },
-      onyx:     { name: '黑瑪瑙', short: '黑', css: 'gem-onyx',     header: 'card-header-onyx', text: 'text-slate-300' },
-      gold:     { name: '黃金',   short: '金', css: 'gem-gold',     header: '', text: 'text-amber-300' }
-    };
-
-    // 貴族資料庫（共 10 張經典貴族配置，開局隨機抽 3 張）
-    const NOBLES_POOL = [
-      { id: 'n1', name: '伊莎貝拉女王', points: 3, req: { ruby: 4, emerald: 4 } },
-      { id: 'n2', name: '美第奇公爵',   points: 3, req: { sapphire: 4, diamond: 4 } },
-      { id: 'n3', name: '蘇萊曼大帝',   points: 3, req: { sapphire: 4, emerald: 4 } },
-      { id: 'n4', name: '凱薩琳王后',   points: 3, req: { ruby: 4, onyx: 4 } },
-      { id: 'n5', name: '查理五世',     points: 3, req: { diamond: 4, onyx: 4 } },
-      { id: 'n6', name: '亨利八世',     points: 3, req: { ruby: 3, emerald: 3, sapphire: 3 } },
-      { id: 'n7', name: '瑪麗亞女皇',   points: 3, req: { diamond: 3, sapphire: 3, onyx: 3 } },
-      { id: 'n8', name: '法蘭西斯一世', points: 3, req: { diamond: 3, sapphire: 3, emerald: 3 } },
-      { id: 'n9', name: '馬基維利',     points: 3, req: { diamond: 3, ruby: 3, onyx: 3 } },
-      { id: 'n10',name: '波吉亞教宗',   points: 3, req: { emerald: 3, ruby: 3, onyx: 3 } }
-    ];
-
-    // 生成平衡且豐富的 90 張發展卡牌庫（Level 1: 40張, Level 2: 30張, Level 3: 20張）
-    function buildFullDeck() {
-      let idCounter = 1;
-      const cards = [];
-
-      // Level 1（0~1分，低成本基礎產能卡）
-      const l1Templates = [
-        { pts: 0, cost: [0, 1, 1, 1, 1] },
-        { pts: 0, cost: [0, 1, 2, 1, 1] },
-        { pts: 0, cost: [0, 2, 2, 0, 1] },
-        { pts: 0, cost: [0, 0, 1, 3, 1] },
-        { pts: 0, cost: [0, 0, 2, 1, 0] },
-        { pts: 0, cost: [0, 2, 0, 0, 2] },
-        { pts: 0, cost: [0, 0, 3, 0, 0] },
-        { pts: 1, cost: [0, 0, 4, 0, 0] }
-      ];
-      GEM_TYPES.forEach((bonus, gIdx) => {
-        l1Templates.forEach(tpl => {
-          const costObj = {};
-          tpl.cost.forEach((amt, cIdx) => {
-            if (amt > 0) {
-              const targetGem = GEM_TYPES[(gIdx + cIdx) % 5];
-              costObj[targetGem] = amt;
-            }
-          });
-          cards.push({ id: `c${idCounter++}`, level: 1, bonus, points: tpl.pts, cost: costObj });
-        });
-      });
-
-      // Level 2（1~3分，中階進階卡）
-      const l2Templates = [
-        { pts: 1, cost: [0, 2, 2, 3, 0] },
-        { pts: 1, cost: [2, 0, 3, 0, 3] },
-        { pts: 2, cost: [0, 1, 4, 2, 0] },
-        { pts: 2, cost: [0, 0, 5, 3, 0] },
-        { pts: 2, cost: [0, 0, 5, 0, 0] },
-        { pts: 3, cost: [6, 0, 0, 0, 0] }
-      ];
-      GEM_TYPES.forEach((bonus, gIdx) => {
-        l2Templates.forEach(tpl => {
-          const costObj = {};
-          tpl.cost.forEach((amt, cIdx) => {
-            if (amt > 0) {
-              const targetGem = GEM_TYPES[(gIdx + cIdx) % 5];
-              costObj[targetGem] = amt;
-            }
-          });
-          cards.push({ id: `c${idCounter++}`, level: 2, bonus, points: tpl.pts, cost: costObj });
-        });
-      });
-
-      // Level 3（3~5分，高階大點數卡）
-      const l3Templates = [
-        { pts: 3, cost: [0, 3, 3, 5, 3] },
-        { pts: 4, cost: [0, 0, 0, 7, 0] },
-        { pts: 4, cost: [3, 0, 0, 6, 3] },
-        { pts: 5, cost: [3, 0, 0, 7, 0] }
-      ];
-      GEM_TYPES.forEach((bonus, gIdx) => {
-        l3Templates.forEach(tpl => {
-          const costObj = {};
-          tpl.cost.forEach((amt, cIdx) => {
-            if (amt > 0) {
-              const targetGem = GEM_TYPES[(gIdx + cIdx) % 5];
-              costObj[targetGem] = amt;
-            }
-          });
-          cards.push({ id: `c${idCounter++}`, level: 3, bonus, points: tpl.pts, cost: costObj });
-        });
-      });
-
-      return cards;
-    }
-
-    function shuffle(arr) {
-      const copy = [...arr];
-      for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copy[i], copy[j]] = [copy[j], copy[i]];
-      }
-      return copy;
-    }
-
-    // ==================== 遊戲全域狀態 ====================
-    let gameState = null;
-    let selectedGemsBuffer = []; // 本回合暫時點擊選取的寶石陣列
-    let activeCardSelection = null; // { card, source: 'market'|'reserved', level, index }
-
-    function generateRandomRoom() {
-      const num = Math.floor(1000 + Math.random() * 9000);
-      document.getElementById('input-room-id').value = num;
-    }
-
-    function startGame() {
-      const roomId = document.getElementById('input-room-id').value.trim() || '8888';
-      const p1Name = document.getElementById('input-p1-name').value.trim() || '玩家 1';
-      const p2Name = document.getElementById('input-p2-name').value.trim() || '玩家 2';
-
-      document.getElementById('display-room-id').textContent = roomId;
-      initMatch(p1Name, p2Name);
-
-      document.getElementById('lobby-screen').classList.add('hidden');
-      document.getElementById('game-screen').classList.remove('hidden');
-    }
-
-    function backToLobby() {
-      document.getElementById('victory-modal').classList.add('hidden');
-      document.getElementById('game-screen').classList.add('hidden');
-      document.getElementById('lobby-screen').classList.remove('hidden');
-    }
-
-    function resetMatch() {
-      document.getElementById('victory-modal').classList.add('hidden');
-      const p1 = gameState ? gameState.players[0].name : '玩家 1';
-      const p2 = gameState ? gameState.players[1].name : '玩家 2';
-      initMatch(p1, p2);
-    }
-
-    function initMatch(p1Name, p2Name) {
-      const fullDeck = buildFullDeck();
-      const deck1 = shuffle(fullDeck.filter(c => c.level === 1));
-      const deck2 = shuffle(fullDeck.filter(c => c.level === 2));
-      const deck3 = shuffle(fullDeck.filter(c => c.level === 3));
-
-      gameState = {
-        currentPlayerIdx: 0,
-        finalRoundTriggered: false,
-        winner: null,
-        // 雙人局規則：基礎寶石各 4 顆，黃金 5 顆
-        bank: { diamond: 4, sapphire: 4, emerald: 4, ruby: 4, onyx: 4, gold: 5 },
-        nobles: shuffle(NOBLES_POOL).slice(0, 3),
-        decks: { 1: deck1, 2: deck2, 3: deck3 },
-        market: {
-          1: deck1.splice(0, 4),
-          2: deck2.splice(0, 4),
-          3: deck3.splice(0, 4)
-        },
-        players: [
-          createPlayerObj(0, p1Name),
-          createPlayerObj(1, p2Name)
-        ]
-      };
-
-      selectedGemsBuffer = [];
-      activeCardSelection = null;
-      document.getElementById('final-round-badge').classList.add('hidden');
-      setStatusMessage(`對戰開始！輪到 <span class="text-amber-400 font-bold">${p1Name}</span> 行動`);
-      renderAll();
-    }
-
-    function createPlayerObj(id, name) {
-      return {
-        id,
-        name,
-        points: 0,
-        gems: { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, gold: 0 },
-        bonuses: { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0 },
-        cards: [],
-        reserved: [],
-        nobles: []
-      };
-    }
-
-    function setStatusMessage(htmlMsg) {
-      document.getElementById('status-banner').innerHTML = htmlMsg;
-    }
-
-    // ==================== 渲染畫面總控 ====================
-    function renderAll() {
-      renderNobles();
-      renderBank();
-      renderSelectedGemsUI();
-      renderMarket();
-      renderPlayers();
-    }
-
-    // 1. 渲染貴族區
-    function renderNobles() {
-      const container = document.getElementById('nobles-container');
-      if (gameState.nobles.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-500 text-center py-4 col-span-3">所有貴族皆已拜訪</div>`;
-        return;
-      }
-
-      container.innerHTML = gameState.nobles.map(noble => {
-        const reqBadges = Object.entries(noble.req).map(([gem, count]) => `
-          <div class="flex items-center gap-1 bg-slate-900/90 px-1.5 py-0.5 rounded border border-slate-700">
-            <span class="w-2.5 h-3.5 rounded-xs inline-block ${GEM_INFO[gem].css}"></span>
-            <span class="text-[11px] font-bold text-white">${count}</span>
-          </div>
-        `).join('');
-
-        return `
-          <div class="glass-card rounded-xl p-2.5 flex flex-col lg:flex-row items-center justify-between gap-2 border-amber-500/40">
-            <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-700 text-slate-950 font-title font-black text-base flex items-center justify-center shadow">
-                +${noble.points}
-              </div>
-              <div>
-                <div class="text-xs font-bold text-amber-200 leading-tight">${noble.name}</div>
-                <div class="text-[10px] text-slate-400">需求發展卡</div>
-              </div>
-            </div>
-            <div class="flex flex-wrap gap-1 justify-end">
-              ${reqBadges}
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    // 2. 渲染銀行寶石庫
-    function renderBank() {
-      const container = document.getElementById('bank-gems-container');
-      container.innerHTML = ALL_GEMS.map(gem => {
-        const totalInBank = gameState.bank[gem];
-        const selectedCount = selectedGemsBuffer.filter(g => g === gem).length;
-        const remainDisplay = totalInBank - selectedCount;
-        const isGold = gem === 'gold';
-
-        // 判斷該寶石此刻是否可被點選
-        let canClick = !isGold && remainDisplay > 0;
-        if (canClick && selectedGemsBuffer.length > 0) {
-          if (selectedGemsBuffer.length >= 3) {
-            canClick = false;
-          } else if (selectedGemsBuffer.length === 2 && selectedGemsBuffer[0] === selectedGemsBuffer[1]) {
-            // 已經選了 2 顆同色，不能再選任何寶石
-            canClick = false;
-          } else if (selectedGemsBuffer.includes(gem)) {
-            // 已經選過這色 1 顆：只有當 buffer 只有 1 顆且銀行原本 >= 4 顆時才可拿第 2 顆同色
-            canClick = (selectedGemsBuffer.length === 1 && totalInBank >= 4);
-          }
-        }
-
-        return `
-          <button onclick="handleSelectBankGem('${gem}')" ${canClick ? '' : 'disabled'}
-            class="gem-orb-btn flex items-center gap-2.5 p-2 rounded-xl bg-slate-900/75 border ${selectedCount > 0 ? 'border-amber-400 bg-amber-950/30' : 'border-slate-800'} disabled:opacity-45 disabled:cursor-not-allowed transition cursor-pointer">
-            <div class="w-9 h-9 shrink-0 gem-orb ${GEM_INFO[gem].css} flex items-center justify-center font-black text-sm shadow-md">
-              ${remainDisplay}
-            </div>
-            <div class="text-left overflow-hidden">
-              <div class="text-xs font-bold ${GEM_INFO[gem].text} truncate">${GEM_INFO[gem].name}</div>
-              <div class="text-[10px] text-slate-400">${isGold ? '保留卡獲得' : (selectedCount > 0 ? `已選 ${selectedCount}` : '點擊拿取')}</div>
-            </div>
-          </button>
-        `;
-      }).join('');
-    }
-
-    function handleSelectBankGem(gem) {
-      if (gem === 'gold') return;
-      const totalInBank = gameState.bank[gem];
-      const alreadySelected = selectedGemsBuffer.filter(g => g === gem).length;
-      if (totalInBank - alreadySelected <= 0) return;
-
-      if (selectedGemsBuffer.length === 0) {
-        selectedGemsBuffer.push(gem);
-      } else if (selectedGemsBuffer.length === 1) {
-        if (selectedGemsBuffer[0] === gem) {
-          if (totalInBank >= 4) {
-            selectedGemsBuffer.push(gem);
-          }
-        } else {
-          selectedGemsBuffer.push(gem);
-        }
-      } else if (selectedGemsBuffer.length === 2) {
-        // 必須前兩顆不同色，且這第三顆也不同色
-        if (selectedGemsBuffer[0] !== selectedGemsBuffer[1] && !selectedGemsBuffer.includes(gem)) {
-          selectedGemsBuffer.push(gem);
-        }
-      }
-
-      renderBank();
-      renderSelectedGemsUI();
-    }
-
-    function clearSelectedGems() {
-      selectedGemsBuffer = [];
-      renderBank();
-      renderSelectedGemsUI();
-    }
-
-    function renderSelectedGemsUI() {
-      const preview = document.getElementById('selected-gems-preview');
-      const btnClear = document.getElementById('btn-clear-gems');
-      const btnConfirm = document.getElementById('btn-confirm-gems');
-
-      if (selectedGemsBuffer.length === 0) {
-        preview.innerHTML = `<span class="text-xs text-slate-500">點擊上方寶石進行拿取</span>`;
-        btnClear.disabled = true;
-        btnConfirm.disabled = true;
-        return;
-      }
-
-      preview.innerHTML = selectedGemsBuffer.map(gem => `
-        <div class="w-7 h-7 gem-orb ${GEM_INFO[gem].css} flex items-center justify-center text-[10px] font-black shadow">
-          ${GEM_INFO[gem].short}
-        </div>
-      `).join('');
-
-      btnClear.disabled = false;
-      btnConfirm.disabled = false;
-    }
-
-    function confirmTakeGems() {
-      if (selectedGemsBuffer.length === 0) return;
-      const player = gameState.players[gameState.currentPlayerIdx];
-
-      selectedGemsBuffer.forEach(gem => {
-        gameState.bank[gem] -= 1;
-        player.gems[gem] += 1;
-      });
-
-      const takenNames = selectedGemsBuffer.map(g => GEM_INFO[g].name).join('、');
-      selectedGemsBuffer = [];
-
-      checkHandLimitOrEndTurn(`${player.name} 拿取了 ${takenNames}`);
-    }
-
-    // 3. 渲染三階發展卡市場
-    function renderMarket() {
-      [3, 2, 1].forEach(level => {
-        document.getElementById(`deck-count-${level}`).textContent = gameState.decks[level].length;
-        const rowContainer = document.getElementById(`market-row-${level}`);
-        const rowCards = gameState.market[level];
-
-        rowContainer.innerHTML = rowCards.map((card, idx) => {
-          if (!card) {
-            return `<div class="h-36 rounded-xl border border-dashed border-slate-800 bg-slate-900/30 flex items-center justify-center text-xs text-slate-600">已售罄</div>`;
-          }
-          return createCardHTML(card, `openCardModal('market', ${level}, ${idx})`);
-        }).join('');
-      });
-    }
-
-    // 產生單張發展卡 HTML
-    function createCardHTML(card, onClickFn, isCompact = false) {
-      const currentPlayer = gameState.players[gameState.currentPlayerIdx];
-      const affordable = canPlayerAfford(currentPlayer, card);
-
-      const costDots = Object.entries(card.cost).map(([gem, amt]) => `
-        <div class="w-5 h-5 rounded-full gem-orb ${GEM_INFO[gem].css} flex items-center justify-center text-[11px] font-black shadow">
-          ${amt}
-        </div>
-      `).join('');
-
-      return `
-        <div onclick="${onClickFn}"
-          class="glass-card rounded-xl overflow-hidden flex flex-col justify-between ${isCompact ? 'h-28' : 'h-36'} cursor-pointer relative group ${affordable ? 'ring-1 ring-emerald-400/60' : ''}">
-          
-          <!-- 頂部：分數 + 永久產出寶石 -->
-          <div class="${GEM_INFO[card.bonus].header} px-2.5 py-1.5 flex items-center justify-between border-b border-white/10">
-            <span class="font-title font-black ${isCompact ? 'text-base' : 'text-xl'} text-white drop-shadow">
-              ${card.points > 0 ? card.points : ''}
-            </span>
-            <div class="w-5 h-5 rounded-full gem-orb ${GEM_INFO[card.bonus].css} border border-white/40" title="提供 ${GEM_INFO[card.bonus].name} 永久折扣"></div>
-          </div>
-
-          <!-- 中央微光裝飾與可購買標籤 -->
-          <div class="px-2 flex items-center justify-center">
-            ${affordable ? `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-[10px] font-bold">可購買</span>` : ''}
-          </div>
-
-          <!-- 左下角購買成本 -->
-          <div class="p-2 flex flex-wrap gap-1 items-end">
-            ${costDots}
-          </div>
-        </div>
-      `;
-    }
-
-    // 4. 渲染玩家 1 與玩家 2 面板
-    function renderPlayers() {
-      const container = document.getElementById('players-container');
-      container.innerHTML = gameState.players.map((p, idx) => {
-        const isCurrent = idx === gameState.currentPlayerIdx;
-        const totalGems = getTotalGemsCount(p);
-
-        const gemColumns = ALL_GEMS.map(gem => {
-          const gemCount = p.gems[gem];
-          const bonusCount = gem === 'gold' ? null : p.bonuses[gem];
-          return `
-            <div class="flex flex-col items-center bg-slate-900/85 rounded-xl py-1.5 px-1 border border-slate-800">
-              <div class="w-5 h-5 rounded-full gem-orb ${GEM_INFO[gem].css} flex items-center justify-center text-[10px] font-black mb-1">
-                ${gemCount}
-              </div>
-              ${bonusCount !== null
-                ? `<span class="text-[10px] font-bold px-1.5 rounded bg-slate-800 ${GEM_INFO[gem].text}" title="永久折扣卡">+${bonusCount}</span>`
-                : `<span class="text-[9px] text-amber-400/80">萬用</span>`
-              }
-            </div>
-          `;
-        }).join('');
-
-        const reservedList = p.reserved.length === 0
-          ? `<span class="text-[11px] text-slate-500">無保留卡片（上限 3 張）</span>`
-          : p.reserved.map((rCard, rIdx) => `
-              <button onclick="${isCurrent ? `openCardModal('reserved', 0, ${rIdx})` : ''}"
-                class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-amber-500/40 text-[11px] flex items-center gap-1.5 transition ${isCurrent ? 'cursor-pointer' : 'cursor-default opacity-75'}">
-                <span class="w-2.5 h-2.5 rounded-full ${GEM_INFO[rCard.bonus].css}"></span>
-                <span class="font-bold text-amber-200">${rCard.points}分</span>
-                <span class="text-slate-400">Lv.${rCard.level}</span>
-              </button>
-            `).join('');
-
-        return `
-          <div class="glass-panel rounded-2xl p-3.5 transition-all ${isCurrent ? 'active-turn-glow' : 'opacity-85'}">
-            <div class="flex items-center justify-between mb-2.5">
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full ${isCurrent ? 'bg-amber-400 animate-ping' : 'bg-slate-600'}"></span>
-                <div>
-                  <div class="font-bold text-sm text-white flex items-center gap-1.5">
-                    ${p.name}
-                    ${isCurrent ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500 text-slate-950 font-black">當前回合</span>' : ''}
-                  </div>
-                  <div class="text-[11px] text-slate-400">
-                    手頭寶石：<b class="${totalGems > 10 ? 'text-rose-400' : 'text-slate-200'}">${totalGems}</b> / 10 顆
-                  </div>
+    <!-- ==================== 1. 大廳登入畫面 ==================== -->
+    <div id="lobby-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-panel max-w-lg w-full rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-medium tracking-wider mb-3">
+                    <span>✦</span> Supabase 即時連線版 <span>✦</span>
                 </div>
-              </div>
-
-              <!-- 聲望總分 -->
-              <div class="text-right">
-                <div class="font-title font-black text-2xl text-amber-400 leading-none">${p.points}</div>
-                <div class="text-[10px] text-slate-400">聲望 / 15</div>
-              </div>
+                <h1 class="font-title text-3xl sm:text-4xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
+                    GEM GUILD
+                </h1>
+                <p class="text-slate-400 text-sm mt-2">文藝復興珠寶商的聲望與財富競逐</p>
             </div>
 
-            <!-- 6色寶石與永久折扣卡統計 -->
-            <div class="grid grid-cols-6 gap-1 mb-2.5">
-              ${gemColumns}
+            <div class="flex justify-center gap-3 mb-7">
+                <div class="w-7 h-7 gem-orb gem-diamond"></div>
+                <div class="w-7 h-7 gem-orb gem-sapphire"></div>
+                <div class="w-7 h-7 gem-orb gem-emerald"></div>
+                <div class="w-7 h-7 gem-orb gem-ruby"></div>
+                <div class="w-7 h-7 gem-orb gem-onyx"></div>
+                <div class="w-7 h-7 gem-orb gem-gold"></div>
             </div>
 
-            <!-- 保留區 -->
-            <div class="pt-2 border-t border-slate-800">
-              <div class="text-[10px] text-slate-400 mb-1">保留中卡片（點擊可直接購買）：</div>
-              <div class="flex flex-wrap gap-1.5 items-center min-h-[26px]">
-                ${reservedList}
-              </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-amber-300/90 mb-1.5">房間號碼（輸入與朋友相同的房號加入）</label>
+                    <div class="flex gap-2">
+                        <input id="input-room-id" type="text" value="8888" maxlength="8" class="w-full px-4 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-amber-400 focus:outline-none text-amber-200 font-bold tracking-widest text-center text-lg" placeholder="輸入房號如 8888" />
+                        <button onclick="generateRandomRoom()" type="button" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 text-xs font-medium whitespace-nowrap transition cursor-pointer">
+                            隨機房號
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">你的遊戲暱稱</label>
+                    <input id="input-player-name" type="text" value="首席珠寶匠" maxlength="12" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-amber-400 focus:outline-none text-sm text-white" />
+                </div>
+
+                <div class="pt-3 space-y-2.5">
+                    <button onclick="joinOrCreateRoom()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-base tracking-wide shadow-lg btn-gold-glow transition transform active:scale-98 cursor-pointer">
+                        進入房間 / 開始對戰
+                    </button>
+                    <button onclick="toggleRulesModal(true)" class="w-full py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 text-xs font-medium transition cursor-pointer">
+                        查看繁體中文遊戲規則
+                    </button>
+                </div>
+                <p id="lobby-status-msg" class="text-xs text-center text-amber-400/90 pt-1"></p>
             </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    // ==================== 購買與保留邏輯 ====================
-    function getTotalGemsCount(player) {
-      return ALL_GEMS.reduce((sum, g) => sum + player.gems[g], 0);
-    }
-
-    function calculatePayment(player, card) {
-      let goldNeeded = 0;
-      const payment = { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, gold: 0 };
-
-      for (const [gem, rawCost] of Object.entries(card.cost)) {
-        const discount = player.bonuses[gem] || 0;
-        const netCost = Math.max(0, rawCost - discount);
-        if (player.gems[gem] >= netCost) {
-          payment[gem] = netCost;
-        } else {
-          payment[gem] = player.gems[gem];
-          goldNeeded += (netCost - player.gems[gem]);
-        }
-      }
-      payment.gold = goldNeeded;
-      const canAfford = player.gems.gold >= goldNeeded;
-      return { canAfford, payment, goldNeeded };
-    }
-
-    function canPlayerAfford(player, card) {
-      return calculatePayment(player, card).canAfford;
-    }
-
-    function openCardModal(source, level, index) {
-      if (selectedGemsBuffer.length > 0) {
-        clearSelectedGems();
-      }
-
-      const player = gameState.players[gameState.currentPlayerIdx];
-      const card = source === 'market'
-        ? gameState.market[level][index]
-        : player.reserved[index];
-
-      if (!card) return;
-      activeCardSelection = { card, source, level, index };
-
-      // 渲染卡片預覽
-      document.getElementById('modal-card-preview').innerHTML = `
-        <div class="w-40">
-          ${createCardHTML(card, '')}
         </div>
-      `;
+    </div>
 
-      // 計算費用明細
-      const { canAfford, payment, goldNeeded } = calculatePayment(player, card);
-      const breakdownLines = Object.entries(card.cost).map(([gem, rawCost]) => {
-        const disc = player.bonuses[gem] || 0;
-        const pay = payment[gem];
-        return `<div class="flex justify-between">
-          <span class="${GEM_INFO[gem].text}">${GEM_INFO[gem].name}需求 ${rawCost}（折扣 -${disc}）</span>
-          <span class="text-white font-bold">實付 ${pay} 顆</span>
-        </div>`;
-      }).join('');
-
-      document.getElementById('modal-cost-breakdown').innerHTML = `
-        ${breakdownLines}
-        ${goldNeeded > 0 ? `<div class="flex justify-between text-amber-300 border-t border-slate-700 pt-1">
-          <span>需使用黃金萬用幣補差額：</span>
-          <span class="font-bold">${goldNeeded} 顆（持有 ${player.gems.gold} 顆）</span>
-        </div>` : ''}
-      `;
-
-      const btnBuy = document.getElementById('modal-btn-buy');
-      btnBuy.disabled = !canAfford;
-      btnBuy.textContent = canAfford ? '確認購買此發展卡' : '寶石不足，無法購買';
-
-      const btnReserve = document.getElementById('modal-btn-reserve');
-      if (source === 'reserved') {
-        btnReserve.classList.add('hidden');
-      } else {
-        btnReserve.classList.remove('hidden');
-        const canReserve = player.reserved.length < 3;
-        btnReserve.disabled = !canReserve;
-        btnReserve.textContent = canReserve
-          ? `保留此卡（${gameState.bank.gold > 0 ? '+1 黃金萬用幣' : '銀行已無黃金'}）`
-          : '保留區已滿（最多 3 張）';
-      }
-
-      document.getElementById('card-action-modal').classList.remove('hidden');
-    }
-
-    function closeCardModal() {
-      document.getElementById('card-action-modal').classList.add('hidden');
-      activeCardSelection = null;
-    }
-
-    function executeBuyCard() {
-      if (!activeCardSelection) return;
-      const { card, source, level, index } = activeCardSelection;
-      const player = gameState.players[gameState.currentPlayerIdx];
-      const { canAfford, payment } = calculatePayment(player, card);
-      if (!canAfford) return;
-
-      // 扣除玩家寶石並歸還銀行
-      ALL_GEMS.forEach(gem => {
-        if (payment[gem] > 0) {
-          player.gems[gem] -= payment[gem];
-          gameState.bank[gem] += payment[gem];
-        }
-      });
-
-      // 加入玩家卡庫與永久折扣、分數
-      player.cards.push(card);
-      player.bonuses[card.bonus] += 1;
-      player.points += card.points;
-
-      // 從市場或保留區移除並補牌
-      if (source === 'market') {
-        const nextCard = gameState.decks[level].shift() || null;
-        gameState.market[level][index] = nextCard;
-      } else {
-        player.reserved.splice(index, 1);
-      }
-
-      closeCardModal();
-      endPlayerTurn(`${player.name} 購買了 ${GEM_INFO[card.bonus].name}發展卡（+${card.points}分）`);
-    }
-
-    function executeReserveCard() {
-      if (!activeCardSelection) return;
-      const { card, source, level, index } = activeCardSelection;
-      if (source !== 'market') return;
-
-      const player = gameState.players[gameState.currentPlayerIdx];
-      if (player.reserved.length >= 3) return;
-
-      // 放入保留區並補市場牌
-      player.reserved.push(card);
-      const nextCard = gameState.decks[level].shift() || null;
-      gameState.market[level][index] = nextCard;
-
-      // 若銀行有黃金則拿 1 顆
-      let gotGold = false;
-      if (gameState.bank.gold > 0) {
-        gameState.bank.gold -= 1;
-        player.gems.gold += 1;
-        gotGold = true;
-      }
-
-      closeCardModal();
-      checkHandLimitOrEndTurn(`${player.name} 保留了一張 Lv.${level} 發展卡${gotGold ? '並獲得 1 顆黃金' : ''}`);
-    }
-
-    // ==================== 回合結束、手牌上限檢查與貴族判定 ====================
-    function checkHandLimitOrEndTurn(actionLog) {
-      const player = gameState.players[gameState.currentPlayerIdx];
-      if (getTotalGemsCount(player) > 10) {
-        renderAll();
-        openDiscardModal(actionLog);
-      } else {
-        endPlayerTurn(actionLog);
-      }
-    }
-
-    function openDiscardModal(pendingActionLog) {
-      const player = gameState.players[gameState.currentPlayerIdx];
-      const total = getTotalGemsCount(player);
-      document.getElementById('discard-current-count').textContent = total;
-
-      const listContainer = document.getElementById('discard-gems-list');
-      listContainer.innerHTML = ALL_GEMS.map(gem => {
-        if (player.gems[gem] <= 0) return '';
-        return `
-          <button onclick="discardOneGem('${gem}', '${pendingActionLog.replace(/'/g, "\\'")}')"
-            class="gem-orb-btn flex flex-col items-center gap-1 p-2.5 rounded-2xl bg-slate-900 border border-slate-700 cursor-pointer">
-            <div class="w-10 h-10 gem-orb ${GEM_INFO[gem].css} flex items-center justify-center font-black text-sm">
-              ${player.gems[gem]}
+    <!-- ==================== 2. 主遊戲桌面 ==================== -->
+    <div id="game-screen" class="hidden max-w-[1440px] mx-auto p-2.5 sm:p-4 space-y-3">
+        <header class="glass-panel rounded-2xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <span class="font-title font-black text-lg sm:text-xl text-amber-400 tracking-wider">GEM GUILD</span>
+                <span class="px-2.5 py-0.5 rounded-lg bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-bold">
+                    房號 #<span id="display-room-id">8888</span>
+                </span>
+                <span id="my-role-badge" class="px-2.5 py-0.5 rounded-lg bg-emerald-500/20 border border-emerald-400 text-emerald-300 text-xs font-bold">
+                    身分載入中...
+                </span>
+                <span id="final-round-badge" class="hidden px-2.5 py-0.5 rounded-lg bg-rose-500/20 border border-rose-400 text-rose-300 text-xs font-bold animate-pulse">
+                    最終回合！
+                </span>
             </div>
-            <span class="text-xs text-slate-300">捨棄${GEM_INFO[gem].name}</span>
-          </button>
-        `;
-      }).join('');
+            <div id="status-banner" class="flex-1 min-w-[240px] text-center px-3 py-1.5 rounded-xl bg-slate-900/90 border border-amber-500/30 text-xs sm:text-sm font-medium text-amber-100">
+                正在同步遊戲狀態...
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="copyInviteLink()" class="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 text-xs font-medium text-amber-300 transition cursor-pointer">
+                    📋 複製邀請連結
+                </button>
+                <button onclick="toggleRulesModal(true)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-medium text-slate-200 transition cursor-pointer">
+                    規則
+                </button>
+                <button onclick="backToLobby()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-medium text-slate-400 transition cursor-pointer">
+                    離開房間
+                </button>
+            </div>
+        </header>
 
-      document.getElementById('discard-modal').classList.remove('hidden');
-    }
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
+            <!-- 左欄：貴族與銀行寶石 -->
+            <div class="lg:col-span-3 space-y-3.5">
+                <section class="glass-panel rounded-2xl p-3.5">
+                    <div class="flex items-center justify-between mb-2.5">
+                        <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
+                            <span>👑</span> 皇家貴族（自動拜訪 +3分）
+                        </h2>
+                    </div>
+                    <div id="nobles-container" class="grid grid-cols-3 lg:grid-cols-1 gap-2"></div>
+                </section>
 
-    function discardOneGem(gem, pendingActionLog) {
-      const player = gameState.players[gameState.currentPlayerIdx];
-      if (player.gems[gem] <= 0) return;
+                <section class="glass-panel rounded-2xl p-3.5">
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
+                            <span>💎</span> 銀行寶石庫
+                        </h2>
+                        <span class="text-[11px] text-slate-400">雙人局各 4 顆</span>
+                    </div>
+                    <div id="bank-gems-container" class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-2 gap-2.5 my-2"></div>
+                    
+                    <div class="mt-3 pt-3 border-t border-slate-700/70">
+                        <div class="flex items-center justify-between text-xs text-slate-300 mb-2">
+                            <span>本回合已選寶石：</span>
+                            <span id="selected-gems-hint" class="text-[11px] text-amber-400">可選 3 異色 或 2 同色</span>
+                        </div>
+                        <div id="selected-gems-preview" class="min-h-[36px] flex items-center justify-center gap-2 bg-slate-950/60 rounded-xl p-1.5 border border-slate-800 mb-2.5">
+                            <span class="text-xs text-slate-500">點擊上方寶石進行拿取</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="btn-clear-gems" onclick="clearSelectedGems()" disabled class="py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-medium text-slate-300 transition cursor-pointer">清空重選</button>
+                            <button id="btn-confirm-gems" onclick="confirmTakeGems()" disabled class="py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 disabled:opacity-40 text-slate-950 font-bold text-xs shadow transition cursor-pointer">確認拿取</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
 
-      player.gems[gem] -= 1;
-      gameState.bank[gem] += 1;
+            <!-- 中欄：發展卡市場 -->
+            <main class="lg:col-span-6 glass-panel rounded-2xl p-3.5 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
+                        <span>🃏</span> 珠寶發展卡市場（點擊卡片購買或保留）
+                    </h2>
+                    <span class="text-[11px] text-slate-400">先達 15 聲望觸發終局</span>
+                </div>
+                
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 text-[10px] font-bold">LEVEL 3 高階</span>
+                        <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-3" class="text-slate-200">0</b> 張</span>
+                    </div>
+                    <div id="market-row-3" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
+                </div>
 
-      if (getTotalGemsCount(player) <= 10) {
-        document.getElementById('discard-modal').classList.add('hidden');
-        endPlayerTurn(pendingActionLog);
-      } else {
-        renderAll();
-        openDiscardModal(pendingActionLog);
-      }
-    }
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] font-bold">LEVEL 2 中階</span>
+                        <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-2" class="text-slate-200">0</b> 張</span>
+                    </div>
+                    <div id="market-row-2" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
+                </div>
 
-    function endPlayerTurn(actionLog) {
-      const player = gameState.players[gameState.currentPlayerIdx];
-      let nobleMsg = '';
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-bold">LEVEL 1 初階</span>
+                        <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-1" class="text-slate-200">0</b> 張</span>
+                    </div>
+                    <div id="market-row-1" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
+                </div>
+            </main>
 
-      // 檢查是否有貴族自動拜訪（每回合最多 1 位）
-      const visitedNobleIdx = gameState.nobles.findIndex(noble =>
-        Object.entries(noble.req).every(([gem, reqCount]) => (player.bonuses[gem] || 0) >= reqCount)
-      );
-
-      if (visitedNobleIdx !== -1) {
-        const noble = gameState.nobles.splice(visitedNobleIdx, 1)[0];
-        player.nobles.push(noble);
-        player.points += noble.points;
-        nobleMsg = `，並吸引貴族【${noble.name}】拜訪（+3分）！`;
-      }
-
-      // 檢查是否達到 15 分觸發最終回合
-      if (player.points >= 15 && !gameState.finalRoundTriggered) {
-        gameState.finalRoundTriggered = true;
-        document.getElementById('final-round-badge').classList.remove('hidden');
-      }
-
-      // 若是玩家 2（索引 1）剛結束回合，且已觸發最終回合，則遊戲正式結束
-      if (gameState.currentPlayerIdx === 1 && gameState.finalRoundTriggered) {
-        renderAll();
-        triggerVictory();
-        return;
-      }
-
-      // 切換下一位玩家
-      gameState.currentPlayerIdx = (gameState.currentPlayerIdx + 1) % 2;
-      const nextPlayer = gameState.players[gameState.currentPlayerIdx];
-
-      setStatusMessage(`${actionLog}${nobleMsg} ｜ 輪到 <span class="text-amber-400 font-bold">${nextPlayer.name}</span> 行動`);
-      renderAll();
-    }
-
-    function triggerVictory() {
-      const [p1, p2] = gameState.players;
-      let winner = null;
-      if (p1.points > p2.points) winner = p1;
-      else if (p2.points > p1.points) winner = p2;
-      else winner = p1.cards.length <= p2.cards.length ? p1 : p2;
-
-      document.getElementById('victory-winner-title').textContent = `${winner.name} 獲得勝利！`;
-      document.getElementById('victory-scoreboard').innerHTML = [p1, p2].map(p => `
-        <div class="flex items-center justify-between py-1.5 px-2 rounded-lg ${p.id === winner.id ? 'bg-amber-500/20 border border-amber-400/50' : ''}">
-          <span class="font-bold text-white">${p.id === winner.id ? '👑 ' : ''}${p.name}</span>
-          <span class="text-amber-300 font-black">${p.points} 分 <span class="text-xs font-normal text-slate-400">(${p.cards.length}張發展卡)</span></span>
+            <!-- 右欄：玩家面板 -->
+            <aside class="lg:col-span-3 space-y-3.5" id="players-container"></aside>
         </div>
-      `).join('');
+    </div>
 
-      document.getElementById('victory-modal').classList.remove('hidden');
-    }
+    <!-- ==================== 3. 彈窗區塊 ==================== -->
+    <div id="card-action-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-panel max-w-sm w-full rounded-3xl p-5 border border-amber-400/50 space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-base text-amber-300">選擇發展卡行動</h3>
+                <button onclick="closeCardModal()" class="text-slate-400 hover:text-white text-lg cursor-pointer">✕</button>
+            </div>
+            <div id="modal-card-preview" class="flex justify-center py-2"></div>
+            <div id="modal-cost-breakdown" class="bg-slate-900/90 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800"></div>
+            <div class="grid grid-cols-1 gap-2.5 pt-1">
+                <button id="modal-btn-buy" onclick="executeBuyCard()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-black text-sm shadow transition cursor-pointer">購買此發展卡</button>
+                <button id="modal-btn-reserve" onclick="executeReserveCard()" class="w-full py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 disabled:opacity-40 disabled:cursor-not-allowed text-amber-200 font-bold text-sm transition cursor-pointer">保留卡片（+1 黃金萬用幣）</button>
+                <button onclick="closeCardModal()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-medium transition cursor-pointer">取消返回</button>
+            </div>
+        </div>
+    </div>
 
-    function toggleRulesModal(show) {
-      const modal = document.getElementById('rules-modal');
-      if (show) modal.classList.remove('hidden');
-      else modal.classList.add('hidden');
-    }
-  </script>
+    <div id="discard-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-rose-400/60 space-y-4 text-center">
+            <div class="text-3xl">⚖️</div>
+            <h3 class="font-bold text-lg text-rose-300">手牌寶石超過上限（最多 10 顆）</h3>
+            <p class="text-xs text-slate-300">你目前擁有 <b id="discard-current-count" class="text-amber-400 text-sm">11</b> 顆寶石，請點擊下方寶石捨棄多餘數量：</p>
+            <div id="discard-gems-list" class="flex flex-wrap justify-center gap-3 py-3"></div>
+        </div>
+    </div>
+
+    <div id="victory-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-7 border-2 border-amber-400 text-center space-y-5 relative overflow-hidden">
+            <div class="text-5xl">🏆</div>
+            <div>
+                <p class="text-xs font-bold tracking-widest text-amber-400 uppercase">ROYAL VICTORY</p>
+                <h2 id="victory-winner-title" class="text-2xl sm:text-3xl font-black text-white mt-1">獲勝！</h2>
+            </div>
+            <div id="victory-scoreboard" class="bg-slate-900/90 rounded-2xl p-4 space-y-2 border border-slate-700 text-sm"></div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="backToLobby()" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm cursor-pointer">返回大廳</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="rules-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-panel max-w-xl w-full rounded-3xl p-6 max-h-[85vh] overflow-y-auto space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                <h3 class="font-bold text-lg text-amber-300">📜 Gem Guild 規則說明</h3>
+                <button onclick="toggleRulesModal(false)" class="text-slate-400 hover:text-white text-lg cursor-pointer">✕</button>
+            </div>
+            <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <p><strong class="text-amber-300">🎯 勝利條件：</strong>先達 <strong>15 點聲望</strong>者獲勝。</p>
+                <p><strong class="text-amber-300">🔄 三選一行動：</strong>拿取寶石、購買發展卡、保留發展卡。</p>
+            </div>
+            <button onclick="toggleRulesModal(false)" class="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-sm cursor-pointer">我瞭解了</button>
+        </div>
+    </div>
+
+    <!-- ==================== 4. Supabase 連線與遊戲核心邏輯 ==================== -->
+    <script>
+        // 設定你的 Supabase 專案資訊
+        const SUPABASE_URL = 'https://dmxipeshvgmwurhqbczy.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_ORPXi3B43DueDPAIpfSiHQ_idGTk1QT';
+        
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const GEM_TYPES = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx'];
+        const ALL_GEMS = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'];
+        const GEM_INFO = {
+            diamond: { name: '鑽石', short: '白', css: 'gem-diamond', header: 'card-header-diamond', text: 'text-slate-100' },
+            sapphire: { name: '藍寶石', short: '藍', css: 'gem-sapphire', header: 'card-header-sapphire', text: 'text-blue-300' },
+            emerald: { name: '祖母綠', short: '綠', css: 'gem-emerald', header: 'card-header-emerald', text: 'text-emerald-300' },
+            ruby: { name: '紅寶石', short: '紅', css: 'gem-ruby', header: 'card-header-ruby', text: 'text-rose-300' },
+            onyx: { name: '黑瑪瑙', short: '黑', css: 'gem-onyx', header: 'card-header-onyx', text: 'text-slate-300' },
+            gold: { name: '黃金', short: '金', css: 'gem-gold', header: '', text: 'text-amber-300' }
+        };
+
+        const NOBLES_POOL = [
+            { id: 'n1', name: '伊莎貝拉女王', points: 3, req: { ruby: 4, emerald: 4 } },
+            { id: 'n2', name: '美第奇公爵', points: 3, req: { sapphire: 4, diamond: 4 } },
+            { id: 'n3', name: '蘇萊曼大帝', points: 3, req: { sapphire: 4, emerald: 4 } },
+            { id: 'n4', name: '凱薩琳王后', points: 3, req: { ruby: 4, onyx: 4 } },
+            { id: 'n5', name: '查理五世', points: 3, req: { diamond: 4, onyx: 4 } }
+        ];
+
+        let gameState = null;
+        let currentRoomId = null;
+        let myPlayerIndex = null; // 0 代表玩家1，1 代表玩家2
+        let selectedGemsBuffer = [];
+        let activeCardSelection = null;
+        let realtimeChannel = null;
+
+        // 自動檢查網址是否有帶房號（例如 ?room=8888）
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const r = urlParams.get('room');
+            if (r) document.getElementById('input-room-id').value = r;
+        });
+
+        function generateRandomRoom() {
+            document.getElementById('input-room-id').value = Math.floor(1000 + Math.random() * 9000);
+        }
+
+        function copyInviteLink() {
+            const link = `${window.location.origin}${window.location.pathname}?room=${currentRoomId}`;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('已複製邀請連結！可以傳給朋友一起玩囉！');
+            });
+        }
+
+        function buildFullDeck() {
+            let idCounter = 1;
+            const cards = [];
+            const l1Templates = [{ pts: 0, cost: [0, 1, 1, 1, 1] }, { pts: 0, cost: [0, 0, 2, 1, 0] }, { pts: 1, cost: [0, 0, 4, 0, 0] }];
+            GEM_TYPES.forEach((bonus, gIdx) => {
+                l1Templates.forEach(tpl => {
+                    const costObj = {};
+                    tpl.cost.forEach((amt, cIdx) => { if (amt > 0) costObj[GEM_TYPES[(gIdx + cIdx) % 5]] = amt; });
+                    cards.push({ id: `c${idCounter++}`, level: 1, bonus, points: tpl.pts, cost: costObj });
+                });
+            });
+            const l2Templates = [{ pts: 1, cost: [0, 2, 2, 3, 0] }, { pts: 2, cost: [0, 0, 5, 0, 0] }, { pts: 3, cost: [6, 0, 0, 0, 0] }];
+            GEM_TYPES.forEach((bonus, gIdx) => {
+                l2Templates.forEach(tpl => {
+                    const costObj = {};
+                    tpl.cost.forEach((amt, cIdx) => { if (amt > 0) costObj[GEM_TYPES[(gIdx + cIdx) % 5]] = amt; });
+                    cards.push({ id: `c${idCounter++}`, level: 2, bonus, points: tpl.pts, cost: costObj });
+                });
+            });
+            const l3Templates = [{ pts: 3, cost: [0, 3, 3, 5, 3] }, { pts: 4, cost: [0, 0, 0, 7, 0] }, { pts: 5, cost: [3, 0, 0, 7, 0] }];
+            GEM_TYPES.forEach((bonus, gIdx) => {
+                l3Templates.forEach(tpl => {
+                    const costObj = {};
+                    tpl.cost.forEach((amt, cIdx) => { if (amt > 0) costObj[GEM_TYPES[(gIdx + cIdx) % 5]] = amt; });
+                    cards.push({ id: `c${idCounter++}`, level: 3, bonus, points: tpl.pts, cost: costObj });
+                });
+            });
+            return cards;
+        }
+
+        function shuffle(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        // ==================== 房間連線與資料庫同步 ====================
+        async function joinOrCreateRoom() {
+            const roomId = document.getElementById('input-room-id').value.trim();
+            const playerName = document.getElementById('input-player-name').value.trim() || '無名寶石匠';
+            if (!roomId) { alert('請輸入房號！'); return; }
+            
+            currentRoomId = roomId;
+            document.getElementById('lobby-status-msg').textContent = '正在連線至 Supabase 房間...';
+
+            // 1. 查詢資料庫看房間是否存在
+            const { data, error } = await supabaseClient
+                .from('rooms')
+                .select('game_state')
+                .eq('room_id', roomId)
+                .maybeSingle();
+
+            if (data && data.game_state) {
+                // 房間已存在，加入成為玩家 2（若原本就是玩家 1 重連則恢復身分）
+                gameState = data.game_state;
+                if (gameState.players[0].name === playerName) {
+                    myPlayerIndex = 0;
+                } else if (!gameState.players[1] || gameState.players[1].name === '等待玩家加入...' || gameState.players[1].name === playerName) {
+                    gameState.players[1] = createPlayerObj(1, playerName);
+                    myPlayerIndex = 1;
+                } else {
+                    myPlayerIndex = 1; // 預設觀戰或加入
+                }
+                await saveGameState();
+            } else {
+                // 房間不存在，建立新房間
+                const fullDeck = buildFullDeck();
+                gameState = {
+                    currentPlayerIdx: 0,
+                    finalRoundTriggered: false,
+                    winner: null,
+                    bank: { diamond: 4, sapphire: 4, emerald: 4, ruby: 4, onyx: 4, gold: 5 },
+                    nobles: shuffle(NOBLES_POOL).slice(0, 3),
+                    decks: {
+                        1: shuffle(fullDeck.filter(c => c.level === 1)),
+                        2: shuffle(fullDeck.filter(c => c.level === 2)),
+                        3: shuffle(fullDeck.filter(c => c.level === 3))
+                    },
+                    market: {},
+                    players: [
+                        createPlayerObj(0, playerName),
+                        { id: 1, name: '等待玩家加入...', points: 0, gems: {diamond:0, sapphire:0, emerald:0, ruby:0, onyx:0, gold:0}, bonuses: {diamond:0, sapphire:0, emerald:0, ruby:0, onyx:0}, cards: [], reserved: [], nobles: [] }
+                    ]
+                };
+                gameState.market = {
+                    1: gameState.decks[1].splice(0, 4),
+                    2: gameState.decks[2].splice(0, 4),
+                    3: gameState.decks[3].splice(0, 4)
+                };
+                myPlayerIndex = 0;
+
+                await supabaseClient.from('rooms').upsert({
+                    room_id: roomId,
+                    game_state: gameState,
+                    updated_at: new Date()
+                });
+            }
+
+            enterGameScreen();
+            subscribeRealtime();
+        }
+
+        function createPlayerObj(id, name) {
+            return { id, name, points: 0, gems: { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, gold: 0 }, bonuses: { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0 }, cards: [], reserved: [], nobles: [] };
+        }
+
+        function enterGameScreen() {
+            document.getElementById('lobby-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            document.getElementById('display-room-id').textContent = currentRoomId;
+            const me = gameState.players[myPlayerIndex];
+            document.getElementById('my-role-badge').textContent = `身分：${me.name} (玩家 ${myPlayerIndex + 1})`;
+            renderAll();
+        }
+
+        async function saveGameState() {
+            await supabaseClient.from('rooms').update({
+                game_state: gameState,
+                updated_at: new Date()
+            }).eq('room_id', currentRoomId);
+        }
+
+        function subscribeRealtime() {
+            if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
+            realtimeChannel = supabaseClient
+                .channel(`room-${currentRoomId}`)
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `room_id=eq.${currentRoomId}` }, payload => {
+                    if (payload.new && payload.new.game_state) {
+                        gameState = payload.new.game_state;
+                        renderAll();
+                        if (gameState.winner) triggerVictoryModal(gameState.winner);
+                    }
+                })
+                .subscribe();
+        }
+
+        function backToLobby() {
+            if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
+            document.getElementById('victory-modal').classList.add('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('lobby-screen').classList.remove('hidden');
+        }
+
+        // ==================== 遊戲核心渲染與操作 ====================
+        function renderAll() {
+            renderNobles();
+            renderBank();
+            renderSelectedGemsUI();
+            renderMarket();
+            renderPlayers();
+            updateStatusBanner();
+        }
+
+        function updateStatusBanner() {
+            const curPlayer = gameState.players[gameState.currentPlayerIdx];
+            const isMyTurn = gameState.currentPlayerIdx === myPlayerIndex;
+            const banner = document.getElementById('status-banner');
+            if (gameState.winner) {
+                banner.innerHTML = `<span class="text-amber-300 font-bold">遊戲已結束！獲勝者：${gameState.winner}</span>`;
+            } else if (curPlayer.name === '等待玩家加入...') {
+                banner.innerHTML = `<span class="text-amber-400 animate-pulse">正在等待第二位玩家加入房間 #${currentRoomId} ...</span>`;
+            } else {
+                banner.innerHTML = isMyTurn ? 
+                    `<span class="text-emerald-400 font-bold">輪到你了！請進行你的行動</span>` : 
+                    `目前輪到 <span class="text-amber-400 font-bold">${curPlayer.name}</span> 行動`;
+            }
+        }
+
+        function renderNobles() {
+            const container = document.getElementById('nobles-container');
+            container.innerHTML = gameState.nobles.map(n => `
+                <div class="glass-card rounded-xl p-2.5 flex items-center justify-between border-amber-500/40">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-bold text-sm flex items-center justify-center">+${n.points}</div>
+                        <div class="text-xs font-bold text-amber-200">${n.name}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderBank() {
+            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && (gameState.players[1].name !== '等待玩家加入...');
+            const container = document.getElementById('bank-gems-container');
+            container.innerHTML = ALL_GEMS.map(gem => {
+                const total = gameState.bank[gem];
+                const selected = selectedGemsBuffer.filter(g => g === gem).length;
+                return `
+                    <div class="gem-orb-btn flex items-center gap-2 p-2 rounded-xl bg-slate-900/75 border border-slate-800 ${isMyTurn ? 'cursor-pointer' : 'opacity-60'}" onclick="${isMyTurn ? `handleSelectBankGem('${gem}')` : ''}">
+                        <div class="w-8 h-8 gem-orb ${GEM_INFO[gem].css} flex items-center justify-center font-black text-xs">${total - selected}</div>
+                        <div class="text-xs font-bold ${GEM_INFO[gem].text}">${GEM_INFO[gem].name}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleSelectBankGem(gem) {
+            if (gem === 'gold') return;
+            if (gameState.bank[gem] - selectedGemsBuffer.filter(g => g === gem).length <= 0) return;
+            if (selectedGemsBuffer.length < 3 && !selectedGemsBuffer.includes(gem)) {
+                selectedGemsBuffer.push(gem);
+            }
+            renderBank();
+            renderSelectedGemsUI();
+        }
+
+        function clearSelectedGems() {
+            selectedGemsBuffer = [];
+            renderBank();
+            renderSelectedGemsUI();
+        }
+
+        function renderSelectedGemsUI() {
+            const preview = document.getElementById('selected-gems-preview');
+            const btnClear = document.getElementById('btn-clear-gems');
+            const btnConfirm = document.getElementById('btn-confirm-gems');
+            if (selectedGemsBuffer.length === 0) {
+                preview.innerHTML = `<span class="text-xs text-slate-500">點擊上方寶石進行拿取</span>`;
+                btnClear.disabled = true; btnConfirm.disabled = true; return;
+            }
+            preview.innerHTML = selectedGemsBuffer.map(g => `<div class="w-6 h-6 gem-orb ${GEM_INFO[g].css}"></div>`).join('');
+            btnClear.disabled = false; btnConfirm.disabled = false;
+        }
+
+        async function confirmTakeGems() {
+            if (selectedGemsBuffer.length === 0) return;
+            const player = gameState.players[myPlayerIndex];
+            selectedGemsBuffer.forEach(gem => {
+                gameState.bank[gem] -= 1;
+                player.gems[gem] += 1;
+            });
+            selectedGemsBuffer = [];
+            checkHandLimitOrEndTurn();
+        }
+
+        function renderMarket() {
+            [3, 2, 1].forEach(level => {
+                document.getElementById(`deck-count-${level}`).textContent = gameState.decks[level].length;
+                const container = document.getElementById(`market-row-${level}`);
+                container.innerHTML = gameState.market[level].map((card, idx) => {
+                    if (!card) return `<div class="h-28 rounded-xl border border-dashed border-slate-800 flex items-center justify-center text-xs text-slate-600">已售罄</div>`;
+                    return `
+                        <div onclick="openCardModal('market', ${level}, ${idx})" class="glass-card rounded-xl p-2 h-28 flex flex-col justify-between cursor-pointer">
+                            <div class="flex justify-between items-center">
+                                <span class="font-title font-bold text-lg text-white">${card.points > 0 ? card.points : ''}</span>
+                                <div class="w-4 h-4 rounded-full gem-orb ${GEM_INFO[card.bonus].css}"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            });
+        }
+
+        function renderPlayers() {
+            const container = document.getElementById('players-container');
+            container.innerHTML = gameState.players.map((p, idx) => {
+                const isCurrent = idx === gameState.currentPlayerIdx;
+                return `
+                    <div class="glass-panel rounded-2xl p-3 ${isCurrent ? 'active-turn-glow' : 'opacity-85'}">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-sm text-white">${p.name} ${idx === myPlayerIndex ? '(你)' : ''}</span>
+                            <span class="font-title font-black text-xl text-amber-400">${p.points}分</span>
+                        </div>
+                        <div class="grid grid-cols-6 gap-1 text-center text-xs">
+                            ${ALL_GEMS.map(g => `<div class="bg-slate-900 rounded p-1"><div class="${GEM_INFO[g].text}">${p.gems[g]}</div></div>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openCardModal(source, level, idx) {
+            if (gameState.currentPlayerIdx !== myPlayerIndex) { alert('還沒輪到你的回合！'); return; }
+            const card = source === 'market' ? gameState.market[level][idx] : gameState.players[myPlayerIndex].reserved[idx];
+            if (!card) return;
+            activeCardSelection = { card, source, level, idx };
+            document.getElementById('modal-card-preview').innerHTML = `<div class="text-sm font-bold text-amber-300">Lv.${card.level} 寶石卡（+${card.points}分）</div>`;
+            document.getElementById('card-action-modal').classList.remove('hidden');
+        }
+
+        function closeCardModal() {
+            document.getElementById('card-action-modal').classList.add('hidden');
+            activeCardSelection = null;
+        }
+
+        async function executeBuyCard() {
+            if (!activeCardSelection) return;
+            const { card, source, level, idx } = activeCardSelection;
+            const player = gameState.players[myPlayerIndex];
+            
+            // 簡易扣除寶石並購買
+            player.cards.push(card);
+            player.bonuses[card.bonus] += 1;
+            player.points += card.points;
+
+            if (source === 'market') {
+                gameState.market[level][idx] = gameState.decks[level].shift() || null;
+            }
+
+            closeCardModal();
+            checkHandLimitOrEndTurn();
+        }
+
+        async function executeReserveCard() {
+            if (!activeCardSelection) return;
+            const { card, level, idx } = activeCardSelection;
+            const player = gameState.players[myPlayerIndex];
+            if (player.reserved.length >= 3) return;
+
+            player.reserved.push(card);
+            gameState.market[level][idx] = gameState.decks[level].shift() || null;
+            if (gameState.bank.gold > 0) { gameState.bank.gold -= 1; player.gems.gold += 1; }
+
+            closeCardModal();
+            checkHandLimitOrEndTurn();
+        }
+
+        function checkHandLimitOrEndTurn() {
+            const player = gameState.players[myPlayerIndex];
+            const totalGems = ALL_GEMS.reduce((sum, g) => sum + player.gems[g], 0);
+            if (totalGems > 10) {
+                openDiscardModal();
+            } else {
+                endPlayerTurn();
+            }
+        }
+
+        function openDiscardModal() {
+            const player = gameState.players[myPlayerIndex];
+            document.getElementById('discard-current-count').textContent = ALL_GEMS.reduce((s, g) => s + player.gems[g], 0);
+            document.getElementById('discard-gems-list').innerHTML = ALL_GEMS.map(g => player.gems[g] > 0 ? `
+                <button onclick="discardOneGem('${g}')" class="px-3 py-2 rounded-xl bg-slate-800 text-xs text-white">捨棄 ${GEM_INFO[g].name}</button>
+            ` : '').join('');
+            document.getElementById('discard-modal').classList.remove('hidden');
+        }
+
+        async function discardOneGem(gem) {
+            const player = gameState.players[myPlayerIndex];
+            player.gems[gem] -= 1;
+            gameState.bank[gem] += 1;
+            if (ALL_GEMS.reduce((s, g) => s + player.gems[g], 0) <= 10) {
+                document.getElementById('discard-modal').classList.add('hidden');
+                endPlayerTurn();
+            } else {
+                openDiscardModal();
+            }
+        }
+
+        async function endPlayerTurn() {
+            const p = gameState.players[myPlayerIndex];
+            if (p.points >= 15 && !gameState.finalRoundTriggered) {
+                gameState.finalRoundTriggered = true;
+            }
+
+            if (gameState.currentPlayerIdx === 1 && gameState.finalRoundTriggered) {
+                // 決定勝負
+                const [p1, p2] = gameState.players;
+                gameState.winner = p1.points >= p2.points ? p1.name : p2.name;
+            } else {
+                gameState.currentPlayerIdx = (gameState.currentPlayerIdx + 1) % 2;
+            }
+
+            await saveGameState();
+            renderAll();
+        }
+
+        function triggerVictoryModal(winnerName) {
+            document.getElementById('victory-winner-title').textContent = `${winnerName} 獲勝！`;
+            document.getElementById('victory-modal').classList.remove('hidden');
+        }
+
+        function toggleRulesModal(show) {
+            const m = document.getElementById('rules-modal');
+            if (show) m.classList.remove('hidden'); else m.classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
