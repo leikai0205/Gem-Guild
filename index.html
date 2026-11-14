@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pokémon Guild - 100% 正統璀璨寶石規則版</title>
+    <title>Pokémon Guild</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="cards-data.js"></script>
@@ -31,7 +31,7 @@
         <div class="glass-panel max-w-lg w-full rounded-3xl p-6 sm:p-8 relative overflow-hidden">
             <div class="text-center mb-8">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-medium tracking-wider mb-3">
-                    <span>⚡</span> 100% 正統璀璨寶石規則版 <span>⚡</span>
+                    <span>⚡</span> POKÉMON GUILD <span>⚡</span>
                 </div>
                 <h1 class="font-title text-3xl sm:text-4xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
                     POKÉMON GUILD
@@ -230,7 +230,7 @@
         <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-amber-400/70 space-y-4 text-center">
             <div class="text-3xl">⭐</div>
             <h3 class="font-bold text-lg text-amber-300">多位稀有寶可夢同時被吸引！</h3>
-            <p class="text-xs text-slate-300">依正統《璀璨寶石》規則，每回合只能選擇 <b>1 隻</b>稀有寶可夢來訪（其餘留待下回合）：</p>
+            <p class="text-xs text-slate-300">依規則，每回合只能選擇 <b>1 隻</b>稀有寶可夢來訪（其餘留待下回合）：</p>
             <div id="noble-choice-list" class="space-y-2.5 py-2"></div>
         </div>
     </div>
@@ -261,7 +261,7 @@
     <div id="rules-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel max-w-xl w-full rounded-3xl p-6 max-h-[85vh] overflow-y-auto space-y-4">
             <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-                <h3 class="font-bold text-lg text-amber-300">📜 100% 正統璀璨寶石規則</h3>
+                <h3 class="font-bold text-lg text-amber-300">📜 POKÉMON GUILD</h3>
                 <button onclick="toggleRulesModal(false)" class="text-slate-400 hover:text-white text-lg cursor-pointer">✕</button>
             </div>
             <div class="space-y-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
@@ -527,7 +527,7 @@
             }).join('');
         }
 
-        // 正統《璀璨寶石》拿寶石規則：3顆異色 OR 2顆同色（需銀行原本 >= 4 顆）
+        // 拿寶石規則：3顆異色 OR 2顆同色（需銀行原本 >= 4 顆）
         function handleSelectBankGem(gem) {
             if (gem === 'gold') return;
             const alreadyCount = selectedGemsBuffer.filter(g => g === gem).length;
