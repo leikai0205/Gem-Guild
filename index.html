@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gem Guild - 線上即時對戰版</title>
+    <title>Gem Guild - 2~4人線上即時對戰版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Supabase 即時連線 SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -44,7 +44,7 @@
             
             <div class="text-center mb-8">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-medium tracking-wider mb-3">
-                    <span>✦</span> Supabase 即時連線版 <span>✦</span>
+                    <span>✦</span> 2~4 人自由開局版 <span>✦</span>
                 </div>
                 <h1 class="font-title text-3xl sm:text-4xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
                     GEM GUILD
@@ -77,6 +77,15 @@
                     <input id="input-player-name" type="text" value="首席珠寶匠" maxlength="12" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-amber-400 focus:outline-none text-sm text-white" />
                 </div>
 
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">遊戲上限人數（建立新房時生效）</label>
+                    <select id="input-max-players" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-amber-400 focus:outline-none text-sm text-amber-200">
+                        <option value="2">2 人對戰局（每種寶石 4 顆）</option>
+                        <option value="3">3 人局（每種寶石 5 顆）</option>
+                        <option value="4" selected>4 人局（每種寶石 7 顆）</option>
+                    </select>
+                </div>
+
                 <div class="pt-3 space-y-2.5">
                     <button onclick="joinOrCreateRoom()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-base tracking-wide shadow-lg btn-gold-glow transition transform active:scale-98 cursor-pointer">
                         進入房間 / 開始對戰
@@ -91,7 +100,7 @@
     </div>
 
     <!-- ==================== 2. 主遊戲桌面 ==================== -->
-    <div id="game-screen" class="hidden max-w-[1440px] mx-auto p-2.5 sm:p-4 space-y-3">
+    <div id="game-screen" class="hidden max-w-[1540px] mx-auto p-2.5 sm:p-4 space-y-3">
         <header class="glass-panel rounded-2xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
                 <span class="font-title font-black text-lg sm:text-xl text-amber-400 tracking-wider">GEM GUILD</span>
@@ -138,7 +147,7 @@
                         <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
                             <span>💎</span> 銀行寶石庫
                         </h2>
-                        <span class="text-[11px] text-slate-400">雙人局各 4 顆</span>
+                        <span id="bank-limit-hint" class="text-[11px] text-slate-400">依人數自動調整</span>
                     </div>
                     <div id="bank-gems-container" class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-2 gap-2.5 my-2"></div>
                     
@@ -159,10 +168,10 @@
             </div>
 
             <!-- 中欄：發展卡市場 -->
-            <main class="lg:col-span-6 glass-panel rounded-2xl p-3.5 space-y-3">
+            <main class="lg:col-span-5 glass-panel rounded-2xl p-3.5 space-y-3">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-                        <span>🃏</span> 珠寶發展卡市場（點擊卡片購買或保留）
+                        <span>🃏</span> 珠寶發展卡市場
                     </h2>
                     <span class="text-[11px] text-slate-400">先達 15 聲望觸發終局</span>
                 </div>
@@ -192,8 +201,8 @@
                 </div>
             </main>
 
-            <!-- 右欄：玩家面板 -->
-            <aside class="lg:col-span-3 space-y-3.5" id="players-container"></aside>
+            <!-- 右欄：所有玩家面板 -->
+            <aside class="lg:col-span-4 space-y-3" id="players-container"></aside>
         </div>
     </div>
 
@@ -207,8 +216,8 @@
             <div id="modal-card-preview" class="flex justify-center py-2"></div>
             <div id="modal-cost-breakdown" class="bg-slate-900/90 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800"></div>
             <div class="grid grid-cols-1 gap-2.5 pt-1">
-                <button id="modal-btn-buy" onclick="executeBuyCard()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-black text-sm shadow transition cursor-pointer">購買此發展卡</button>
-                <button id="modal-btn-reserve" onclick="executeReserveCard()" class="w-full py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 disabled:opacity-40 disabled:cursor-not-allowed text-amber-200 font-bold text-sm transition cursor-pointer">保留卡片（+1 黃金萬用幣）</button>
+                <button id="modal-btn-buy" onclick="executeBuyCard()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow transition cursor-pointer">購買此發展卡</button>
+                <button id="modal-btn-reserve" onclick="executeReserveCard()" class="w-full py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 text-amber-200 font-bold text-sm transition cursor-pointer">保留卡片（+1 黃金萬用幣）</button>
                 <button onclick="closeCardModal()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-medium transition cursor-pointer">取消返回</button>
             </div>
         </div>
@@ -240,12 +249,12 @@
     <div id="rules-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel max-w-xl w-full rounded-3xl p-6 max-h-[85vh] overflow-y-auto space-y-4">
             <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-                <h3 class="font-bold text-lg text-amber-300">📜 Gem Guild 規則說明</h3>
+                <h3 class="font-bold text-lg text-amber-300">📜 規則說明</h3>
                 <button onclick="toggleRulesModal(false)" class="text-slate-400 hover:text-white text-lg cursor-pointer">✕</button>
             </div>
             <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
-                <p><strong class="text-amber-300">🎯 勝利條件：</strong>先達 <strong>15 點聲望</strong>者獲勝。</p>
-                <p><strong class="text-amber-300">🔄 三選一行動：</strong>拿取寶石、購買發展卡、保留發展卡。</p>
+                <p><strong class="text-amber-300">🎯 勝利條件：</strong>先達 <strong>15 點聲望</strong>者觸發最終局並由最高分者勝出。</p>
+                <p><strong class="text-amber-300">👥 玩家人數：</strong>支援 2 至 4 人同房競技。</p>
             </div>
             <button onclick="toggleRulesModal(false)" class="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-sm cursor-pointer">我瞭解了</button>
         </div>
@@ -253,10 +262,8 @@
 
     <!-- ==================== 4. Supabase 連線與遊戲核心邏輯 ==================== -->
     <script>
-        // 設定你的 Supabase 專案資訊
         const SUPABASE_URL = 'https://dmxipeshvgmwurhqbczy.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_ORPXi3B43DueDPAIpfSiHQ_idGTk1QT';
-        
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const GEM_TYPES = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx'];
@@ -275,17 +282,17 @@
             { id: 'n2', name: '美第奇公爵', points: 3, req: { sapphire: 4, diamond: 4 } },
             { id: 'n3', name: '蘇萊曼大帝', points: 3, req: { sapphire: 4, emerald: 4 } },
             { id: 'n4', name: '凱薩琳王后', points: 3, req: { ruby: 4, onyx: 4 } },
-            { id: 'n5', name: '查理五世', points: 3, req: { diamond: 4, onyx: 4 } }
+            { id: 'n5', name: '查理五世', points: 3, req: { diamond: 4, onyx: 4 } },
+            { id: 'n6', name: '法蘭西斯一世', points: 3, req: { diamond: 4, sapphire: 4 } }
         ];
 
         let gameState = null;
         let currentRoomId = null;
-        let myPlayerIndex = null; // 0 代表玩家1，1 代表玩家2
+        let myPlayerIndex = null; 
         let selectedGemsBuffer = [];
         let activeCardSelection = null;
         let realtimeChannel = null;
 
-        // 自動檢查網址是否有帶房號（例如 ?room=8888）
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const r = urlParams.get('room');
@@ -342,16 +349,21 @@
             return copy;
         }
 
-        // ==================== 房間連線與資料庫同步 ====================
+        function getInitialGemCount(maxPlayers) {
+            if (maxPlayers === 2) return 4;
+            if (maxPlayers === 3) return 5;
+            return 7; // 4人局
+        }
+
         async function joinOrCreateRoom() {
             const roomId = document.getElementById('input-room-id').value.trim();
             const playerName = document.getElementById('input-player-name').value.trim() || '無名寶石匠';
+            const maxPlayers = parseInt(document.getElementById('input-max-players').value);
             if (!roomId) { alert('請輸入房號！'); return; }
             
             currentRoomId = roomId;
             document.getElementById('lobby-status-msg').textContent = '正在連線至 Supabase 房間...';
 
-            // 1. 查詢資料庫看房間是否存在
             const { data, error } = await supabaseClient
                 .from('rooms')
                 .select('game_state')
@@ -359,36 +371,52 @@
                 .maybeSingle();
 
             if (data && data.game_state) {
-                // 房間已存在，加入成為玩家 2（若原本就是玩家 1 重連則恢復身分）
                 gameState = data.game_state;
-                if (gameState.players[0].name === playerName) {
-                    myPlayerIndex = 0;
-                } else if (!gameState.players[1] || gameState.players[1].name === '等待玩家加入...' || gameState.players[1].name === playerName) {
-                    gameState.players[1] = createPlayerObj(1, playerName);
-                    myPlayerIndex = 1;
+                // 檢查玩家是否已經在名單中
+                let existingIdx = gameState.players.findIndex(p => p.name === playerName);
+                if (existingIdx !== -1) {
+                    myPlayerIndex = existingIdx;
                 } else {
-                    myPlayerIndex = 1; // 預設觀戰或加入
+                    // 找尋第一個空位（等待加入的位置）
+                    let emptyIdx = gameState.players.findIndex(p => p.name.startsWith('等待玩家'));
+                    if (emptyIdx !== -1) {
+                        gameState.players[emptyIdx] = createPlayerObj(emptyIdx, playerName);
+                        myPlayerIndex = emptyIdx;
+                    } else {
+                        alert('此房間已滿員！');
+                        return;
+                    }
                 }
                 await saveGameState();
             } else {
-                // 房間不存在，建立新房間
+                // 建立新房間
                 const fullDeck = buildFullDeck();
+                const gemInit = getInitialGemCount(maxPlayers);
+                const initialPlayers = [];
+                initialPlayers.push(createPlayerObj(0, playerName));
+                for (let i = 1; i < maxPlayers; i++) {
+                    initialPlayers.push({
+                        id: i, name: `等待玩家 ${i+1}...`, points: 0,
+                        gems: {diamond:0, sapphire:0, emerald:0, ruby:0, onyx:0, gold:0},
+                        bonuses: {diamond:0, sapphire:0, emerald:0, ruby:0, onyx:0},
+                        cards: [], reserved: [], nobles: []
+                    });
+                }
+
                 gameState = {
+                    maxPlayers: maxPlayers,
                     currentPlayerIdx: 0,
                     finalRoundTriggered: false,
                     winner: null,
-                    bank: { diamond: 4, sapphire: 4, emerald: 4, ruby: 4, onyx: 4, gold: 5 },
-                    nobles: shuffle(NOBLES_POOL).slice(0, 3),
+                    bank: { diamond: gemInit, sapphire: gemInit, emerald: gemInit, ruby: gemInit, onyx: gemInit, gold: 5 },
+                    nobles: shuffle(NOBLES_POOL).slice(0, maxPlayers + 1),
                     decks: {
                         1: shuffle(fullDeck.filter(c => c.level === 1)),
                         2: shuffle(fullDeck.filter(c => c.level === 2)),
                         3: shuffle(fullDeck.filter(c => c.level === 3))
                     },
                     market: {},
-                    players: [
-                        createPlayerObj(0, playerName),
-                        { id: 1, name: '等待玩家加入...', points: 0, gems: {diamond:0, sapphire:0, emerald:0, ruby:0, onyx:0, gold:0}, bonuses: {diamond:0, sapphire:0, emerald:0, ruby:0, onyx:0}, cards: [], reserved: [], nobles: [] }
-                    ]
+                    players: initialPlayers
                 };
                 gameState.market = {
                     1: gameState.decks[1].splice(0, 4),
@@ -449,7 +477,6 @@
             document.getElementById('lobby-screen').classList.remove('hidden');
         }
 
-        // ==================== 遊戲核心渲染與操作 ====================
         function renderAll() {
             renderNobles();
             renderBank();
@@ -462,11 +489,13 @@
         function updateStatusBanner() {
             const curPlayer = gameState.players[gameState.currentPlayerIdx];
             const isMyTurn = gameState.currentPlayerIdx === myPlayerIndex;
+            const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
             const banner = document.getElementById('status-banner');
+            
             if (gameState.winner) {
                 banner.innerHTML = `<span class="text-amber-300 font-bold">遊戲已結束！獲勝者：${gameState.winner}</span>`;
-            } else if (curPlayer.name === '等待玩家加入...') {
-                banner.innerHTML = `<span class="text-amber-400 animate-pulse">正在等待第二位玩家加入房間 #${currentRoomId} ...</span>`;
+            } else if (hasWaiting) {
+                banner.innerHTML = `<span class="text-amber-400 animate-pulse">正在等待其他玩家加入房間 #${currentRoomId} ...</span>`;
             } else {
                 banner.innerHTML = isMyTurn ? 
                     `<span class="text-emerald-400 font-bold">輪到你了！請進行你的行動</span>` : 
@@ -487,8 +516,11 @@
         }
 
         function renderBank() {
-            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && (gameState.players[1].name !== '等待玩家加入...');
+            const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
+            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !hasWaiting;
             const container = document.getElementById('bank-gems-container');
+            document.getElementById('bank-limit-hint').textContent = `${gameState.maxPlayers}人局配置`;
+
             container.innerHTML = ALL_GEMS.map(gem => {
                 const total = gameState.bank[gem];
                 const selected = selectedGemsBuffer.filter(g => g === gem).length;
@@ -595,7 +627,6 @@
             const { card, source, level, idx } = activeCardSelection;
             const player = gameState.players[myPlayerIndex];
             
-            // 簡易扣除寶石並購買
             player.cards.push(card);
             player.bonuses[card.bonus] += 1;
             player.points += card.points;
@@ -659,12 +690,16 @@
                 gameState.finalRoundTriggered = true;
             }
 
-            if (gameState.currentPlayerIdx === 1 && gameState.finalRoundTriggered) {
-                // 決定勝負
-                const [p1, p2] = gameState.players;
-                gameState.winner = p1.points >= p2.points ? p1.name : p2.name;
+            const totalPlayers = gameState.maxPlayers;
+            // 如果是最後一名玩家且觸發了最終回合，遊戲結束結算
+            if (gameState.currentPlayerIdx === totalPlayers - 1 && gameState.finalRoundTriggered) {
+                let winner = gameState.players[0];
+                gameState.players.forEach(pl => {
+                    if (pl.points > winner.points) winner = pl;
+                });
+                gameState.winner = winner.name;
             } else {
-                gameState.currentPlayerIdx = (gameState.currentPlayerIdx + 1) % 2;
+                gameState.currentPlayerIdx = (gameState.currentPlayerIdx + 1) % totalPlayers;
             }
 
             await saveGameState();
