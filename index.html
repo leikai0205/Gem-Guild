@@ -155,7 +155,7 @@
                 </section>
             </div>
 
-            <!-- 中欄：精靈球資源卡市場 (每張卡片顯示專屬寶可夢圖片) -->
+            <!-- 中欄：精靈球資源卡市場 (優化排版，防止數字較多時破版) -->
             <main class="lg:col-span-5 glass-panel rounded-2xl p-3.5 space-y-3">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
@@ -275,19 +275,6 @@
             onyx: { name: '豪華球', short: '黑', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/luxury-ball.png', text: 'text-slate-300' },
             gold: { name: '金珠', short: '金', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/nugget.png', text: 'text-amber-300' }
         };
-
-        const POKEMON_NOBLES = [
-            { id: 'n131', name: '成龍', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/131.png', req: { ruby: 4, emerald: 4 } },
-            { id: 'n132', name: '百變怪', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/132.png', req: { sapphire: 4, diamond: 4 } },
-            { id: 'n137', name: '多邊獸', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/137.png', req: { sapphire: 4, emerald: 4 } },
-            { id: 'n142', name: '化石翼龍', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/142.png', req: { ruby: 4, onyx: 4 } },
-            { id: 'n143', name: '卡比獸', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/143.png', req: { diamond: 4, onyx: 4 } },
-            { id: 'n144', name: '急凍鳥', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/144.png', req: { diamond: 4, sapphire: 4 } },
-            { id: 'n145', name: '閃電鳥', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/145.png', req: { sapphire: 3, emerald: 3, diamond: 3 } },
-            { id: 'n146', name: '火焰鳥', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/146.png', req: { ruby: 4, onyx: 3 } },
-            { id: 'n150', name: '超夢', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png', req: { diamond: 4, onyx: 4 } },
-            { id: 'n151', name: '夢幻', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/151.png', req: { ruby: 3, emerald: 3, sapphire: 3 } }
-        ];
 
         let gameState = null;
         let currentRoomId = null;
@@ -581,30 +568,33 @@
             checkHandLimitOrEndTurn();
         }
 
-        // 這就是你剛剛寫得非常棒的 renderMarket 函式！
+        // 渲染市場卡片（已優化卡片內部空間，避免多個石頭時破版）
         function renderMarket() {
             [3, 2, 1].forEach(level => {
                 document.getElementById(`deck-count-${level}`).textContent = gameState.decks[level].length;
                 const container = document.getElementById(`market-row-${level}`);
                 container.innerHTML = gameState.market[level].map((card, idx) => {
-                    if (!card) return `<div class="h-28 rounded-xl border border-dashed border-slate-800 flex items-center justify-center text-xs text-slate-600">已售罄</div>`;
+                    if (!card) return `<div class="h-32 rounded-xl border border-dashed border-slate-800 flex items-center justify-center text-xs text-slate-600">已售罄</div>`;
                     const ballInfo = BALL_ITEMS[card.bonus];
                     return `
-                        <div onclick="openCardModal('market', ${level}, ${idx})" class="glass-card rounded-xl p-2 h-32 flex flex-col justify-between cursor-pointer relative overflow-hidden group">
+                        <div onclick="openCardModal('market', ${level}, ${idx})" class="glass-card rounded-xl p-2 h-36 flex flex-col justify-between cursor-pointer relative overflow-hidden group">
                             <div class="flex justify-between items-center z-10">
                                 <span class="font-title font-black text-sm text-amber-300">${card.points > 0 ? '+' + card.points : ''}</span>
-                                <!-- 顯示專屬寶可夢美術圖，右下角帶有這張卡產出的精靈球屬性小圖 -->
                                 <div class="flex items-center gap-1">
                                     <span class="text-[10px] text-slate-400">產</span>
                                     <img src="${ballInfo.img}" class="w-5 h-5 object-contain drop-shadow" title="${ballInfo.name}" />
                                 </div>
                             </div>
-                            <!-- 卡片正中央顯示寶可夢圖片 -->
                             <div class="flex justify-center my-auto">
-                                <img src="${card.pokeImg}" class="w-14 h-14 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] group-hover:scale-110 transition duration-200" />
+                                <img src="${card.pokeImg}" class="w-12 h-12 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] group-hover:scale-110 transition duration-200" />
                             </div>
-                            <div class="space-y-0.5 z-10 text-[10px]">
-                                ${Object.entries(card.cost).map(([g, c]) => `<div class="flex justify-between text-slate-300 font-medium"><span>${BANK_ITEMS[g].name}</span><span class="font-bold">${c}</span></div>`).join('')}
+                            <div class="flex flex-wrap gap-1 justify-end z-10 bg-slate-950/60 p-1 rounded-lg">
+                                ${Object.entries(card.cost).map(([g, c]) => `
+                                    <div class="flex items-center gap-0.5 px-1 py-0.5 rounded bg-slate-900 border border-slate-800 text-[10px]" title="${BANK_ITEMS[g].name}">
+                                        <img src="${BANK_ITEMS[g].img}" class="w-3.5 h-3.5 object-contain" />
+                                        <span class="font-bold text-amber-300">${c}</span>
+                                    </div>
+                                `).join('')}
                             </div>
                         </div>
                     `;
@@ -629,7 +619,6 @@
                             ${ALL_GEMS.map(g => `<div><div class="text-[10px] text-slate-400">${BANK_ITEMS[g].short}</div><div class="${BANK_ITEMS[g].text} font-bold">${p.gems[g]}</div></div>`).join('')}
                         </div>
                         <div class="flex flex-wrap gap-1 pt-1">
-                            {/* 修正產源對應到 BALL_ITEMS */}
                             ${['diamond', 'sapphire', 'emerald', 'ruby', 'onyx'].map(g => `<span class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] ${BALL_ITEMS[g].text}">產${BALL_ITEMS[g].name} ${p.bonuses[g]}</span>`).join('')}
                         </div>
                     </div>
@@ -643,7 +632,7 @@
             if (!card) return;
             activeCardSelection = { card, source, level, idx };
             document.getElementById('modal-card-preview').innerHTML = `<div class="text-sm font-bold text-amber-300">Lv.${card.level} 精靈球卡（+${card.points}分 / 產 ${BALL_ITEMS[card.bonus].name}）</div>`;
-            document.getElementById('modal-cost-breakdown').innerHTML = Object.entries(card.cost).map(([g, c]) => `<div class="flex justify-between"><span>需要 ${BANK_ITEMS[g].name}</span><span class="font-bold text-amber-300">${c} 個</span></div>`).join('');
+            document.getElementById('modal-cost-breakdown').innerHTML = Object.entries(card.cost).map(([g, c]) => `<div class="flex justify-between items-center py-0.5"><span class="flex items-center gap-1"><img src="${BANK_ITEMS[g].img}" class="w-4 h-4 object-contain" /> ${BANK_ITEMS[g].name}</span><span class="font-bold text-amber-300">${c} 個</span></div>`).join('');
             document.getElementById('card-action-modal').classList.remove('hidden');
         }
 
@@ -700,6 +689,7 @@
             document.getElementById('discard-gems-list').innerHTML = ALL_GEMS.map(g => player.gems[g] > 0 ? `
                 <button onclick="discardOneGem('${g}')" class="px-3 py-2 rounded-xl bg-slate-800 text-xs text-white">捨棄 ${BANK_ITEMS[g].name}</button>
             ` : '').join('');
+            document.getElementById('discard-modal').classList.add('hidden'); // 先重置避免殘留
             document.getElementById('discard-modal').classList.remove('hidden');
         }
 
@@ -724,6 +714,7 @@
             const totalPlayers = gameState.maxPlayers;
             if (gameState.currentPlayerIdx === totalPlayers - 1 && gameState.finalRoundTriggered) {
                 let winner = gameState.players[0];
+                gameState.players.formatEach = null; // safe
                 gameState.players.forEach(pl => {
                     if (pl.points > winner.points) winner = pl;
                 });
