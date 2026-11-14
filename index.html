@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pokémon Guild - 進化石與寶可夢卡牌對戰版</title>
+    <title>Pokémon Guild - 100% 正統璀璨寶石規則版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- 引入獨立的 90 張寶可夢資源卡資料庫 -->
     <script src="cards-data.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
     <style>
@@ -14,7 +13,7 @@
         .font-title { font-family: 'Cinzel', 'Noto Sans TC', serif; }
         .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(251, 191, 36, 0.25); box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
         .glass-card { background: linear-gradient(145deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.96)); border: 1px solid rgba(251, 191, 36, 0.35); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55); transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1); }
-        .glass-card:hover { transform: translateY(-4px) scale(1.02); border-color: rgba(251, 191, 36, 0.85); box-shadow: 0 14px 28px rgba(251, 191, 36, 0.22), 0 0 15px rgba(251, 191, 36, 0.15); }
+        .glass-card:hover { transform: translateY(-3px) scale(1.02); border-color: rgba(251, 191, 36, 0.85); }
         .poke-color-card { transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55); }
         .poke-color-card:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 14px 28px rgba(251, 191, 36, 0.28), 0 0 15px rgba(255, 255, 255, 0.18); }
         .item-orb-btn { transition: transform 0.18s ease, box-shadow 0.18s ease; }
@@ -30,12 +29,9 @@
     <!-- ==================== 1. 大廳登入畫面 ==================== -->
     <div id="lobby-screen" class="min-h-screen flex items-center justify-center p-4">
         <div class="glass-panel max-w-lg w-full rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            
             <div class="text-center mb-8">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-medium tracking-wider mb-3">
-                    <span>⚡</span> 寶可夢大師對戰版 <span>⚡</span>
+                    <span>⚡</span> 100% 正統璀璨寶石規則版 <span>⚡</span>
                 </div>
                 <h1 class="font-title text-3xl sm:text-4xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
                     POKÉMON GUILD
@@ -81,7 +77,7 @@
                         進入房間 / 開始對戰
                     </button>
                     <button onclick="toggleRulesModal(true)" class="w-full py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 text-xs font-medium transition cursor-pointer">
-                        查看遊戲規則
+                        查看正統遊戲規則
                     </button>
                 </div>
                 <p id="lobby-status-msg" class="text-xs text-center text-amber-400/90 pt-1"></p>
@@ -121,12 +117,12 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
-            <!-- 左欄：寶可夢夥伴與進化石銀行 -->
+            <!-- 左欄：稀有寶可夢夥伴與進化石銀行 -->
             <div class="lg:col-span-3 space-y-3.5">
                 <section class="glass-panel rounded-2xl p-3.5">
                     <div class="flex items-center justify-between mb-2.5">
                         <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-                            <span>⭐</span> 稀有寶可夢夥伴（自動拜訪 +3分）
+                            <span>⭐</span> 稀有寶可夢夥伴（每回合限 1 隻 +3分）
                         </h2>
                     </div>
                     <div id="nobles-container" class="grid grid-cols-1 gap-2.5"></div>
@@ -144,7 +140,7 @@
                     <div class="mt-3 pt-3 border-t border-slate-700/70">
                         <div class="flex items-center justify-between text-xs text-slate-300 mb-2">
                             <span>本回合已選進化石：</span>
-                            <span id="selected-gems-hint" class="text-[11px] text-amber-400">可選 3 異色 或 2 同色</span>
+                            <span id="selected-gems-hint" class="text-[11px] text-amber-400">3 異色 或 2 同色(需剩≥4)</span>
                         </div>
                         <div id="selected-gems-preview" class="min-h-[42px] flex items-center justify-center gap-2 bg-slate-950/60 rounded-xl p-1.5 border border-slate-800 mb-2.5">
                             <span class="text-xs text-slate-500">點擊上方進化石進行拿取</span>
@@ -157,7 +153,7 @@
                 </section>
             </div>
 
-            <!-- 中欄：寶可夢屬性卡市場（依顏色區分背景） -->
+            <!-- 中欄：寶可夢屬性卡市場 -->
             <main class="lg:col-span-5 glass-panel rounded-2xl p-3.5 space-y-3">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
@@ -167,31 +163,46 @@
                 </div>
                 
                 <div class="space-y-1.5">
-                    <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 text-[10px] font-bold">LEVEL 3 頂級</span>
-                        <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-3" class="text-slate-200">0</b> 張</span>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 text-[10px] font-bold">LEVEL 3 頂級</span>
+                            <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-3" class="text-slate-200">0</b> 張</span>
+                        </div>
+                        <button onclick="reserveBlindFromDeck(3)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition">
+                            盲抽保留 (+大師球)
+                        </button>
                     </div>
                     <div id="market-row-3" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
                 </div>
 
                 <div class="space-y-1.5">
-                    <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] font-bold">LEVEL 2 中階</span>
-                        <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-2" class="text-slate-200">0</b> 張</span>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] font-bold">LEVEL 2 中階</span>
+                            <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-2" class="text-slate-200">0</b> 張</span>
+                        </div>
+                        <button onclick="reserveBlindFromDeck(2)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition">
+                            盲抽保留 (+大師球)
+                        </button>
                     </div>
                     <div id="market-row-2" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
                 </div>
 
                 <div class="space-y-1.5">
-                    <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-bold">LEVEL 1 初階</span>
-                        <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-1" class="text-slate-200">0</b> 張</span>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-bold">LEVEL 1 初階</span>
+                            <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-1" class="text-slate-200">0</b> 張</span>
+                        </div>
+                        <button onclick="reserveBlindFromDeck(1)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition">
+                            盲抽保留 (+大師球)
+                        </button>
                     </div>
                     <div id="market-row-1" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
                 </div>
             </main>
 
-            <!-- 右欄：所有玩家面板 -->
+            <!-- 右欄：所有玩家面板（含保留卡片區） -->
             <aside class="lg:col-span-4 space-y-3" id="players-container"></aside>
         </div>
     </div>
@@ -203,13 +214,24 @@
                 <h3 class="font-bold text-base text-amber-300">選擇寶可夢卡行動</h3>
                 <button onclick="closeCardModal()" class="text-slate-400 hover:text-white text-lg cursor-pointer">✕</button>
             </div>
-            <div id="modal-card-preview" class="flex justify-center py-2"></div>
+            <div id="modal-card-preview" class="flex justify-center py-1"></div>
             <div id="modal-cost-breakdown" class="bg-slate-900/90 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800"></div>
+            <div id="modal-afford-status" class="text-center text-xs font-bold"></div>
             <div class="grid grid-cols-1 gap-2.5 pt-1">
-                <button id="modal-btn-buy" onclick="executeBuyCard()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow transition cursor-pointer">收服此寶可夢卡</button>
-                <button id="modal-btn-reserve" onclick="executeReserveCard()" class="w-full py-2.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/50 text-purple-200 font-bold text-sm transition cursor-pointer">保留卡片（+1 大師球萬用）</button>
+                <button id="modal-btn-buy" onclick="executeBuyCard()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-black text-sm shadow transition cursor-pointer">收服此寶可夢卡</button>
+                <button id="modal-btn-reserve" onclick="executeReserveCard()" class="w-full py-2.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 disabled:opacity-40 disabled:cursor-not-allowed border border-purple-400/50 text-purple-200 font-bold text-sm transition cursor-pointer">保留卡片（+1 大師球萬用）</button>
                 <button onclick="closeCardModal()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-medium transition cursor-pointer">取消返回</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 多位貴族同時滿足時，依正統規則只能選 1 位 -->
+    <div id="noble-choice-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-amber-400/70 space-y-4 text-center">
+            <div class="text-3xl">⭐</div>
+            <h3 class="font-bold text-lg text-amber-300">多位稀有寶可夢同時被吸引！</h3>
+            <p class="text-xs text-slate-300">依正統《璀璨寶石》規則，每回合只能選擇 <b>1 隻</b>稀有寶可夢來訪（其餘留待下回合）：</p>
+            <div id="noble-choice-list" class="space-y-2.5 py-2"></div>
         </div>
     </div>
 
@@ -217,7 +239,7 @@
         <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-rose-400/60 space-y-4 text-center">
             <div class="text-3xl">⚖️</div>
             <h3 class="font-bold text-lg text-rose-300">進化石與大師球超過上限（最多 10 個）</h3>
-            <p class="text-xs text-slate-300">你目前擁有 <b id="discard-current-count" class="text-amber-400 text-sm">11</b> 個道具，請點擊下方按鈕捨棄多餘數量：</p>
+            <p class="text-xs text-slate-300">你目前擁有 <b id="discard-current-count" class="text-amber-400 text-sm">11</b> 個道具，請點擊下方按鈕退回銀行：</p>
             <div id="discard-gems-list" class="flex flex-wrap justify-center gap-3 py-3"></div>
         </div>
     </div>
@@ -239,14 +261,18 @@
     <div id="rules-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel max-w-xl w-full rounded-3xl p-6 max-h-[85vh] overflow-y-auto space-y-4">
             <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-                <h3 class="font-bold text-lg text-amber-300">📜 寶可夢大師規則</h3>
+                <h3 class="font-bold text-lg text-amber-300">📜 100% 正統璀璨寶石規則</h3>
                 <button onclick="toggleRulesModal(false)" class="text-slate-400 hover:text-white text-lg cursor-pointer">✕</button>
             </div>
-            <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
-                <p><strong class="text-amber-300">🎯 勝利條件：</strong>先達 <strong>15 點聲望</strong>者觸發最終局，最高分者成為寶可夢大師！</p>
-                <p><strong class="text-amber-300">🎨 卡片顏色對應：</strong>紅卡（火/毒）、藍卡（水/冰）、綠卡（草/蟲）、米黃卡（超能/電）、黑卡（幽靈/格鬥）。</p>
-                <p><strong class="text-purple-300">🟣 大師球（萬用）：</strong>保留卡片可獲得 1 顆大師球，可當作任意進化石使用！</p>
-                <p><strong class="text-amber-300">⭐ 稀有寶可夢：</strong>當收集足夠對應顏色的卡片（例如紅卡4張）時，稀有寶可夢夥伴會自動來訪並提供 +3 分！</p>
+            <div class="space-y-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <p><strong class="text-amber-300">1. 回合三選一行動：</strong></p>
+                <ul class="list-disc pl-5 space-y-1 text-slate-300">
+                    <li><strong>拿取進化石：</strong>拿 <strong>3 顆不同色</strong>進化石；或當銀行該色 <strong>≥ 4 顆</strong>時，連點兩下拿 <strong>2 顆同色</strong>。回合結束總數不可超過 10 顆。</li>
+                    <li><strong>保留卡片（上限 3 張）：</strong>保留場上 1 張明牌或從牌庫頂盲抽 1 張暗牌，並從銀行獲得 <strong>1 顆大師球（萬用）</strong>。</li>
+                    <li><strong>收服寶可夢卡：</strong>支付對應進化石（已擁有的同色卡片可永久折抵 1 顆，不足可用大師球補差額）。</li>
+                </ul>
+                <p><strong class="text-amber-300">2. 稀有寶可夢來訪：</strong>回合結束時若已擁有的各色卡片數達成條件（如紅卡4張），該稀有寶可夢會自動來訪（+3分）；若同時滿足多隻，每回合只能選 1 隻。</p>
+                <p><strong class="text-amber-300">3. 終局與勝負：</strong>任一玩家達到 <strong>15 分</strong>時觸發最終回合（該輪所有玩家回合數相同後結束）。最高分者獲勝；若平手，<strong>已收服寶可夢卡張數較少</strong>者獲勝！</p>
             </div>
             <button onclick="toggleRulesModal(false)" class="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-sm cursor-pointer">我瞭解了</button>
         </div>
@@ -260,7 +286,6 @@
 
         const ALL_GEMS = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'];
         
-        // 1. 左下角銀行區：五大進化石 + 大師球
         const BANK_ITEMS = {
             ruby: { name: '火之石', short: '火', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/fire-stone.png', text: 'text-rose-300' },
             emerald: { name: '葉之石', short: '草', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/leaf-stone.png', text: 'text-emerald-300' },
@@ -270,48 +295,12 @@
             gold: { name: '大師球', short: '大師球', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png', text: 'text-purple-300' }
         };
 
-        // 2. 卡片顏色樣式與名稱對應表（紅、藍、綠、米黃、黑）
         const CARD_COLORS = {
-            ruby: {
-                name: '紅卡',
-                shortName: '紅',
-                bgClass: 'bg-gradient-to-br from-red-700 via-rose-800 to-red-950 border-red-400/70',
-                badgeClass: 'bg-red-950/80 text-red-200 border-red-400/50',
-                textClass: 'text-rose-300',
-                scoreClass: 'text-amber-200 drop-shadow'
-            },
-            sapphire: {
-                name: '藍卡',
-                shortName: '藍',
-                bgClass: 'bg-gradient-to-br from-blue-700 via-sky-800 to-blue-950 border-blue-400/70',
-                badgeClass: 'bg-blue-950/80 text-blue-200 border-blue-400/50',
-                textClass: 'text-blue-300',
-                scoreClass: 'text-amber-200 drop-shadow'
-            },
-            emerald: {
-                name: '綠卡',
-                shortName: '綠',
-                bgClass: 'bg-gradient-to-br from-emerald-700 via-green-800 to-emerald-950 border-emerald-400/70',
-                badgeClass: 'bg-emerald-950/80 text-emerald-200 border-emerald-400/50',
-                textClass: 'text-emerald-300',
-                scoreClass: 'text-amber-200 drop-shadow'
-            },
-            diamond: {
-                name: '米黃卡',
-                shortName: '米黃',
-                bgClass: 'bg-gradient-to-br from-amber-100 via-yellow-200 to-amber-300 border-amber-500',
-                badgeClass: 'bg-amber-900/90 text-amber-100 border-amber-600',
-                textClass: 'text-amber-200',
-                scoreClass: 'text-amber-950 font-black'
-            },
-            onyx: {
-                name: '黑卡',
-                shortName: '黑',
-                bgClass: 'bg-gradient-to-br from-zinc-800 via-neutral-900 to-black border-zinc-500/80',
-                badgeClass: 'bg-zinc-950/90 text-zinc-200 border-zinc-500/60',
-                textClass: 'text-zinc-300',
-                scoreClass: 'text-amber-300 drop-shadow'
-            }
+            ruby: { name: '紅卡', shortName: '紅', bgClass: 'bg-gradient-to-br from-red-700 via-rose-800 to-red-950 border-red-400/70', badgeClass: 'bg-red-950/80 text-red-200 border-red-400/50', textClass: 'text-rose-300', scoreClass: 'text-amber-200 drop-shadow' },
+            sapphire: { name: '藍卡', shortName: '藍', bgClass: 'bg-gradient-to-br from-blue-700 via-sky-800 to-blue-950 border-blue-400/70', badgeClass: 'bg-blue-950/80 text-blue-200 border-blue-400/50', textClass: 'text-blue-300', scoreClass: 'text-amber-200 drop-shadow' },
+            emerald: { name: '綠卡', shortName: '綠', bgClass: 'bg-gradient-to-br from-emerald-700 via-green-800 to-emerald-950 border-emerald-400/70', badgeClass: 'bg-emerald-950/80 text-emerald-200 border-emerald-400/50', textClass: 'text-emerald-300', scoreClass: 'text-amber-200 drop-shadow' },
+            diamond: { name: '米黃卡', shortName: '米黃', bgClass: 'bg-gradient-to-br from-amber-100 via-yellow-200 to-amber-300 border-amber-500', badgeClass: 'bg-amber-900/90 text-amber-100 border-amber-600', textClass: 'text-amber-200', scoreClass: 'text-amber-950 font-black' },
+            onyx: { name: '黑卡', shortName: '黑', bgClass: 'bg-gradient-to-br from-zinc-800 via-neutral-900 to-black border-zinc-500/80', badgeClass: 'bg-zinc-950/90 text-zinc-200 border-zinc-500/60', textClass: 'text-zinc-300', scoreClass: 'text-amber-300 drop-shadow' }
         };
 
         let gameState = null;
@@ -333,9 +322,7 @@
 
         function copyInviteLink() {
             const link = `${window.location.origin}${window.location.pathname}?room=${currentRoomId}`;
-            navigator.clipboard.writeText(link).then(() => {
-                alert('已複製邀請連結！可以傳給朋友一起玩囉！');
-            });
+            navigator.clipboard.writeText(link).then(() => alert('已複製邀請連結！'));
         }
 
         function shuffle(arr) {
@@ -360,9 +347,9 @@
             if (!roomId) { alert('請輸入房號！'); return; }
             
             currentRoomId = roomId;
-            document.getElementById('lobby-status-msg').textContent = '正在連線至 Supabase 房間...';
+            document.getElementById('lobby-status-msg').textContent = '正在連線至房間...';
 
-            const { data, error } = await supabaseClient
+            const { data } = await supabaseClient
                 .from('rooms')
                 .select('game_state')
                 .eq('room_id', roomId)
@@ -385,17 +372,11 @@
                 }
                 await saveGameState();
             } else {
-                const fullDeck = buildFullDeck(); // 來自 cards-data.js
+                const fullDeck = buildFullDeck();
                 const gemInit = getInitialGemCount(maxPlayers);
-                const initialPlayers = [];
-                initialPlayers.push(createPlayerObj(0, playerName));
+                const initialPlayers = [createPlayerObj(0, playerName)];
                 for (let i = 1; i < maxPlayers; i++) {
-                    initialPlayers.push({
-                        id: i, name: `等待玩家 ${i+1}...`, points: 0,
-                        gems: {diamond:0, sapphire:0, emerald:0, ruby:0, onyx:0, gold:0},
-                        bonuses: {diamond:0, sapphire:0, emerald:0, ruby:0, onyx:0},
-                        cards: [], reserved: [], nobles: []
-                    });
+                    initialPlayers.push(createPlayerObj(i, `等待玩家 ${i+1}...`));
                 }
 
                 gameState = {
@@ -473,37 +454,14 @@
         }
 
         function renderAll() {
-            checkNoblesVisit();
             renderNobles();
             renderBank();
             renderSelectedGemsUI();
             renderMarket();
             renderPlayers();
             updateStatusBanner();
-        }
-
-        function checkNoblesVisit() {
-            let updated = false;
-            gameState.players.forEach(p => {
-                gameState.nobles.forEach(n => {
-                    if (!p.nobles.some(nb => nb.id === n.id)) {
-                        let canVisit = true;
-                        for (let [gem, reqCount] of Object.entries(n.req)) {
-                            if ((p.bonuses[gem] || 0) < reqCount) {
-                                canVisit = false;
-                                break;
-                            }
-                        }
-                        if (canVisit) {
-                            p.nobles.push(n);
-                            p.points += n.points;
-                            updated = true;
-                        }
-                    }
-                });
-            });
-            if (updated && gameState.currentPlayerIdx === myPlayerIndex) {
-                saveGameState();
+            if (gameState.finalRoundTriggered) {
+                document.getElementById('final-round-badge').classList.remove('hidden');
             }
         }
 
@@ -519,12 +477,11 @@
                 banner.innerHTML = `<span class="text-amber-400 animate-pulse">正在等待其他訓練家加入房間 #${currentRoomId} ...</span>`;
             } else {
                 banner.innerHTML = isMyTurn ? 
-                    `<span class="text-emerald-400 font-bold">輪到你了！請進行你的訓練家行動</span>` : 
+                    `<span class="text-emerald-400 font-bold">輪到你了！請選擇拿取進化石、保留卡片或收服寶可夢</span>` : 
                     `目前輪到訓練家 <span class="text-amber-400 font-bold">${curPlayer.name}</span> 行動`;
             }
         }
 
-        // 左上角貴族卡：條件直接顯示「紅卡4張」、「藍卡4張」
         function renderNobles() {
             const container = document.getElementById('nobles-container');
             container.innerHTML = gameState.nobles.map(n => `
@@ -549,7 +506,7 @@
 
         function renderBank() {
             const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
-            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !hasWaiting;
+            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !hasWaiting && !gameState.winner;
             const container = document.getElementById('bank-gems-container');
             document.getElementById('bank-limit-hint').textContent = `${gameState.maxPlayers}人局配置`;
 
@@ -559,7 +516,7 @@
                 const info = BANK_ITEMS[gem];
                 const remaining = total - selected;
                 return `
-                    <div class="item-orb-btn relative flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 ${isMyTurn ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-60'}" onclick="${isMyTurn ? `handleSelectBankGem('${gem}')` : ''}">
+                    <div class="item-orb-btn relative flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 ${isMyTurn && gem !== 'gold' ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-70'}" onclick="${isMyTurn && gem !== 'gold' ? `handleSelectBankGem('${gem}')` : ''}">
                         <span class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-black text-[11px] flex items-center justify-center shadow-md border border-amber-300">
                             ${remaining}
                         </span>
@@ -570,12 +527,30 @@
             }).join('');
         }
 
+        // 正統《璀璨寶石》拿寶石規則：3顆異色 OR 2顆同色（需銀行原本 >= 4 顆）
         function handleSelectBankGem(gem) {
             if (gem === 'gold') return;
-            if (gameState.bank[gem] - selectedGemsBuffer.filter(g => g === gem).length <= 0) return;
-            if (selectedGemsBuffer.length < 3 && !selectedGemsBuffer.includes(gem)) {
-                selectedGemsBuffer.push(gem);
+            const alreadyCount = selectedGemsBuffer.filter(g => g === gem).length;
+            const bankStock = gameState.bank[gem];
+            if (bankStock - alreadyCount <= 0) return;
+
+            if (alreadyCount === 1) {
+                // 嘗試拿第 2 顆同色：必須目前只選了這 1 顆，且銀行原本 >= 4 顆
+                if (selectedGemsBuffer.length === 1 && bankStock >= 4) {
+                    selectedGemsBuffer.push(gem);
+                } else if (bankStock < 4) {
+                    alert(`正統規則：銀行「${BANK_ITEMS[gem].name}」需剩餘 4 顆以上才能拿 2 顆同色！`);
+                } else {
+                    alert('正統規則：已拿取不同色進化石時，不能再拿同色第 2 顆！');
+                }
+            } else if (alreadyCount === 0) {
+                // 拿異色：如果已經拿了 2 顆同色，就不能再拿
+                const hasPair = selectedGemsBuffer.length === 2 && selectedGemsBuffer[0] === selectedGemsBuffer[1];
+                if (!hasPair && selectedGemsBuffer.length < 3) {
+                    selectedGemsBuffer.push(gem);
+                }
             }
+
             renderBank();
             renderSelectedGemsUI();
         }
@@ -606,10 +581,9 @@
                 player.gems[gem] += 1;
             });
             selectedGemsBuffer = [];
-            checkHandLimitOrEndTurn();
+            finishActionAndCheckPhase();
         }
 
-        // 渲染市場卡片（直接以紅、藍、綠、米黃、黑作為卡片背景色）
         function renderMarket() {
             [3, 2, 1].forEach(level => {
                 document.getElementById(`deck-count-${level}`).textContent = gameState.decks[level].length;
@@ -628,7 +602,7 @@
                             <div class="flex justify-center my-auto">
                                 <img src="${card.pokeImg}" class="w-14 h-14 object-contain drop-shadow-[0_6px_10px_rgba(0,0,0,0.85)] group-hover:scale-110 transition duration-200" />
                             </div>
-                            <div class="flex flex-wrap gap-1 justify-end z-10 bg-slate-950/75 p-1 rounded-lg backdrop-blur-xs">
+                            <div class="flex flex-wrap gap-1 justify-end z-10 bg-slate-950/75 p-1 rounded-lg">
                                 ${Object.entries(card.cost).map(([g, c]) => `
                                     <div class="flex items-center gap-0.5 px-1 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px]" title="${BANK_ITEMS[g].name}">
                                         <img src="${BANK_ITEMS[g].img}" class="w-3.5 h-3.5 object-contain" />
@@ -646,43 +620,137 @@
             const container = document.getElementById('players-container');
             container.innerHTML = gameState.players.map((p, idx) => {
                 const isCurrent = idx === gameState.currentPlayerIdx;
+                const isMe = idx === myPlayerIndex;
+                const totalGems = ALL_GEMS.reduce((s, g) => s + p.gems[g], 0);
                 return `
                     <div class="glass-panel rounded-2xl p-3.5 ${isCurrent ? 'active-turn-glow' : 'opacity-85'} space-y-2.5">
                         <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <span class="font-bold text-sm text-white">${p.name} ${idx === myPlayerIndex ? '(你)' : ''}</span>
-                                <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">已拜訪 ${p.nobles.length} 隻</span>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-bold text-sm text-white">${p.name} ${isMe ? '(你)' : ''}</span>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">道具 ${totalGems}/10</span>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">貴族 ${p.nobles.length}</span>
                             </div>
                             <span class="font-title font-black text-xl text-amber-400">${p.points}分</span>
                         </div>
                         <div class="grid grid-cols-6 gap-1 text-center text-xs bg-slate-950/50 p-1.5 rounded-xl">
                             ${ALL_GEMS.map(g => `<div><div class="text-[10px] text-slate-400">${BANK_ITEMS[g].short}</div><div class="${BANK_ITEMS[g].text} font-bold">${p.gems[g]}</div></div>`).join('')}
                         </div>
-                        <div class="flex flex-wrap gap-1 pt-1">
+                        <div class="flex flex-wrap gap-1 pt-0.5">
                             ${['ruby', 'sapphire', 'emerald', 'diamond', 'onyx'].map(g => `
                                 <span class="px-1.5 py-0.5 rounded border text-[10px] font-bold ${CARD_COLORS[g].badgeClass}">
                                     ${CARD_COLORS[g].name} ${p.bonuses[g]}
                                 </span>
                             `).join('')}
                         </div>
+                        ${p.reserved && p.reserved.length > 0 ? `
+                            <div class="pt-1.5 border-t border-slate-800/80">
+                                <div class="text-[10px] text-purple-300 font-bold mb-1">保留區 (${p.reserved.length}/3)：${isMe ? '點擊可購買' : ''}</div>
+                                <div class="flex gap-1.5 flex-wrap">
+                                    ${p.reserved.map((rc, rIdx) => `
+                                        <button ${isMe ? `onclick="openCardModal('reserved', ${rc.level}, ${rIdx})"` : 'disabled'} class="px-2 py-1 rounded-lg border text-[10px] font-bold flex items-center gap-1 ${CARD_COLORS[rc.bonus].badgeClass} ${isMe ? 'cursor-pointer hover:brightness-125' : 'opacity-80'}">
+                                            <span>Lv.${rc.level} ${CARD_COLORS[rc.bonus].name}</span>
+                                            ${rc.points > 0 ? `<span class="text-amber-300">+${rc.points}分</span>` : ''}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             }).join('');
         }
 
+        // 正統買卡成本試算（自動扣除已擁有同色卡片折扣，不足用大師球補）
+        function calculatePurchasePayment(player, card) {
+            const payGems = { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, gold: 0 };
+            let goldNeeded = 0;
+            const missingDetails = [];
+
+            for (const [gem, rawCost] of Object.entries(card.cost)) {
+                const discount = player.bonuses[gem] || 0;
+                const netCost = Math.max(0, rawCost - discount);
+                const owned = player.gems[gem] || 0;
+                if (owned >= netCost) {
+                    payGems[gem] = netCost;
+                } else {
+                    payGems[gem] = owned;
+                    const short = netCost - owned;
+                    goldNeeded += short;
+                    missingDetails.push(`${BANK_ITEMS[gem].name} 差 ${short}`);
+                }
+            }
+
+            if (goldNeeded <= (player.gems.gold || 0)) {
+                payGems.gold = goldNeeded;
+                return { canAfford: true, payGems, goldUsed: goldNeeded, missingDetails: [] };
+            } else {
+                return { canAfford: false, payGems, goldUsed: goldNeeded, missingDetails };
+            }
+        }
+
         function openCardModal(source, level, idx) {
+            const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
+            if (hasWaiting) { alert('請先等待所有訓練家加入房間！'); return; }
             if (gameState.currentPlayerIdx !== myPlayerIndex) { alert('還沒輪到你的回合！'); return; }
-            const card = source === 'market' ? gameState.market[level][idx] : gameState.players[myPlayerIndex].reserved[idx];
+            if (gameState.winner) return;
+
+            const player = gameState.players[myPlayerIndex];
+            const card = source === 'market' ? gameState.market[level][idx] : player.reserved[idx];
             if (!card) return;
+
             activeCardSelection = { card, source, level, idx };
             const colorInfo = CARD_COLORS[card.bonus];
+            const payment = calculatePurchasePayment(player, card);
+
             document.getElementById('modal-card-preview').innerHTML = `
                 <div class="flex flex-col items-center gap-1.5">
                     <img src="${card.pokeImg}" class="w-16 h-16 object-contain drop-shadow-lg" />
                     <div class="text-sm font-bold text-amber-300">Lv.${card.level} ${colorInfo.name}（+${card.points}分）</div>
                 </div>
             `;
-            document.getElementById('modal-cost-breakdown').innerHTML = Object.entries(card.cost).map(([g, c]) => `<div class="flex justify-between items-center py-0.5"><span class="flex items-center gap-1"><img src="${BANK_ITEMS[g].img}" class="w-4 h-4 object-contain" /> ${BANK_ITEMS[g].name}</span><span class="font-bold text-amber-300">${c} 個</span></div>`).join('');
+
+            document.getElementById('modal-cost-breakdown').innerHTML = Object.entries(card.cost).map(([g, c]) => {
+                const disc = player.bonuses[g] || 0;
+                const actual = Math.max(0, c - disc);
+                return `
+                    <div class="flex justify-between items-center py-0.5">
+                        <span class="flex items-center gap-1.5">
+                            <img src="${BANK_ITEMS[g].img}" class="w-4 h-4 object-contain" />
+                            <span>${BANK_ITEMS[g].name}</span>
+                        </span>
+                        <span>
+                            <span class="text-slate-400">原價 ${c}</span>
+                            ${disc > 0 ? `<span class="text-emerald-400"> - 折扣 ${disc}</span>` : ''}
+                            <span class="font-bold text-amber-300"> ＝ 實付 ${actual}</span>
+                        </span>
+                    </div>
+                `;
+            }).join('');
+
+            const statusEl = document.getElementById('modal-afford-status');
+            const buyBtn = document.getElementById('modal-btn-buy');
+            const reserveBtn = document.getElementById('modal-btn-reserve');
+
+            if (payment.canAfford) {
+                buyBtn.disabled = false;
+                statusEl.innerHTML = payment.goldUsed > 0 
+                    ? `<span class="text-purple-300">資源足夠（將自動消耗 ${payment.goldUsed} 顆大師球補差額）</span>`
+                    : `<span class="text-emerald-400">資源足夠，可直接收服！</span>`;
+            } else {
+                buyBtn.disabled = true;
+                statusEl.innerHTML = `<span class="text-rose-400">進化石不足（${payment.missingDetails.join('、')}，且大師球不足補齊）</span>`;
+            }
+
+            if (source === 'reserved') {
+                reserveBtn.classList.add('hidden');
+            } else {
+                reserveBtn.classList.remove('hidden');
+                reserveBtn.disabled = (player.reserved || []).length >= 3;
+                reserveBtn.textContent = (player.reserved || []).length >= 3
+                    ? '保留區已滿 (3/3 張)'
+                    : (gameState.bank.gold > 0 ? '保留卡片（+1 大師球萬用）' : '保留卡片（銀行大師球已空）');
+            }
+
             document.getElementById('card-action-modal').classList.remove('hidden');
         }
 
@@ -695,41 +763,87 @@
             if (!activeCardSelection) return;
             const { card, source, level, idx } = activeCardSelection;
             const player = gameState.players[myPlayerIndex];
-            
+            const payment = calculatePurchasePayment(player, card);
+
+            if (!payment.canAfford) {
+                alert('你的進化石與大師球不足以收服這張寶可夢卡！');
+                return;
+            }
+
+            // 實際扣除進化石並退回銀行
+            ALL_GEMS.forEach(g => {
+                if (payment.payGems[g] > 0) {
+                    player.gems[g] -= payment.payGems[g];
+                    gameState.bank[g] += payment.payGems[g];
+                }
+            });
+
             player.cards.push(card);
             player.bonuses[card.bonus] += 1;
             player.points += card.points;
 
             if (source === 'market') {
                 gameState.market[level][idx] = gameState.decks[level].shift() || null;
+            } else {
+                player.reserved.splice(idx, 1);
             }
 
-            checkNoblesVisit();
             closeCardModal();
-            checkHandLimitOrEndTurn();
+            finishActionAndCheckPhase();
         }
 
         async function executeReserveCard() {
             if (!activeCardSelection) return;
             const { card, level, idx } = activeCardSelection;
             const player = gameState.players[myPlayerIndex];
-            if (player.reserved.length >= 3) return;
+            if ((player.reserved || []).length >= 3) return;
 
             player.reserved.push(card);
             gameState.market[level][idx] = gameState.decks[level].shift() || null;
-            if (gameState.bank.gold > 0) { gameState.bank.gold -= 1; player.gems.gold += 1; }
+            if (gameState.bank.gold > 0) {
+                gameState.bank.gold -= 1;
+                player.gems.gold += 1;
+            }
 
             closeCardModal();
-            checkHandLimitOrEndTurn();
+            finishActionAndCheckPhase();
         }
 
-        function checkHandLimitOrEndTurn() {
+        // 正統規則：從牌庫頂盲抽保留 1 張
+        async function reserveBlindFromDeck(level) {
+            const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
+            if (hasWaiting) { alert('請先等待所有訓練家加入房間！'); return; }
+            if (gameState.currentPlayerIdx !== myPlayerIndex) { alert('還沒輪到你的回合！'); return; }
+            if (gameState.winner) return;
+
+            const player = gameState.players[myPlayerIndex];
+            if ((player.reserved || []).length >= 3) {
+                alert('正統規則：保留區最多只能有 3 張卡片！');
+                return;
+            }
+            if (gameState.decks[level].length === 0) {
+                alert(`Level ${level} 牌庫已經沒有卡片了！`);
+                return;
+            }
+
+            const topCard = gameState.decks[level].shift();
+            player.reserved.push(topCard);
+            if (gameState.bank.gold > 0) {
+                gameState.bank.gold -= 1;
+                player.gems.gold += 1;
+            }
+
+            finishActionAndCheckPhase();
+        }
+
+        // 行動完成後：1. 檢查手牌上限 10 顆 -> 2. 檢查貴族來訪（單回合限 1 隻）-> 3. 結束回合
+        function finishActionAndCheckPhase() {
             const player = gameState.players[myPlayerIndex];
             const totalGems = ALL_GEMS.reduce((sum, g) => sum + player.gems[g], 0);
             if (totalGems > 10) {
                 openDiscardModal();
             } else {
-                endPlayerTurn();
+                checkNoblePhaseAndEndTurn();
             }
         }
 
@@ -737,24 +851,64 @@
             const player = gameState.players[myPlayerIndex];
             document.getElementById('discard-current-count').textContent = ALL_GEMS.reduce((s, g) => s + player.gems[g], 0);
             document.getElementById('discard-gems-list').innerHTML = ALL_GEMS.map(g => player.gems[g] > 0 ? `
-                <button onclick="discardOneGem('${g}')" class="px-3 py-2 rounded-xl bg-slate-800 text-xs text-white">捨棄 ${BANK_ITEMS[g].name}</button>
+                <button onclick="discardOneGem('${g}')" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs text-white flex items-center gap-1.5 cursor-pointer">
+                    <img src="${BANK_ITEMS[g].img}" class="w-4 h-4 object-contain" />
+                    <span>退回 ${BANK_ITEMS[g].name} (${player.gems[g]})</span>
+                </button>
             ` : '').join('');
-            document.getElementById('discard-modal').classList.add('hidden');
             document.getElementById('discard-modal').classList.remove('hidden');
         }
 
-        async function discardOneGem(gem) {
+        function discardOneGem(gem) {
             const player = gameState.players[myPlayerIndex];
             player.gems[gem] -= 1;
             gameState.bank[gem] += 1;
             if (ALL_GEMS.reduce((s, g) => s + player.gems[g], 0) <= 10) {
                 document.getElementById('discard-modal').classList.add('hidden');
-                endPlayerTurn();
+                checkNoblePhaseAndEndTurn();
             } else {
                 openDiscardModal();
             }
         }
 
+        // 正統規則：貴族被一位玩家吸引走後會從場上移除；若同時滿足多位，只能選 1 位
+        function checkNoblePhaseAndEndTurn() {
+            const player = gameState.players[myPlayerIndex];
+            const eligibleNobles = gameState.nobles.filter(n => {
+                return Object.entries(n.req).every(([gem, reqCount]) => (player.bonuses[gem] || 0) >= reqCount);
+            });
+
+            if (eligibleNobles.length === 1) {
+                claimNobleAndEndTurn(eligibleNobles[0].id);
+            } else if (eligibleNobles.length > 1) {
+                document.getElementById('noble-choice-list').innerHTML = eligibleNobles.map(n => `
+                    <button onclick="claimNobleAndEndTurn('${n.id}')" class="w-full p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-amber-400/50 flex items-center gap-3 cursor-pointer">
+                        <img src="${n.img}" class="w-12 h-12 object-contain" />
+                        <div class="text-left flex-1">
+                            <div class="font-bold text-amber-200 text-sm">${n.name} (+3分)</div>
+                            <div class="text-[11px] text-slate-400">點擊邀請此稀有寶可夢來訪</div>
+                        </div>
+                    </button>
+                `).join('');
+                document.getElementById('noble-choice-modal').classList.remove('hidden');
+            } else {
+                endPlayerTurn();
+            }
+        }
+
+        function claimNobleAndEndTurn(nobleId) {
+            document.getElementById('noble-choice-modal').classList.add('hidden');
+            const nobleIdx = gameState.nobles.findIndex(n => n.id === nobleId);
+            if (nobleIdx !== -1) {
+                const noble = gameState.nobles.splice(nobleIdx, 1)[0];
+                const player = gameState.players[myPlayerIndex];
+                player.nobles.push(noble);
+                player.points += noble.points;
+            }
+            endPlayerTurn();
+        }
+
+        // 正統終局判定：達 15 分觸發最終回合，整輪結束後最高分勝；平手則卡片張數較少者勝
         async function endPlayerTurn() {
             const p = gameState.players[myPlayerIndex];
             if (p.points >= 15 && !gameState.finalRoundTriggered) {
@@ -765,7 +919,11 @@
             if (gameState.currentPlayerIdx === totalPlayers - 1 && gameState.finalRoundTriggered) {
                 let winner = gameState.players[0];
                 gameState.players.forEach(pl => {
-                    if (pl.points > winner.points) winner = pl;
+                    if (pl.points > winner.points) {
+                        winner = pl;
+                    } else if (pl.points === winner.points && pl.cards.length < winner.cards.length) {
+                        winner = pl;
+                    }
                 });
                 gameState.winner = winner.name;
             } else {
@@ -774,10 +932,18 @@
 
             await saveGameState();
             renderAll();
+            if (gameState.winner) triggerVictoryModal(gameState.winner);
         }
 
         function triggerVictoryModal(winnerName) {
             document.getElementById('victory-winner-title').textContent = `${winnerName} 獲勝！`;
+            const sorted = [...gameState.players].sort((a, b) => (b.points - a.points) || (a.cards.length - b.cards.length));
+            document.getElementById('victory-scoreboard').innerHTML = sorted.map((pl, i) => `
+                <div class="flex justify-between items-center py-1.5 px-2 rounded-lg ${i === 0 ? 'bg-amber-500/20 text-amber-200 font-bold' : 'text-slate-300'}">
+                    <span>#${i + 1} ${pl.name}（收服 ${pl.cards.length} 張卡）</span>
+                    <span class="font-title font-black">${pl.points} 分</span>
+                </div>
+            `).join('');
             document.getElementById('victory-modal').classList.remove('hidden');
         }
 
