@@ -48,11 +48,11 @@
             </div>
 
             <div class="flex justify-center gap-3 mb-7">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-red-600 to-rose-400 shadow-[0_0_10px_rgba(239,68,68,0.6)] border border-red-300 flex items-center justify-center text-[10px] font-bold text-white" title="火之石">火</div>
-                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-sky-400 shadow-[0_0_10px_rgba(59,130,246,0.6)] border border-blue-300 flex items-center justify-center text-[10px] font-bold text-white" title="水之石">水</div>
-                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-500 to-amber-300 shadow-[0_0_10px_rgba(234,179,8,0.6)] border border-yellow-200 flex items-center justify-center text-[10px] font-bold text-slate-950" title="雷之石">雷</div>
-                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-green-400 shadow-[0_0_10px_rgba(16,185,129,0.6)] border border-emerald-300 flex items-center justify-center text-[10px] font-bold text-white" title="葉之石">葉</div>
-                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-800 to-slate-700 shadow-[0_0_10px_rgba(147,51,234,0.6)] border border-purple-400 flex items-center justify-center text-[10px] font-bold text-white" title="月之石">月</div>
+                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full bg-gradient-to-tr from-red-600 via-rose-500 to-red-200 shadow-[0_0_10px_rgba(239,68,68,0.7)] border-2 border-red-200"></div><span class="text-[10px] text-rose-300 mt-1 font-bold">火之石</span></div>
+                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-700 via-sky-400 to-blue-200 shadow-[0_0_10px_rgba(59,130,246,0.7)] border-2 border-blue-200"></div><span class="text-[10px] text-blue-300 mt-1 font-bold">水之石</span></div>
+                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 via-green-400 to-emerald-200 shadow-[0_0_10px_rgba(16,185,129,0.7)] border-2 border-emerald-200"></div><span class="text-[10px] text-emerald-300 mt-1 font-bold">葉之石</span></div>
+                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-300 to-amber-100 shadow-[0_0_10px_rgba(234,179,8,0.7)] border-2 border-yellow-100"></div><span class="text-[10px] text-amber-200 mt-1 font-bold">雷之石</span></div>
+                <div class="flex flex-col items-center"><div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-900 via-zinc-800 to-purple-600 shadow-[0_0_10px_rgba(147,51,234,0.7)] border-2 border-purple-300"></div><span class="text-[10px] text-purple-300 mt-1 font-bold">月之石</span></div>
             </div>
 
             <div class="space-y-4">
@@ -233,7 +233,6 @@
         </div>
     </div>
 
-    <!-- 多位貴族同時滿足時，依正統規則只能選 1 位 -->
     <div id="noble-choice-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-amber-400/70 space-y-4 text-center">
             <div class="text-3xl">⭐</div>
@@ -294,21 +293,31 @@
 
         const ALL_GEMS = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'];
         
-        // 寶珠按鈕 HTML 產生器（紅藍綠黃紫金，高辨識度）
+        // 精緻寶石風圓珠與大師球產生器
         function getGemOrbHTML(gem, sizeClass = 'w-10 h-10') {
             switch(gem) {
-                case 'ruby': // 火之石 (紅)
-                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-red-600 via-rose-500 to-red-300 shadow-[0_0_12px_rgba(239,68,68,0.7)] border-2 border-red-200 flex items-center justify-center text-xs font-black text-white drop-shadow">火</div>`;
-                case 'sapphire': // 水之石 (藍)
-                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-blue-700 via-sky-500 to-blue-300 shadow-[0_0_12px_rgba(59,130,246,0.7)] border-2 border-blue-200 flex items-center justify-center text-xs font-black text-white drop-shadow">水</div>`;
-                case 'emerald': // 葉之石 (綠)
-                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-emerald-700 via-green-500 to-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.7)] border-2 border-emerald-200 flex items-center justify-center text-xs font-black text-white drop-shadow">葉</div>`;
-                case 'diamond': // 雷之石 (米黃/黃)
-                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-amber-600 via-yellow-400 to-amber-200 shadow-[0_0_12px_rgba(234,179,8,0.7)] border-2 border-yellow-100 flex items-center justify-center text-xs font-black text-slate-950 drop-shadow">雷</div>`;
-                case 'onyx': // 月之石 (黑/紫)
-                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-purple-900 via-slate-800 to-purple-600 shadow-[0_0_12px_rgba(147,51,234,0.7)] border-2 border-purple-300 flex items-center justify-center text-xs font-black text-white drop-shadow">月</div>`;
-                case 'gold': // 大師球 (金紫)
-                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-purple-800 via-yellow-500 to-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.7)] border-2 border-amber-200 flex items-center justify-center text-[10px] font-black text-slate-950 drop-shadow">大師</div>`;
+                case 'ruby': // 紅寶石 / 火之石
+                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-red-700 via-rose-500 to-red-200 shadow-[0_0_14px_rgba(239,68,68,0.75)] border-2 border-red-200 relative flex items-center justify-center">
+                        <div class="absolute top-1 left-2 w-2.5 h-1.5 bg-white/60 rounded-full blur-[0.5px]"></div>
+                    </div>`;
+                case 'sapphire': // 藍寶石 / 水之石
+                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-blue-800 via-sky-500 to-blue-200 shadow-[0_0_14px_rgba(59,130,246,0.75)] border-2 border-blue-200 relative flex items-center justify-center">
+                        <div class="absolute top-1 left-2 w-2.5 h-1.5 bg-white/60 rounded-full blur-[0.5px]"></div>
+                    </div>`;
+                case 'emerald': // 祖母綠 / 葉之石
+                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-emerald-800 via-green-500 to-emerald-200 shadow-[0_0_14px_rgba(16,185,129,0.75)] border-2 border-emerald-200 relative flex items-center justify-center">
+                        <div class="absolute top-1 left-2 w-2.5 h-1.5 bg-white/60 rounded-full blur-[0.5px]"></div>
+                    </div>`;
+                case 'diamond': // 鑽石 / 雷之石
+                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-amber-600 via-yellow-300 to-amber-100 shadow-[0_0_14px_rgba(234,179,8,0.75)] border-2 border-yellow-100 relative flex items-center justify-center">
+                        <div class="absolute top-1 left-2 w-2.5 h-1.5 bg-white/70 rounded-full blur-[0.5px]"></div>
+                    </div>`;
+                case 'onyx': // 黑瑪瑙 / 月之石
+                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-purple-950 via-zinc-900 to-purple-600 shadow-[0_0_14px_rgba(147,51,234,0.75)] border-2 border-purple-300 relative flex items-center justify-center">
+                        <div class="absolute top-1 left-2 w-2.5 h-1.5 bg-white/50 rounded-full blur-[0.5px]"></div>
+                    </div>`;
+                case 'gold': // 大師球 (使用指定圖片)
+                    return `<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbWkcWsQqjpflROiOjbEMKU1Q_NPjfAlwdlE9PyWxQ0Q&s=10" class="${sizeClass} object-contain rounded-full drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]" />`;
                 default:
                     return '';
             }
@@ -667,7 +676,6 @@
                     if (!card) return `<div class="h-36 rounded-xl border border-dashed border-slate-800 flex items-center justify-center text-xs text-slate-600">已售罄</div>`;
                     const colorStyle = CARD_COLORS[card.bonus];
                     
-                    // 檢查是否可直接收服
                     let canAffordCard = false;
                     if (isMyTurn && currentPlayer) {
                         canAffordCard = calculatePurchasePayment(currentPlayer, card).canAfford;
