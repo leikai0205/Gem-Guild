@@ -16,6 +16,14 @@
         .glass-card:hover { transform: translateY(-3px) scale(1.02); border-color: rgba(251, 191, 36, 0.85); }
         .poke-color-card { transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55); }
         .poke-color-card:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 14px 28px rgba(251, 191, 36, 0.28), 0 0 15px rgba(255, 255, 255, 0.18); }
+        
+        /* 可收服卡片金色閃爍呼吸燈提示 */
+        @keyframes affordableGlow {
+            0%, 100% { border-color: #34d399; box-shadow: 0 0 12px rgba(52, 211, 153, 0.6), inset 0 0 6px rgba(52, 211, 153, 0.3); }
+            50% { border-color: #6ee7b7; box-shadow: 0 0 24px rgba(110, 231, 183, 0.9), inset 0 0 12px rgba(110, 231, 183, 0.5); }
+        }
+        .affordable-card { animation: affordableGlow 1.8s infinite; }
+
         .item-orb-btn { transition: transform 0.18s ease, box-shadow 0.18s ease; }
         .item-orb-btn:hover:not(:disabled) { transform: translateY(-3px) scale(1.05); }
         .item-orb-btn:active:not(:disabled) { transform: scale(0.95); }
@@ -40,11 +48,11 @@
             </div>
 
             <div class="flex justify-center gap-3 mb-7">
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/fire-stone.png" class="w-8 h-8 object-contain drop-shadow" title="火之石" />
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/water-stone.png" class="w-8 h-8 object-contain drop-shadow" title="水之石" />
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/thunder-stone.png" class="w-8 h-8 object-contain drop-shadow" title="雷之石" />
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/leaf-stone.png" class="w-8 h-8 object-contain drop-shadow" title="葉之石" />
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/moon-stone.png" class="w-8 h-8 object-contain drop-shadow" title="月之石" />
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-red-600 to-rose-400 shadow-[0_0_10px_rgba(239,68,68,0.6)] border border-red-300 flex items-center justify-center text-[10px] font-bold text-white" title="火之石">火</div>
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-sky-400 shadow-[0_0_10px_rgba(59,130,246,0.6)] border border-blue-300 flex items-center justify-center text-[10px] font-bold text-white" title="水之石">水</div>
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-500 to-amber-300 shadow-[0_0_10px_rgba(234,179,8,0.6)] border border-yellow-200 flex items-center justify-center text-[10px] font-bold text-slate-950" title="雷之石">雷</div>
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-green-400 shadow-[0_0_10px_rgba(16,185,129,0.6)] border border-emerald-300 flex items-center justify-center text-[10px] font-bold text-white" title="葉之石">葉</div>
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-800 to-slate-700 shadow-[0_0_10px_rgba(147,51,234,0.6)] border border-purple-400 flex items-center justify-center text-[10px] font-bold text-white" title="月之石">月</div>
             </div>
 
             <div class="space-y-4">
@@ -157,7 +165,7 @@
             <main class="lg:col-span-5 glass-panel rounded-2xl p-3.5 space-y-3">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-                        <span>🃏</span> 寶可夢資源卡市場（依底色區分屬性）
+                        <span>🃏</span> 寶可夢資源卡市場（可收服會發光提示）
                     </h2>
                     <span class="text-[11px] text-slate-400">先達 15 聲望觸發終局</span>
                 </div>
@@ -269,7 +277,7 @@
                 <ul class="list-disc pl-5 space-y-1 text-slate-300">
                     <li><strong>拿取進化石：</strong>拿 <strong>3 顆不同色</strong>進化石；或當銀行該色 <strong>≥ 4 顆</strong>時，連點兩下拿 <strong>2 顆同色</strong>。回合結束總數不可超過 10 顆。</li>
                     <li><strong>保留卡片（上限 3 張）：</strong>保留場上 1 張明牌或從牌庫頂盲抽 1 張暗牌，並從銀行獲得 <strong>1 顆大師球（萬用）</strong>。</li>
-                    <li><strong>收服寶可夢卡：</strong>支付對應進化石（已擁有的同色卡片可永久折抵 1 顆，不足可用大師球補差額）。</li>
+                    <li><strong>收服寶可夢卡：</strong>支付對應進化石（已擁有的同色卡片可永久折抵 1 顆，不足可用大師球補差額）。可收服的卡片會自動出現<strong>綠色呼吸燈發光提示</strong>！</li>
                 </ul>
                 <p><strong class="text-amber-300">2. 稀有寶可夢來訪：</strong>回合結束時若已擁有的各色卡片數達成條件（如紅卡4張），該稀有寶可夢會自動來訪（+3分）；若同時滿足多隻，每回合只能選 1 隻。</p>
                 <p><strong class="text-amber-300">3. 終局與勝負：</strong>任一玩家達到 <strong>15 分</strong>時觸發最終回合（該輪所有玩家回合數相同後結束）。最高分者獲勝；若平手，<strong>已收服寶可夢卡張數較少</strong>者獲勝！</p>
@@ -286,13 +294,33 @@
 
         const ALL_GEMS = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'];
         
+        // 寶珠按鈕 HTML 產生器（紅藍綠黃紫金，高辨識度）
+        function getGemOrbHTML(gem, sizeClass = 'w-10 h-10') {
+            switch(gem) {
+                case 'ruby': // 火之石 (紅)
+                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-red-600 via-rose-500 to-red-300 shadow-[0_0_12px_rgba(239,68,68,0.7)] border-2 border-red-200 flex items-center justify-center text-xs font-black text-white drop-shadow">火</div>`;
+                case 'sapphire': // 水之石 (藍)
+                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-blue-700 via-sky-500 to-blue-300 shadow-[0_0_12px_rgba(59,130,246,0.7)] border-2 border-blue-200 flex items-center justify-center text-xs font-black text-white drop-shadow">水</div>`;
+                case 'emerald': // 葉之石 (綠)
+                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-emerald-700 via-green-500 to-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.7)] border-2 border-emerald-200 flex items-center justify-center text-xs font-black text-white drop-shadow">葉</div>`;
+                case 'diamond': // 雷之石 (米黃/黃)
+                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-amber-600 via-yellow-400 to-amber-200 shadow-[0_0_12px_rgba(234,179,8,0.7)] border-2 border-yellow-100 flex items-center justify-center text-xs font-black text-slate-950 drop-shadow">雷</div>`;
+                case 'onyx': // 月之石 (黑/紫)
+                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-purple-900 via-slate-800 to-purple-600 shadow-[0_0_12px_rgba(147,51,234,0.7)] border-2 border-purple-300 flex items-center justify-center text-xs font-black text-white drop-shadow">月</div>`;
+                case 'gold': // 大師球 (金紫)
+                    return `<div class="${sizeClass} rounded-full bg-gradient-to-tr from-purple-800 via-yellow-500 to-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.7)] border-2 border-amber-200 flex items-center justify-center text-[10px] font-black text-slate-950 drop-shadow">大師</div>`;
+                default:
+                    return '';
+            }
+        }
+
         const BANK_ITEMS = {
-            ruby: { name: '火之石', short: '火', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/fire-stone.png', text: 'text-rose-300' },
-            emerald: { name: '葉之石', short: '草', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/leaf-stone.png', text: 'text-emerald-300' },
-            sapphire: { name: '水之石', short: '水', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/water-stone.png', text: 'text-blue-300' },
-            diamond: { name: '雷之石', short: '電', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/thunder-stone.png', text: 'text-amber-200' },
-            onyx: { name: '月之石', short: '月', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/moon-stone.png', text: 'text-purple-300' },
-            gold: { name: '大師球', short: '大師球', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png', text: 'text-purple-300' }
+            ruby: { name: '火之石', short: '火', text: 'text-rose-300' },
+            emerald: { name: '葉之石', short: '草', text: 'text-emerald-300' },
+            sapphire: { name: '水之石', short: '水', text: 'text-blue-300' },
+            diamond: { name: '雷之石', short: '雷', text: 'text-amber-200' },
+            onyx: { name: '月之石', short: '月', text: 'text-purple-300' },
+            gold: { name: '大師球', short: '大師球', text: 'text-purple-300' }
         };
 
         const CARD_COLORS = {
@@ -446,17 +474,14 @@
                 .subscribe();
         }
 
-async function backToLobby() {
+        async function backToLobby() {
             if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
 
             if (gameState && currentRoomId !== null && myPlayerIndex !== null) {
-                // 情況 A：如果是房主（玩家 1，索引為 0）按下離開房間 -> 直接整間刪除
                 if (myPlayerIndex === 0) {
                     await supabaseClient.from('rooms').delete().eq('room_id', currentRoomId);
                 } else {
-                    // 情況 B：其他玩家離開 -> 將該座位恢復為「等待玩家」
                     gameState.players[myPlayerIndex] = createPlayerObj(myPlayerIndex, `等待玩家 ${myPlayerIndex + 1}...`);
-                    
                     const activeCount = gameState.players.filter(p => !p.name.startsWith('等待玩家')).length;
                     if (activeCount === 0) {
                         await supabaseClient.from('rooms').delete().eq('room_id', currentRoomId);
@@ -500,7 +525,7 @@ async function backToLobby() {
                 banner.innerHTML = `<span class="text-amber-400 animate-pulse">正在等待其他訓練家加入房間 #${currentRoomId} ...</span>`;
             } else {
                 banner.innerHTML = isMyTurn ? 
-                    `<span class="text-emerald-400 font-bold">輪到你了！請選擇拿取進化石、保留卡片或收服寶可夢</span>` : 
+                    `<span class="text-emerald-400 font-bold">輪到你了！可收服卡片已發光提示，請選擇行動</span>` : 
                     `目前輪到訓練家 <span class="text-amber-400 font-bold">${curPlayer.name}</span> 行動`;
             }
         }
@@ -539,18 +564,17 @@ async function backToLobby() {
                 const info = BANK_ITEMS[gem];
                 const remaining = total - selected;
                 return `
-                    <div class="item-orb-btn relative flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 ${isMyTurn && gem !== 'gold' ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-70'}" onclick="${isMyTurn && gem !== 'gold' ? `handleSelectBankGem('${gem}')` : ''}">
-                        <span class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-black text-[11px] flex items-center justify-center shadow-md border border-amber-300">
+                    <div class="item-orb-btn relative flex flex-col items-center justify-center p-2 rounded-xl bg-slate-900/80 border border-slate-800 ${isMyTurn && gem !== 'gold' ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-70'}" onclick="${isMyTurn && gem !== 'gold' ? `handleSelectBankGem('${gem}')` : ''}">
+                        <span class="absolute top-1 right-1 w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-black text-[11px] flex items-center justify-center shadow-md border border-amber-300 z-10">
                             ${remaining}
                         </span>
-                        <img src="${info.img}" alt="${info.name}" class="w-10 h-10 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] my-1" />
-                        <span class="text-xs font-bold ${info.text} mt-1">${info.name}</span>
+                        <div class="my-1">${getGemOrbHTML(gem, 'w-9 h-9')}</div>
+                        <span class="text-xs font-bold ${info.text} mt-0.5">${info.name}</span>
                     </div>
                 `;
             }).join('');
         }
 
-        // 拿寶石規則：3顆異色 OR 2顆同色（需銀行原本 >= 4 顆）
         function handleSelectBankGem(gem) {
             if (gem === 'gold') return;
             const alreadyCount = selectedGemsBuffer.filter(g => g === gem).length;
@@ -558,7 +582,6 @@ async function backToLobby() {
             if (bankStock - alreadyCount <= 0) return;
 
             if (alreadyCount === 1) {
-                // 嘗試拿第 2 顆同色：必須目前只選了這 1 顆，且銀行原本 >= 4 顆
                 if (selectedGemsBuffer.length === 1 && bankStock >= 4) {
                     selectedGemsBuffer.push(gem);
                 } else if (bankStock < 4) {
@@ -567,7 +590,6 @@ async function backToLobby() {
                     alert('正統規則：已拿取不同色進化石時，不能再拿同色第 2 顆！');
                 }
             } else if (alreadyCount === 0) {
-                // 拿異色：如果已經拿了 2 顆同色，就不能再拿
                 const hasPair = selectedGemsBuffer.length === 2 && selectedGemsBuffer[0] === selectedGemsBuffer[1];
                 if (!hasPair && selectedGemsBuffer.length < 3) {
                     selectedGemsBuffer.push(gem);
@@ -592,7 +614,7 @@ async function backToLobby() {
                 preview.innerHTML = `<span class="text-xs text-slate-500">點擊上方進化石進行拿取</span>`;
                 btnClear.disabled = true; btnConfirm.disabled = true; return;
             }
-            preview.innerHTML = selectedGemsBuffer.map(g => `<img src="${BANK_ITEMS[g].img}" class="w-7 h-7 object-contain drop-shadow" />`).join('');
+            preview.innerHTML = selectedGemsBuffer.map(g => getGemOrbHTML(g, 'w-7 h-7')).join('');
             btnClear.disabled = false; btnConfirm.disabled = false;
         }
 
@@ -607,15 +629,53 @@ async function backToLobby() {
             finishActionAndCheckPhase();
         }
 
+        function calculatePurchasePayment(player, card) {
+            const payGems = { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, gold: 0 };
+            let goldNeeded = 0;
+            const missingDetails = [];
+
+            for (const [gem, rawCost] of Object.entries(card.cost)) {
+                const discount = player.bonuses[gem] || 0;
+                const netCost = Math.max(0, rawCost - discount);
+                const owned = player.gems[gem] || 0;
+                if (owned >= netCost) {
+                    payGems[gem] = netCost;
+                } else {
+                    payGems[gem] = owned;
+                    const short = netCost - owned;
+                    goldNeeded += short;
+                    missingDetails.push(`${BANK_ITEMS[gem].name} 差 ${short}`);
+                }
+            }
+
+            if (goldNeeded <= (player.gems.gold || 0)) {
+                payGems.gold = goldNeeded;
+                return { canAfford: true, payGems, goldUsed: goldNeeded, missingDetails: [] };
+            } else {
+                return { canAfford: false, payGems, goldUsed: goldNeeded, missingDetails };
+            }
+        }
+
         function renderMarket() {
+            const currentPlayer = gameState.players[myPlayerIndex];
+            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !gameState.winner;
+
             [3, 2, 1].forEach(level => {
                 document.getElementById(`deck-count-${level}`).textContent = gameState.decks[level].length;
                 const container = document.getElementById(`market-row-${level}`);
                 container.innerHTML = gameState.market[level].map((card, idx) => {
                     if (!card) return `<div class="h-36 rounded-xl border border-dashed border-slate-800 flex items-center justify-center text-xs text-slate-600">已售罄</div>`;
                     const colorStyle = CARD_COLORS[card.bonus];
+                    
+                    // 檢查是否可直接收服
+                    let canAffordCard = false;
+                    if (isMyTurn && currentPlayer) {
+                        canAffordCard = calculatePurchasePayment(currentPlayer, card).canAfford;
+                    }
+
                     return `
-                        <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border-2 ${colorStyle.bgClass} rounded-xl p-2 h-36 flex flex-col justify-between cursor-pointer relative overflow-hidden group">
+                        <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border-2 ${colorStyle.bgClass} rounded-xl p-2 h-36 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
+                            ${canAffordCard ? `<span class="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[9px] shadow animate-pulse z-20">可收服！</span>` : ''}
                             <div class="flex justify-between items-center z-10">
                                 <span class="font-title font-black text-base ${colorStyle.scoreClass}">${card.points > 0 ? '+' + card.points : ''}</span>
                                 <span class="px-1.5 py-0.5 rounded border text-[10px] font-bold ${colorStyle.badgeClass}">
@@ -627,8 +687,8 @@ async function backToLobby() {
                             </div>
                             <div class="flex flex-wrap gap-1 justify-end z-10 bg-slate-950/75 p-1 rounded-lg">
                                 ${Object.entries(card.cost).map(([g, c]) => `
-                                    <div class="flex items-center gap-0.5 px-1 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px]" title="${BANK_ITEMS[g].name}">
-                                        <img src="${BANK_ITEMS[g].img}" class="w-3.5 h-3.5 object-contain" />
+                                    <div class="flex items-center gap-1 px-1 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px]" title="${BANK_ITEMS[g].name}">
+                                        ${getGemOrbHTML(g, 'w-3.5 h-3.5')}
                                         <span class="font-bold text-amber-300">${c}</span>
                                     </div>
                                 `).join('')}
@@ -641,6 +701,8 @@ async function backToLobby() {
 
         function renderPlayers() {
             const container = document.getElementById('players-container');
+            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !gameState.winner;
+
             container.innerHTML = gameState.players.map((p, idx) => {
                 const isCurrent = idx === gameState.currentPlayerIdx;
                 const isMe = idx === myPlayerIndex;
@@ -669,46 +731,25 @@ async function backToLobby() {
                             <div class="pt-1.5 border-t border-slate-800/80">
                                 <div class="text-[10px] text-purple-300 font-bold mb-1">保留區 (${p.reserved.length}/3)：${isMe ? '點擊可購買' : ''}</div>
                                 <div class="flex gap-1.5 flex-wrap">
-                                    ${p.reserved.map((rc, rIdx) => `
-                                        <button ${isMe ? `onclick="openCardModal('reserved', ${rc.level}, ${rIdx})"` : 'disabled'} class="px-2 py-1 rounded-lg border text-[10px] font-bold flex items-center gap-1 ${CARD_COLORS[rc.bonus].badgeClass} ${isMe ? 'cursor-pointer hover:brightness-125' : 'opacity-80'}">
-                                            <span>Lv.${rc.level} ${CARD_COLORS[rc.bonus].name}</span>
-                                            ${rc.points > 0 ? `<span class="text-amber-300">+${rc.points}分</span>` : ''}
-                                        </button>
-                                    `).join('')}
+                                    ${p.reserved.map((rc, rIdx) => {
+                                        let canAffordReserved = false;
+                                        if (isMe && isMyTurn) {
+                                            canAffordReserved = calculatePurchasePayment(p, rc).canAfford;
+                                        }
+                                        return `
+                                            <button ${isMe ? `onclick="openCardModal('reserved', ${rc.level}, ${rIdx})"` : 'disabled'} class="px-2 py-1 rounded-lg border text-[10px] font-bold flex items-center gap-1 ${CARD_COLORS[rc.bonus].badgeClass} ${isMe ? 'cursor-pointer hover:brightness-125' : 'opacity-80'} ${canAffordReserved ? 'ring-2 ring-emerald-400 animate-pulse' : ''}">
+                                                <span>Lv.${rc.level} ${CARD_COLORS[rc.bonus].name}</span>
+                                                ${rc.points > 0 ? `<span class="text-amber-300">+${rc.points}分</span>` : ''}
+                                                ${canAffordReserved ? '<span class="text-emerald-300 font-black">⚡</span>' : ''}
+                                            </button>
+                                        `;
+                                    }).join('')}
                                 </div>
                             </div>
                         ` : ''}
                     </div>
                 `;
             }).join('');
-        }
-
-        // 正統買卡成本試算（自動扣除已擁有同色卡片折扣，不足用大師球補）
-        function calculatePurchasePayment(player, card) {
-            const payGems = { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, gold: 0 };
-            let goldNeeded = 0;
-            const missingDetails = [];
-
-            for (const [gem, rawCost] of Object.entries(card.cost)) {
-                const discount = player.bonuses[gem] || 0;
-                const netCost = Math.max(0, rawCost - discount);
-                const owned = player.gems[gem] || 0;
-                if (owned >= netCost) {
-                    payGems[gem] = netCost;
-                } else {
-                    payGems[gem] = owned;
-                    const short = netCost - owned;
-                    goldNeeded += short;
-                    missingDetails.push(`${BANK_ITEMS[gem].name} 差 ${short}`);
-                }
-            }
-
-            if (goldNeeded <= (player.gems.gold || 0)) {
-                payGems.gold = goldNeeded;
-                return { canAfford: true, payGems, goldUsed: goldNeeded, missingDetails: [] };
-            } else {
-                return { canAfford: false, payGems, goldUsed: goldNeeded, missingDetails };
-            }
         }
 
         function openCardModal(source, level, idx) {
@@ -738,7 +779,7 @@ async function backToLobby() {
                 return `
                     <div class="flex justify-between items-center py-0.5">
                         <span class="flex items-center gap-1.5">
-                            <img src="${BANK_ITEMS[g].img}" class="w-4 h-4 object-contain" />
+                            ${getGemOrbHTML(g, 'w-4 h-4')}
                             <span>${BANK_ITEMS[g].name}</span>
                         </span>
                         <span>
@@ -793,7 +834,6 @@ async function backToLobby() {
                 return;
             }
 
-            // 實際扣除進化石並退回銀行
             ALL_GEMS.forEach(g => {
                 if (payment.payGems[g] > 0) {
                     player.gems[g] -= payment.payGems[g];
@@ -832,7 +872,6 @@ async function backToLobby() {
             finishActionAndCheckPhase();
         }
 
-        // 正統規則：從牌庫頂盲抽保留 1 張
         async function reserveBlindFromDeck(level) {
             const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
             if (hasWaiting) { alert('請先等待所有訓練家加入房間！'); return; }
@@ -859,7 +898,6 @@ async function backToLobby() {
             finishActionAndCheckPhase();
         }
 
-        // 行動完成後：1. 檢查手牌上限 10 顆 -> 2. 檢查貴族來訪（單回合限 1 隻）-> 3. 結束回合
         function finishActionAndCheckPhase() {
             const player = gameState.players[myPlayerIndex];
             const totalGems = ALL_GEMS.reduce((sum, g) => sum + player.gems[g], 0);
@@ -875,7 +913,7 @@ async function backToLobby() {
             document.getElementById('discard-current-count').textContent = ALL_GEMS.reduce((s, g) => s + player.gems[g], 0);
             document.getElementById('discard-gems-list').innerHTML = ALL_GEMS.map(g => player.gems[g] > 0 ? `
                 <button onclick="discardOneGem('${g}')" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs text-white flex items-center gap-1.5 cursor-pointer">
-                    <img src="${BANK_ITEMS[g].img}" class="w-4 h-4 object-contain" />
+                    ${getGemOrbHTML(g, 'w-4 h-4')}
                     <span>退回 ${BANK_ITEMS[g].name} (${player.gems[g]})</span>
                 </button>
             ` : '').join('');
@@ -894,7 +932,6 @@ async function backToLobby() {
             }
         }
 
-        // 正統規則：貴族被一位玩家吸引走後會從場上移除；若同時滿足多位，只能選 1 位
         function checkNoblePhaseAndEndTurn() {
             const player = gameState.players[myPlayerIndex];
             const eligibleNobles = gameState.nobles.filter(n => {
@@ -931,7 +968,6 @@ async function backToLobby() {
             endPlayerTurn();
         }
 
-        // 正統終局判定：達 15 分觸發最終回合，整輪結束後最高分勝；平手則卡片張數較少者勝
         async function endPlayerTurn() {
             const p = gameState.players[myPlayerIndex];
             if (p.points >= 15 && !gameState.finalRoundTriggered) {
@@ -967,7 +1003,7 @@ async function backToLobby() {
                     <span class="font-title font-black">${pl.points} 分</span>
                 </div>
             `).join('');
-            document.getElementById('victory-modal').classList.remove('hidden');
+            document.getElementById('victory-modal').classList.add('hidden');
         }
 
         function toggleRulesModal(show) {
