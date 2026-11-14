@@ -300,20 +300,19 @@
 
         const ALL_GEMS = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'];
         
-        // 純淨立體寶石與新版大師球圖片產生器
         function getGemOrbHTML(gem, sizeClass = 'w-9 h-9') {
             switch(gem) {
-                case 'ruby': // 紅寶石 / 火之石
+                case 'ruby':
                     return `<div class="${sizeClass} rounded-full gem-ruby shrink-0"></div>`;
-                case 'sapphire': // 藍寶石 / 水之石
+                case 'sapphire':
                     return `<div class="${sizeClass} rounded-full gem-sapphire shrink-0"></div>`;
-                case 'emerald': // 祖母綠 / 葉之石
+                case 'emerald':
                     return `<div class="${sizeClass} rounded-full gem-emerald shrink-0"></div>`;
-                case 'diamond': // 鑽石 / 雷之石
+                case 'diamond':
                     return `<div class="${sizeClass} rounded-full gem-diamond shrink-0"></div>`;
-                case 'onyx': // 黑瑪瑙 / 月之石
+                case 'onyx':
                     return `<div class="${sizeClass} rounded-full gem-onyx shrink-0"></div>`;
-                case 'gold': // 大師球 (更換為你指定的新圖片網址)
+                case 'gold':
                     return `<img src="https://www.toynews.com.tw/wp-content/uploads/PCPR21427.webp" class="${sizeClass} object-contain rounded-full drop-shadow-[0_0_8px_rgba(251,191,36,0.6)] shrink-0" />`;
                 default:
                     return '';
@@ -375,18 +374,19 @@
         }
 
         async function joinOrCreateRoom() {
-            const roomId = document.getElementById('input-room-id').value.trim();
+            const rawRoomId = document.getElementById('input-room-id').value.trim();
             const playerName = document.getElementById('input-player-name').value.trim() || '小智';
             const maxPlayers = parseInt(document.getElementById('input-max-players').value);
-            if (!roomId) { alert('請輸入房號！'); return; }
+            if (!rawRoomId) { alert('請輸入房號！'); return; }
             
-            currentRoomId = roomId;
+            // 💡 關鍵修正：將房號與人數合併作為資料庫 Key，讓 2 人局與 4 人局徹底獨立
+            currentRoomId = `${rawRoomId}-${maxPlayers}p`;
             document.getElementById('lobby-status-msg').textContent = '正在連線至房間...';
 
             const { data } = await supabaseClient
                 .from('rooms')
                 .select('game_state')
-                .eq('room_id', roomId)
+                .eq('room_id', currentRoomId)
                 .maybeSingle();
 
             if (data && data.game_state) {
@@ -436,7 +436,7 @@
                 myPlayerIndex = 0;
 
                 await supabaseClient.from('rooms').upsert({
-                    room_id: roomId,
+                    room_id: currentRoomId,
                     game_state: gameState,
                     updated_at: new Date()
                 });
