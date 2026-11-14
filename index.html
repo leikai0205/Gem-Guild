@@ -13,16 +13,9 @@
         .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(251, 191, 36, 0.25); box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
         .glass-card { background: linear-gradient(145deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.96)); border: 1px solid rgba(251, 191, 36, 0.35); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55); transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .glass-card:hover { transform: translateY(-4px) scale(1.02); border-color: rgba(251, 191, 36, 0.85); box-shadow: 0 14px 28px rgba(251, 191, 36, 0.22), 0 0 15px rgba(251, 191, 36, 0.15); }
-        .gem-orb { position: relative; border-radius: 9999px; box-shadow: inset -4px -4px 10px rgba(0, 0, 0, 0.65), inset 3px 3px 8px rgba(255, 255, 255, 0.65), 0 6px 14px rgba(0, 0, 0, 0.5); transition: transform 0.18s ease, box-shadow 0.18s ease; }
-        .gem-orb::after { content: ''; position: absolute; top: 14%; left: 18%; width: 28%; height: 18%; border-radius: 50%; background: rgba(255, 255, 255, 0.75); transform: rotate(-30deg); pointer-events: none; }
-        .gem-orb-btn:hover:not(:disabled) { transform: translateY(-3px) scale(1.07); box-shadow: inset -4px -4px 10px rgba(0, 0, 0, 0.65), inset 3px 3px 8px rgba(255, 255, 255, 0.8), 0 0 18px rgba(251, 191, 36, 0.55); }
-        .gem-orb-btn:active:not(:disabled) { transform: scale(0.95); }
-        .gem-ruby { background: radial-gradient(circle at 35% 35%, #ff6b81, #e11d48 55%, #881337 100%); }
-        .gem-sapphire { background: radial-gradient(circle at 35% 35%, #60a5fa, #2563eb 55%, #1e3a8a 100%); }
-        .gem-emerald { background: radial-gradient(circle at 35% 35%, #34d399, #059669 55%, #064e3b 100%); }
-        .gem-diamond { background: radial-gradient(circle at 35% 35%, #ffffff, #e2e8f0 60%, #94a3b8 100%); color: #0f172a; }
-        .gem-onyx { background: radial-gradient(circle at 35% 35%, #64748b, #1e293b 55%, #020617 100%); border: 1px solid rgba(148,163,184,0.4); }
-        .gem-gold { background: radial-gradient(circle at 35% 35%, #fef08a, #eab308 55%, #a16207 100%); color: #422006; }
+        .item-orb-btn { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+        .item-orb-btn:hover:not(:disabled) { transform: translateY(-3px) scale(1.05); }
+        .item-orb-btn:active:not(:disabled) { transform: scale(0.95); }
         .active-turn-glow { border-color: #fbbf24 !important; box-shadow: 0 0 25px rgba(251, 191, 36, 0.35), inset 0 0 12px rgba(251, 191, 36, 0.15); }
         @keyframes pulseGold { 0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.4); } 50% { box-shadow: 0 0 24px rgba(251, 191, 36, 0.85); } }
         .btn-gold-glow { animation: pulseGold 2.2s infinite; }
@@ -38,21 +31,20 @@
             
             <div class="text-center mb-8">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-medium tracking-wider mb-3">
-                    <span>⚡</span> 寶可夢大師聲望對戰版 <span>⚡</span>
+                    <span>⚡</span> 寶可夢大師道具對戰版 <span>⚡</span>
                 </div>
                 <h1 class="font-title text-3xl sm:text-4xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
                     POKÉMON GUILD
                 </h1>
-                <p class="text-slate-400 text-sm mt-2">收集寶石元素，吸引傳說寶可夢來訪！</p>
+                <p class="text-slate-400 text-sm mt-2">收集精靈球與道具，吸引傳說寶可夢來訪！</p>
             </div>
 
-            <div class="flex justify-center gap-3 mb-7">
-                <div class="w-7 h-7 gem-orb gem-diamond"></div>
-                <div class="w-7 h-7 gem-orb gem-sapphire"></div>
-                <div class="w-7 h-7 gem-orb gem-emerald"></div>
-                <div class="w-7 h-7 gem-orb gem-ruby"></div>
-                <div class="w-7 h-7 gem-orb gem-onyx"></div>
-                <div class="w-7 h-7 gem-orb gem-gold"></div>
+            <div class="flex justify-center gap-4 mb-7">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" class="w-8 h-8 object-contain drop-shadow" />
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png" class="w-8 h-8 object-contain drop-shadow" />
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png" class="w-8 h-8 object-contain drop-shadow" />
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png" class="w-8 h-8 object-contain drop-shadow" />
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/nugget.png" class="w-8 h-8 object-contain drop-shadow" />
             </div>
 
             <div class="space-y-4">
@@ -74,9 +66,9 @@
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">遊戲上限人數</label>
                     <select id="input-max-players" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-amber-400 focus:outline-none text-sm text-amber-200">
-                        <option value="2">2 人對戰局（每種寶石 4 顆）</option>
-                        <option value="3">3 人局（每種寶石 5 顆）</option>
-                        <option value="4" selected>4 人局（每種寶石 7 顆）</option>
+                        <option value="2">2 人對戰局（每種道具 4 個）</option>
+                        <option value="3">3 人局（每種道具 5 個）</option>
+                        <option value="4" selected>4 人局（每種道具 7 個）</option>
                     </select>
                 </div>
 
@@ -125,7 +117,7 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
-            <!-- 左欄：寶可夢夥伴與銀行寶石 -->
+            <!-- 左欄：寶可夢夥伴與精靈球銀行 -->
             <div class="lg:col-span-3 space-y-3.5">
                 <section class="glass-panel rounded-2xl p-3.5">
                     <div class="flex items-center justify-between mb-2.5">
@@ -139,19 +131,20 @@
                 <section class="glass-panel rounded-2xl p-3.5">
                     <div class="flex items-center justify-between mb-2">
                         <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-                            <span>💎</span> 寶石元素銀行
+                            <span>🎒</span> 精靈球與道具銀行
                         </h2>
                         <span id="bank-limit-hint" class="text-[11px] text-slate-400">依人數自動調整</span>
                     </div>
+                    <!-- 寶石銀行區塊（置中球圖 + 右上角徽章數字） -->
                     <div id="bank-gems-container" class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-2 gap-2.5 my-2"></div>
                     
                     <div class="mt-3 pt-3 border-t border-slate-700/70">
                         <div class="flex items-center justify-between text-xs text-slate-300 mb-2">
-                            <span>本回合已選寶石：</span>
+                            <span>本回合已選道具：</span>
                             <span id="selected-gems-hint" class="text-[11px] text-amber-400">可選 3 異色 或 2 同色</span>
                         </div>
-                        <div id="selected-gems-preview" class="min-h-[36px] flex items-center justify-center gap-2 bg-slate-950/60 rounded-xl p-1.5 border border-slate-800 mb-2.5">
-                            <span class="text-xs text-slate-500">點擊上方寶石進行拿取</span>
+                        <div id="selected-gems-preview" class="min-h-[42px] flex items-center justify-center gap-2 bg-slate-950/60 rounded-xl p-1.5 border border-slate-800 mb-2.5">
+                            <span class="text-xs text-slate-500">點擊上方道具進行拿取</span>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <button id="btn-clear-gems" onclick="clearSelectedGems()" disabled class="py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-medium text-slate-300 transition cursor-pointer">清空重選</button>
@@ -161,11 +154,11 @@
                 </section>
             </div>
 
-            <!-- 中欄：發展卡市場（寶石卡） -->
+            <!-- 中欄：發展卡市場（資源卡） -->
             <main class="lg:col-span-5 glass-panel rounded-2xl p-3.5 space-y-3">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-                        <span>🃏</span> 寶石資源卡市場
+                        <span>🃏</span> 訓練家資源卡市場
                     </h2>
                     <span class="text-[11px] text-slate-400">先達 15 聲望觸發終局</span>
                 </div>
@@ -211,7 +204,7 @@
             <div id="modal-cost-breakdown" class="bg-slate-900/90 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800"></div>
             <div class="grid grid-cols-1 gap-2.5 pt-1">
                 <button id="modal-btn-buy" onclick="executeBuyCard()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow transition cursor-pointer">獲取此資源卡</button>
-                <button id="modal-btn-reserve" onclick="executeReserveCard()" class="w-full py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 text-amber-200 font-bold text-sm transition cursor-pointer">保留卡片（+1 黃金萬用幣）</button>
+                <button id="modal-btn-reserve" onclick="executeReserveCard()" class="w-full py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 text-amber-200 font-bold text-sm transition cursor-pointer">保留卡片（+1 金珠萬用）</button>
                 <button onclick="closeCardModal()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-medium transition cursor-pointer">取消返回</button>
             </div>
         </div>
@@ -220,8 +213,8 @@
     <div id="discard-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-rose-400/60 space-y-4 text-center">
             <div class="text-3xl">⚖️</div>
-            <h3 class="font-bold text-lg text-rose-300">寶石超過上限（最多 10 顆）</h3>
-            <p class="text-xs text-slate-300">你目前擁有 <b id="discard-current-count" class="text-amber-400 text-sm">11</b> 顆寶石，請點擊下方寶石捨棄多餘數量：</p>
+            <h3 class="font-bold text-lg text-rose-300">道具超過上限（最多 10 個）</h3>
+            <p class="text-xs text-slate-300">你目前擁有 <b id="discard-current-count" class="text-amber-400 text-sm">11</b> 個道具，請點擊下方道具捨棄多餘數量：</p>
             <div id="discard-gems-list" class="flex flex-wrap justify-center gap-3 py-3"></div>
         </div>
     </div>
@@ -248,7 +241,7 @@
             </div>
             <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
                 <p><strong class="text-amber-300">🎯 勝利條件：</strong>先達 <strong>15 點聲望</strong>者觸發最終局，最高分者成為寶可夢大師！</p>
-                <p><strong class="text-amber-300">⭐ 稀有寶可夢：</strong>當收集足夠對應顏色的資源卡時，稀有寶可夢夥伴會自動來訪並提供 +3 分！</p>
+                <p><strong class="text-amber-300">⭐ 稀有寶可夢：</strong>當收集足夠對應屬性的資源卡時，稀有寶可夢夥伴會自動來訪並提供 +3 分！</p>
             </div>
             <button onclick="toggleRulesModal(false)" class="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-sm cursor-pointer">我瞭解了</button>
         </div>
@@ -262,16 +255,17 @@
 
         const GEM_TYPES = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx'];
         const ALL_GEMS = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'];
+        
+        // 對應你指定的 6 種寶可夢精靈球與道具圖片
         const GEM_INFO = {
-            diamond: { name: '鑽石', short: '白', css: 'gem-diamond', text: 'text-slate-100' },
-            sapphire: { name: '藍寶石', short: '藍', css: 'gem-sapphire', text: 'text-blue-300' },
-            emerald: { name: '祖母綠', short: '綠', css: 'gem-emerald', text: 'text-emerald-300' },
-            ruby: { name: '紅寶石', short: '紅', css: 'gem-ruby', text: 'text-rose-300' },
-            onyx: { name: '黑瑪瑙', short: '黑', css: 'gem-onyx', text: 'text-slate-300' },
-            gold: { name: '黃金', short: '金', css: 'gem-gold', text: 'text-amber-300' }
+            ruby: { name: '紅白球', short: '紅', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png', text: 'text-rose-300' },
+            emerald: { name: '超級球', short: '綠', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png', text: 'text-emerald-300' },
+            sapphire: { name: '高級球', short: '藍', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png', text: 'text-blue-300' },
+            diamond: { name: '大師球', short: '白', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png', text: 'text-slate-100' },
+            onyx: { name: '豪華球', short: '黑', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/luxury-ball.png', text: 'text-slate-300' },
+            gold: { name: '金珠', short: '金', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/nugget.png', text: 'text-amber-300' }
         };
 
-        // 你指定的 10 隻寶可夢夥伴（完全對應你給的圖片與名稱）
         const POKEMON_NOBLES = [
             { id: 'n131', name: '成龍', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/131.png', req: { ruby: 4, emerald: 4 } },
             { id: 'n132', name: '百變怪', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/132.png', req: { sapphire: 4, diamond: 4 } },
@@ -552,10 +546,17 @@
             container.innerHTML = ALL_GEMS.map(gem => {
                 const total = gameState.bank[gem];
                 const selected = selectedGemsBuffer.filter(g => g === gem).length;
+                const info = GEM_INFO[gem];
+                const remaining = total - selected;
                 return `
-                    <div class="gem-orb-btn flex items-center gap-2 p-2 rounded-xl bg-slate-900/75 border border-slate-800 ${isMyTurn ? 'cursor-pointer' : 'opacity-60'}" onclick="${isMyTurn ? `handleSelectBankGem('${gem}')` : ''}">
-                        <div class="w-8 h-8 gem-orb ${GEM_INFO[gem].css} flex items-center justify-center font-black text-xs">${total - selected}</div>
-                        <div class="text-xs font-bold ${GEM_INFO[gem].text}">${GEM_INFO[gem].name}</div>
+                    <div class="item-orb-btn relative flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 ${isMyTurn ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-60'}" onclick="${isMyTurn ? `handleSelectBankGem('${gem}')` : ''}">
+                        <!-- 右上角未讀通知風的數量紅點 -->
+                        <span class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-black text-[11px] flex items-center justify-center shadow-md border border-amber-300">
+                            ${remaining}
+                        </span>
+                        <!-- 球體/金珠圖片置中 -->
+                        <img src="${info.img}" alt="${info.name}" class="w-10 h-10 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] my-1" />
+                        <span class="text-xs font-bold ${info.text} mt-1">${info.name}</span>
                     </div>
                 `;
             }).join('');
@@ -582,10 +583,10 @@
             const btnClear = document.getElementById('btn-clear-gems');
             const btnConfirm = document.getElementById('btn-confirm-gems');
             if (selectedGemsBuffer.length === 0) {
-                preview.innerHTML = `<span class="text-xs text-slate-500">點擊上方寶石進行拿取</span>`;
+                preview.innerHTML = `<span class="text-xs text-slate-500">點擊上方道具進行拿取</span>`;
                 btnClear.disabled = true; btnConfirm.disabled = true; return;
             }
-            preview.innerHTML = selectedGemsBuffer.map(g => `<div class="w-6 h-6 gem-orb ${GEM_INFO[g].css}"></div>`).join('');
+            preview.innerHTML = selectedGemsBuffer.map(g => `<img src="${GEM_INFO[g].img}" class="w-7 h-7 object-contain drop-shadow" />`).join('');
             btnClear.disabled = false; btnConfirm.disabled = false;
         }
 
@@ -606,11 +607,12 @@
                 const container = document.getElementById(`market-row-${level}`);
                 container.innerHTML = gameState.market[level].map((card, idx) => {
                     if (!card) return `<div class="h-28 rounded-xl border border-dashed border-slate-800 flex items-center justify-center text-xs text-slate-600">已售罄</div>`;
+                    const bonusInfo = GEM_INFO[card.bonus];
                     return `
                         <div onclick="openCardModal('market', ${level}, ${idx})" class="glass-card rounded-xl p-2.5 h-28 flex flex-col justify-between cursor-pointer relative overflow-hidden">
                             <div class="flex justify-between items-center z-10">
                                 <span class="font-title font-black text-base text-amber-300">${card.points > 0 ? '+' + card.points : ''}</span>
-                                <div class="w-5 h-5 rounded-full gem-orb ${GEM_INFO[card.bonus].css} border border-white/20"></div>
+                                <img src="${bonusInfo.img}" class="w-6 h-6 object-contain drop-shadow" title="${bonusInfo.name}" />
                             </div>
                             <div class="space-y-1 z-10 text-[10px]">
                                 ${Object.entries(card.cost).map(([g, c]) => `<div class="flex justify-between text-slate-300 font-medium"><span>${GEM_INFO[g].name}</span><span class="font-bold">${c}</span></div>`).join('')}
@@ -651,7 +653,7 @@
             if (!card) return;
             activeCardSelection = { card, source, level, idx };
             document.getElementById('modal-card-preview').innerHTML = `<div class="text-sm font-bold text-amber-300">Lv.${card.level} 資源卡（+${card.points}分 / 產 ${GEM_INFO[card.bonus].name}）</div>`;
-            document.getElementById('modal-cost-breakdown').innerHTML = Object.entries(card.cost).map(([g, c]) => `<div class="flex justify-between"><span>需要 ${GEM_INFO[g].name}</span><span class="font-bold text-amber-300">${c} 顆</span></div>`).join('');
+            document.getElementById('modal-cost-breakdown').innerHTML = Object.entries(card.cost).map(([g, c]) => `<div class="flex justify-between"><span>需要 ${GEM_INFO[g].name}</span><span class="font-bold text-amber-300">${c} 個</span></div>`).join('');
             document.getElementById('card-action-modal').classList.remove('hidden');
         }
 
@@ -708,7 +710,6 @@
             document.getElementById('discard-gems-list').innerHTML = ALL_GEMS.map(g => player.gems[g] > 0 ? `
                 <button onclick="discardOneGem('${g}')" class="px-3 py-2 rounded-xl bg-slate-800 text-xs text-white">捨棄 ${GEM_INFO[g].name}</button>
             ` : '').join('');
-            document.getElementById('discard-modal').classList.add('hidden'); // Fix modal toggle
             document.getElementById('discard-modal').classList.remove('hidden');
         }
 
@@ -747,6 +748,7 @@
 
         function triggerVictoryModal(winnerName) {
             document.getElementById('victory-winner-title').textContent = `${winnerName} 獲勝！`;
+            document.getElementById('victory-modal').classList.add('hidden');
             document.getElementById('victory-modal').classList.remove('hidden');
         }
 
