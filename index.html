@@ -300,7 +300,7 @@
 
         const ALL_GEMS = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'];
         
-        // 純淨立體寶石產生器（無反光條）
+        // 純淨立體寶石與新版大師球圖片產生器
         function getGemOrbHTML(gem, sizeClass = 'w-9 h-9') {
             switch(gem) {
                 case 'ruby': // 紅寶石 / 火之石
@@ -313,8 +313,8 @@
                     return `<div class="${sizeClass} rounded-full gem-diamond shrink-0"></div>`;
                 case 'onyx': // 黑瑪瑙 / 月之石
                     return `<div class="${sizeClass} rounded-full gem-onyx shrink-0"></div>`;
-                case 'gold': // 大師球 (指定網址圖片)
-                    return `<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbWkcWsQqjpflROiOjbEMKU1Q_NPjfAlwdlE9PyWxQ0Q&s=10" class="${sizeClass} object-contain rounded-full drop-shadow-[0_0_8px_rgba(251,191,36,0.6)] shrink-0" />`;
+                case 'gold': // 大師球 (更換為你指定的新圖片網址)
+                    return `<img src="https://www.toynews.com.tw/wp-content/uploads/PCPR21427.webp" class="${sizeClass} object-contain rounded-full drop-shadow-[0_0_8px_rgba(251,191,36,0.6)] shrink-0" />`;
                 default:
                     return '';
             }
