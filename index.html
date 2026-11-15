@@ -148,7 +148,6 @@
                         </h2>
                         <span id="bank-limit-hint" class="text-[11px] text-slate-400">依人數自動調整</span>
                     </div>
-                    <!-- 寶石順序調整為：雷、水、草、火、月、大師球 -->
                     <div id="bank-gems-container" class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-2 gap-2.5 my-2"></div>
                     
                     <div class="mt-3 pt-3 border-t border-slate-700/70">
@@ -216,7 +215,7 @@
                 </div>
             </main>
 
-            <!-- 右欄：所有玩家面板（含即時戰報區與保留卡片區） -->
+            <!-- 右欄：所有玩家面板（含即時戰報區與公開保留卡片區） -->
             <aside class="lg:col-span-4 space-y-3">
                 <section class="glass-panel rounded-2xl p-3.5 space-y-2">
                     <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
@@ -235,16 +234,16 @@
     <div id="card-action-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel max-w-sm w-full rounded-3xl p-5 border border-amber-400/50 space-y-4">
             <div class="flex items-center justify-between">
-                <h3 class="font-bold text-base text-amber-300">選擇寶可夢卡行動</h3>
+                <h3 id="modal-title" class="font-bold text-base text-amber-300">選擇寶可夢卡行動</h3>
                 <button onclick="closeCardModal()" class="text-slate-400 hover:text-white text-lg cursor-pointer">✕</button>
             </div>
             <div id="modal-card-preview" class="flex justify-center py-1"></div>
             <div id="modal-cost-breakdown" class="bg-slate-900/90 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800"></div>
             <div id="modal-afford-status" class="text-center text-xs font-bold"></div>
-            <div class="grid grid-cols-1 gap-2.5 pt-1">
+            <div id="modal-action-buttons" class="grid grid-cols-1 gap-2.5 pt-1">
                 <button id="modal-btn-buy" onclick="executeBuyCard()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-black text-sm shadow transition cursor-pointer">收服此寶可夢卡</button>
                 <button id="modal-btn-reserve" onclick="executeReserveCard()" class="w-full py-2.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 disabled:opacity-40 disabled:cursor-not-allowed border border-purple-400/50 text-purple-200 font-bold text-sm transition cursor-pointer">保留卡片（+1 大師球萬用）</button>
-                <button onclick="closeCardModal()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-medium transition cursor-pointer">取消返回</button>
+                <button onclick="closeCardModal()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-medium transition cursor-pointer">關閉返回</button>
             </div>
         </div>
     </div>
@@ -253,7 +252,7 @@
         <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-amber-400/70 space-y-4 text-center">
             <div class="text-3xl">⭐</div>
             <h3 class="font-bold text-lg text-amber-300">多位稀有寶可夢同時被吸引！</h3>
-            <p class="text-xs text-slate-300">依規則，每回合只能選擇 <b>1 隻</b>稀有寶可夢來訪（其餘留待下回合）：</p>
+            <p class="text-xs text-slate-300">依規則,每回合只能選擇 <b>1 隻</b>稀有寶可夢來訪（其餘留待下回合）：</p>
             <div id="noble-choice-list" class="space-y-2.5 py-2"></div>
         </div>
     </div>
@@ -307,9 +306,7 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_ORPXi3B43DueDPAIpfSiHQ_idGTk1QT';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // 💡 統一寶石排列順序：雷、水、草、火、月、大師球
         const ALL_GEMS = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'];
-        // 💡 屬性卡牌分數排列順序對應：雷(diamond)、水(sapphire)、草(emerald)、火(ruby)、月(onyx)
         const CARD_GEM_ORDER = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx'];
         
         function getGemOrbHTML(gem, sizeClass = 'w-9 h-9') {
@@ -343,7 +340,7 @@
         const CARD_COLORS = {
             diamond: { name: '米黃卡', shortName: '米黃', gemKey: 'diamond', bgClass: 'bg-gradient-to-br from-amber-100 via-yellow-200 to-amber-300 border-amber-500', badgeClass: 'bg-amber-900/90 text-amber-100 border-amber-600', textClass: 'text-amber-200', scoreClass: 'text-amber-950 font-black' },
             sapphire: { name: '藍卡', shortName: '藍', gemKey: 'sapphire', bgClass: 'bg-gradient-to-br from-blue-700 via-sky-800 to-blue-950 border-blue-400/70', badgeClass: 'bg-blue-950/80 text-blue-200 border-blue-400/50', textClass: 'text-blue-300', scoreClass: 'text-amber-200 drop-shadow' },
-            emerald: { name: '綠卡', shortName: '綠', gemKey: 'emerald', bgClass: 'bg-gradient-to-br from-emerald-700 via-green-800 to-emerald-950 border-emerald-400/70', badgeClass: 'bg-emerald-950/80 text-emerald-200 border-emerald-400/50', textClass: 'text-emerald-300', scoreClass: 'text-amber-200 drop-shadow' },
+            emerald: { name: '綠卡', shortName: '綠', gemKey: 'emerald', bgClass: 'bg-gradient-to-br from-emerald-700 via-green-800 to-emerald-950 border-emerald-400/70', badgeClass: 'bg-emerald-950/80 text-emerald-200 border-emerald-400/50', textClass: 'text-emerald-300', scoreClass: 'text-emerald-300 drop-shadow' },
             ruby: { name: '紅卡', shortName: '紅', gemKey: 'ruby', bgClass: 'bg-gradient-to-br from-red-700 via-rose-800 to-red-950 border-red-400/70', badgeClass: 'bg-red-950/80 text-red-200 border-red-400/50', textClass: 'text-rose-300', scoreClass: 'text-amber-200 drop-shadow' },
             onyx: { name: '黑卡', shortName: '黑', gemKey: 'onyx', bgClass: 'bg-gradient-to-br from-zinc-800 via-neutral-900 to-black border-zinc-500/80', badgeClass: 'bg-zinc-950/90 text-zinc-200 border-zinc-500/60', textClass: 'text-zinc-300', scoreClass: 'text-amber-300 drop-shadow' }
         };
@@ -762,7 +759,6 @@
                             <span class="font-title font-black text-xl text-amber-400">${p.points}分</span>
                         </div>
 
-                        <!-- 💡 寶石與屬性卡上下完全對齊排版：雷、水、草、火、月、大師球 -->
                         <div class="grid grid-cols-6 gap-1 text-center text-xs bg-slate-950/60 p-2 rounded-xl border border-slate-800/80">
                             ${CARD_GEM_ORDER.map(g => `
                                 <div class="flex flex-col items-center">
@@ -787,10 +783,10 @@
                             `).join('')}
                         </div>
 
-                        <!-- 💡 修正：即使不是你的回合，也可以點擊自己保留區的卡片查看/購買 -->
+                        <!-- 💡 修正：任何人（包括對手）的保留區卡片都可以點擊查看！若是自己且輪到你則可購買 -->
                         ${p.reserved && p.reserved.length > 0 ? `
                             <div class="pt-1.5 border-t border-slate-800/80">
-                                <div class="text-[10px] text-purple-300 font-bold mb-1">保留區 (${p.reserved.length}/3)：${isMe ? '點擊可查看或收服' : ''}</div>
+                                <div class="text-[10px] text-purple-300 font-bold mb-1">${isMe ? '你的' : `${p.name}的`}保留區 (${p.reserved.length}/3)：點擊可查看</div>
                                 <div class="flex gap-1.5 flex-wrap">
                                     ${p.reserved.map((rc, rIdx) => {
                                         let canAffordReserved = false;
@@ -798,7 +794,7 @@
                                             canAffordReserved = calculatePurchasePayment(p, rc).canAfford;
                                         }
                                         return `
-                                            <button ${isMe ? `onclick="openCardModal('reserved', ${rc.level}, ${rIdx})"` : 'disabled'} class="px-2 py-1 rounded-lg border text-[10px] font-bold flex items-center gap-1 ${CARD_COLORS[rc.bonus].badgeClass} ${isMe ? 'cursor-pointer hover:brightness-125' : 'opacity-80'} ${canAffordReserved ? 'ring-2 ring-emerald-400 animate-pulse' : ''}">
+                                            <button onclick="openCardModal('reservedPlayer', ${rc.level}, ${rIdx}, ${idx})" class="px-2 py-1 rounded-lg border text-[10px] font-bold flex items-center gap-1 ${CARD_COLORS[rc.bonus].badgeClass} cursor-pointer hover:brightness-125 ${canAffordReserved ? 'ring-2 ring-emerald-400 animate-pulse' : ''}">
                                                 <span>Lv.${rc.level} ${CARD_COLORS[rc.bonus].name}</span>
                                                 ${rc.points > 0 ? `<span class="text-amber-300">+${rc.points}分</span>` : ''}
                                                 ${canAffordReserved ? '<span class="text-emerald-300 font-black">⚡</span>' : ''}
@@ -813,19 +809,29 @@
             }).join('');
         }
 
-        function openCardModal(source, level, idx) {
+        function openCardModal(source, level, idx, targetPlayerIdx = null) {
             const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
             if (hasWaiting) { alert('請先等待所有訓練家加入房間！'); return; }
-            if (gameState.winner) return;
 
-            const player = gameState.players[myPlayerIndex];
-            const card = source === 'market' ? gameState.market[level][idx] : player.reserved[idx];
+            const me = gameState.players[myPlayerIndex];
+            let card;
+            let ownerPlayer = me;
+
+            if (source === 'market') {
+                card = gameState.market[level][idx];
+            } else if (source === 'reserved') {
+                card = me.reserved[idx];
+            } else if (source === 'reservedPlayer') {
+                ownerPlayer = gameState.players[targetPlayerIdx];
+                card = ownerPlayer.reserved[idx];
+            }
+
             if (!card) return;
 
-            activeCardSelection = { card, source, level, idx };
+            activeCardSelection = { card, source, level, idx, targetPlayerIdx };
             const colorInfo = CARD_COLORS[card.bonus];
-            const payment = calculatePurchasePayment(player, card);
-            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex);
+            const payment = calculatePurchasePayment(me, card);
+            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !gameState.winner;
 
             document.getElementById('modal-card-preview').innerHTML = `
                 <div class="flex flex-col items-center gap-1.5">
@@ -842,8 +848,8 @@
                     </span>
                     <span>
                         <span class="text-slate-400">原價 ${card.cost[g]}</span>
-                        ${(player.bonuses[g] || 0) > 0 ? `<span class="text-emerald-400"> - 折扣 ${player.bonuses[g]}</span>` : ''}
-                        <span class="font-bold text-amber-300"> ＝ 實付 ${Math.max(0, card.cost[g] - (player.bonuses[g] || 0))}</span>
+                        ${(me.bonuses[g] || 0) > 0 ? `<span class="text-emerald-400"> - 折扣 ${me.bonuses[g]}</span>` : ''}
+                        <span class="font-bold text-amber-300"> ＝ 實付 ${Math.max(0, card.cost[g] - (me.bonuses[g] || 0))}</span>
                     </span>
                 </div>
             ` : '').join('');
@@ -852,13 +858,20 @@
             const buyBtn = document.getElementById('modal-btn-buy');
             const reserveBtn = document.getElementById('modal-btn-reserve');
 
-            if (!isMyTurn) {
-                buyBtn.disabled = true;
+            // 💡 如果是別人的保留區卡片，或是市場卡片但不是你的回合，只能檢視不能購買
+            const isOwnReserved = (source === 'reserved' || (source === 'reservedPlayer' && targetPlayerIdx === myPlayerIndex));
+
+            if (!isMyTurn || (source === 'reservedPlayer' && targetPlayerIdx !== myPlayerIndex)) {
+                buyBtn.classList.add('hidden');
                 reserveBtn.classList.add('hidden');
-                statusEl.innerHTML = `<span class="text-amber-300">目前為等待對手回合，僅供檢視卡片需求</span>`;
+                document.getElementById('modal-title').textContent = source === 'reservedPlayer' && targetPlayerIdx !== myPlayerIndex ? `${ownerPlayer.name} 的保留卡片` : '卡片詳細資訊';
+                statusEl.innerHTML = `<span class="text-amber-300">公開檢視卡片資訊</span>`;
                 document.getElementById('card-action-modal').classList.remove('hidden');
                 return;
             }
+
+            document.getElementById('modal-title').textContent = '選擇寶可夢卡行動';
+            buyBtn.classList.remove('hidden');
 
             if (payment.canAfford) {
                 buyBtn.disabled = false;
@@ -870,14 +883,14 @@
                 statusEl.innerHTML = `<span class="text-rose-400">進化石不足（${payment.missingDetails.join('、')}，且大師球不足補齊）</span>`;
             }
 
-            if (source === 'reserved') {
-                reserveBtn.classList.add('hidden');
-            } else {
+            if (source === 'market') {
                 reserveBtn.classList.remove('hidden');
-                reserveBtn.disabled = (player.reserved || []).length >= 3;
-                reserveBtn.textContent = (player.reserved || []).length >= 3
+                reserveBtn.disabled = (me.reserved || []).length >= 3;
+                reserveBtn.textContent = (me.reserved || []).length >= 3
                     ? '保留區已滿 (3/3 張)'
                     : (gameState.bank.gold > 0 ? '保留卡片（+1 大師球萬用）' : '保留卡片（銀行大師球已空）');
+            } else {
+                reserveBtn.classList.add('hidden');
             }
 
             document.getElementById('card-action-modal').classList.remove('hidden');
@@ -890,7 +903,7 @@
 
         async function executeBuyCard() {
             if (!activeCardSelection) return;
-            const { card, source, level, idx } = activeCardSelection;
+            const { card, source, level, idx, targetPlayerIdx } = activeCardSelection;
             const player = gameState.players[myPlayerIndex];
             const payment = calculatePurchasePayment(player, card);
 
@@ -914,8 +927,8 @@
 
             if (source === 'market') {
                 gameState.market[level][idx] = gameState.decks[level].shift() || null;
-            } else {
-                player.reserved.splice(idx, 1);
+            } else if (source === 'reserved' || source === 'reservedPlayer') {
+                gameState.players[targetPlayerIdx].reserved.splice(idx, 1);
             }
 
             closeCardModal();
