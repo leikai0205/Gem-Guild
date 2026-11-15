@@ -536,6 +536,9 @@
             if (gameState.finalRoundTriggered) {
                 document.getElementById('final-round-badge').classList.remove('hidden');
             }
+            if (gameState.winner) {
+                triggerVictoryModal(gameState.winner);
+            }
         }
 
         function renderBattleLogs() {
@@ -1087,7 +1090,6 @@
 
             await saveGameState();
             renderAll();
-            if (gameState.winner) triggerVictoryModal(gameState.winner);
         }
 
         function triggerVictoryModal(winnerName) {
@@ -1099,7 +1101,7 @@
                     <span class="font-title font-black">${pl.points} 分</span>
                 </div>
             `).join('');
-            document.getElementById('victory-modal').classList.add('hidden');
+            document.getElementById('victory-modal').classList.remove('hidden');
         }
 
         function toggleRulesModal(show) {
