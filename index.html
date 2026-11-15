@@ -17,7 +17,6 @@
         .poke-color-card { transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55); }
         .poke-color-card:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 14px 28px rgba(251, 191, 36, 0.28), 0 0 15px rgba(255, 255, 255, 0.18); }
         
-        /* 可收服卡片金色閃爍呼吸燈提示 */
         @keyframes affordableGlow {
             0%, 100% { border-color: #34d399; box-shadow: 0 0 12px rgba(52, 211, 153, 0.6), inset 0 0 6px rgba(52, 211, 153, 0.3); }
             50% { border-color: #6ee7b7; box-shadow: 0 0 24px rgba(110, 231, 183, 0.9), inset 0 0 12px rgba(110, 231, 183, 0.5); }
@@ -31,7 +30,6 @@
         @keyframes pulseGold { 0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.4); } 50% { box-shadow: 0 0 24px rgba(251, 191, 36, 0.85); } }
         .btn-gold-glow { animation: pulseGold 2.2s infinite; }
 
-        /* 純淨立體寶石樣式（無白光條） */
         .gem-ruby { background: radial-gradient(circle at 35% 30%, #fca5a5 0%, #dc2626 40%, #7f1d1d 80%, #450a0a 100%); box-shadow: inset -3px -3px 6px rgba(0,0,0,0.6), inset 2px 2px 4px rgba(255,255,255,0.4), 0 0 10px rgba(220,38,38,0.5); border: 1px solid #f87171; }
         .gem-sapphire { background: radial-gradient(circle at 35% 30%, #7dd3fc 0%, #0284c7 40%, #0369a1 80%, #082f49 100%); box-shadow: inset -3px -3px 6px rgba(0,0,0,0.6), inset 2px 2px 4px rgba(255,255,255,0.4), 0 0 10px rgba(2,132,199,0.5); border: 1px solid #38bdf8; }
         .gem-emerald { background: radial-gradient(circle at 35% 30%, #6ee7b7 0%, #059669 40%, #047857 80%, #022c22 100%); box-shadow: inset -3px -3px 6px rgba(0,0,0,0.6), inset 2px 2px 4px rgba(255,255,255,0.4), 0 0 10px rgba(5,150,105,0.5); border: 1px solid #34d399; }
@@ -75,7 +73,7 @@
 
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">你的訓練家暱稱</label>
-                    <input id="input-player-name" type="text" value=" " maxlength="12" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-amber-400 focus:outline-none text-sm text-white" />
+                    <input id="input-player-name" type="text" value="" maxlength="12" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-amber-400 focus:outline-none text-sm text-white" placeholder="輸入你的名字" />
                 </div>
 
                 <div>
@@ -150,6 +148,7 @@
                         </h2>
                         <span id="bank-limit-hint" class="text-[11px] text-slate-400">依人數自動調整</span>
                     </div>
+                    <!-- 寶石順序調整為：雷、水、草、火、月、大師球 -->
                     <div id="bank-gems-container" class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-2 gap-2.5 my-2"></div>
                     
                     <div class="mt-3 pt-3 border-t border-slate-700/70">
@@ -217,8 +216,18 @@
                 </div>
             </main>
 
-            <!-- 右欄：所有玩家面板（含保留卡片區） -->
-            <aside class="lg:col-span-4 space-y-3" id="players-container"></aside>
+            <!-- 右欄：所有玩家面板（含即時戰報區與保留卡片區） -->
+            <aside class="lg:col-span-4 space-y-3">
+                <section class="glass-panel rounded-2xl p-3.5 space-y-2">
+                    <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
+                        <span>📜</span> 對戰即時戰報紀錄
+                    </h2>
+                    <div id="battle-log-container" class="bg-slate-950/80 rounded-xl p-2.5 h-32 overflow-y-auto space-y-1.5 border border-slate-800 text-xs text-slate-300">
+                        <div class="text-slate-500">遊戲剛開始，等待訓練家們進行第一手操作...</div>
+                    </div>
+                </section>
+                <div id="players-container" class="space-y-3"></div>
+            </aside>
         </div>
     </div>
 
@@ -298,7 +307,10 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_ORPXi3B43DueDPAIpfSiHQ_idGTk1QT';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // 💡 統一寶石排列順序：雷、水、草、火、月、大師球
         const ALL_GEMS = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'];
+        // 💡 屬性卡牌分數排列順序對應：雷(diamond)、水(sapphire)、草(emerald)、火(ruby)、月(onyx)
+        const CARD_GEM_ORDER = ['diamond', 'sapphire', 'emerald', 'ruby', 'onyx'];
         
         function getGemOrbHTML(gem, sizeClass = 'w-9 h-9') {
             switch(gem) {
@@ -320,20 +332,20 @@
         }
 
         const BANK_ITEMS = {
-            ruby: { name: '火之石', short: '火', text: 'text-rose-300' },
-            emerald: { name: '葉之石', short: '草', text: 'text-emerald-300' },
-            sapphire: { name: '水之石', short: '水', text: 'text-blue-300' },
             diamond: { name: '雷之石', short: '雷', text: 'text-amber-200' },
+            sapphire: { name: '水之石', short: '水', text: 'text-blue-300' },
+            emerald: { name: '葉之石', short: '草', text: 'text-emerald-300' },
+            ruby: { name: '火之石', short: '火', text: 'text-rose-300' },
             onyx: { name: '月之石', short: '月', text: 'text-purple-300' },
             gold: { name: '大師球', short: '大師球', text: 'text-purple-300' }
         };
 
         const CARD_COLORS = {
-            ruby: { name: '紅卡', shortName: '紅', bgClass: 'bg-gradient-to-br from-red-700 via-rose-800 to-red-950 border-red-400/70', badgeClass: 'bg-red-950/80 text-red-200 border-red-400/50', textClass: 'text-rose-300', scoreClass: 'text-amber-200 drop-shadow' },
-            sapphire: { name: '藍卡', shortName: '藍', bgClass: 'bg-gradient-to-br from-blue-700 via-sky-800 to-blue-950 border-blue-400/70', badgeClass: 'bg-blue-950/80 text-blue-200 border-blue-400/50', textClass: 'text-blue-300', scoreClass: 'text-amber-200 drop-shadow' },
-            emerald: { name: '綠卡', shortName: '綠', bgClass: 'bg-gradient-to-br from-emerald-700 via-green-800 to-emerald-950 border-emerald-400/70', badgeClass: 'bg-emerald-950/80 text-emerald-200 border-emerald-400/50', textClass: 'text-emerald-300', scoreClass: 'text-amber-200 drop-shadow' },
-            diamond: { name: '米黃卡', shortName: '米黃', bgClass: 'bg-gradient-to-br from-amber-100 via-yellow-200 to-amber-300 border-amber-500', badgeClass: 'bg-amber-900/90 text-amber-100 border-amber-600', textClass: 'text-amber-200', scoreClass: 'text-amber-950 font-black' },
-            onyx: { name: '黑卡', shortName: '黑', bgClass: 'bg-gradient-to-br from-zinc-800 via-neutral-900 to-black border-zinc-500/80', badgeClass: 'bg-zinc-950/90 text-zinc-200 border-zinc-500/60', textClass: 'text-zinc-300', scoreClass: 'text-amber-300 drop-shadow' }
+            diamond: { name: '米黃卡', shortName: '米黃', gemKey: 'diamond', bgClass: 'bg-gradient-to-br from-amber-100 via-yellow-200 to-amber-300 border-amber-500', badgeClass: 'bg-amber-900/90 text-amber-100 border-amber-600', textClass: 'text-amber-200', scoreClass: 'text-amber-950 font-black' },
+            sapphire: { name: '藍卡', shortName: '藍', gemKey: 'sapphire', bgClass: 'bg-gradient-to-br from-blue-700 via-sky-800 to-blue-950 border-blue-400/70', badgeClass: 'bg-blue-950/80 text-blue-200 border-blue-400/50', textClass: 'text-blue-300', scoreClass: 'text-amber-200 drop-shadow' },
+            emerald: { name: '綠卡', shortName: '綠', gemKey: 'emerald', bgClass: 'bg-gradient-to-br from-emerald-700 via-green-800 to-emerald-950 border-emerald-400/70', badgeClass: 'bg-emerald-950/80 text-emerald-200 border-emerald-400/50', textClass: 'text-emerald-300', scoreClass: 'text-amber-200 drop-shadow' },
+            ruby: { name: '紅卡', shortName: '紅', gemKey: 'ruby', bgClass: 'bg-gradient-to-br from-red-700 via-rose-800 to-red-950 border-red-400/70', badgeClass: 'bg-red-950/80 text-red-200 border-red-400/50', textClass: 'text-rose-300', scoreClass: 'text-amber-200 drop-shadow' },
+            onyx: { name: '黑卡', shortName: '黑', gemKey: 'onyx', bgClass: 'bg-gradient-to-br from-zinc-800 via-neutral-900 to-black border-zinc-500/80', badgeClass: 'bg-zinc-950/90 text-zinc-200 border-zinc-500/60', textClass: 'text-zinc-300', scoreClass: 'text-amber-300 drop-shadow' }
         };
 
         let gameState = null;
@@ -347,7 +359,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             const r = urlParams.get('room');
             if (r) {
-                // 💡 智能解析網址房號（例如 8888-2p 自動切分出房號與人數）
                 const match = r.match(/^(.+)-(\d)p$/);
                 if (match) {
                     document.getElementById('input-room-id').value = match[1];
@@ -388,7 +399,6 @@
             const maxPlayers = parseInt(document.getElementById('input-max-players').value);
             if (!rawRoomId) { alert('請輸入房號！'); return; }
             
-            // 房號與人數合併作為資料庫 Key
             currentRoomId = `${rawRoomId}-${maxPlayers}p`;
             document.getElementById('lobby-status-msg').textContent = '正在連線至房間...';
 
@@ -424,9 +434,11 @@
 
                 gameState = {
                     maxPlayers: maxPlayers,
+                    roundCount: 1,
                     currentPlayerIdx: 0,
                     finalRoundTriggered: false,
                     winner: null,
+                    logs: [`遊戲建立：房號 #${currentRoomId} 開始對戰`],
                     bank: { diamond: gemInit, sapphire: gemInit, emerald: gemInit, ruby: gemInit, onyx: gemInit, gold: 5 },
                     nobles: shuffle(POKEMON_NOBLES).slice(0, maxPlayers + 1),
                     decks: {
@@ -522,10 +534,26 @@
             renderSelectedGemsUI();
             renderMarket();
             renderPlayers();
+            renderBattleLogs();
             updateStatusBanner();
             if (gameState.finalRoundTriggered) {
                 document.getElementById('final-round-badge').classList.remove('hidden');
             }
+        }
+
+        function renderBattleLogs() {
+            const container = document.getElementById('battle-log-container');
+            if (!gameState.logs || gameState.logs.length === 0) {
+                container.innerHTML = `<div class="text-slate-500">尚無戰報紀錄...</div>`;
+                return;
+            }
+            container.innerHTML = gameState.logs.slice(-30).reverse().map(log => `<div class="border-b border-slate-900 pb-1">${log}</div>`).join('');
+        }
+
+        function addGameLog(message) {
+            if (!gameState.logs) gameState.logs = [];
+            const round = gameState.roundCount || 1;
+            gameState.logs.push(`[第 ${round} 回合] ${message}`);
         }
 
         function updateStatusBanner() {
@@ -556,11 +584,11 @@
                             <span class="px-2 py-0.5 rounded-lg bg-amber-500 text-slate-950 font-black text-xs">+${n.points}分</span>
                         </div>
                         <div class="flex flex-wrap gap-1 mt-1.5 text-[10px]">
-                            ${Object.entries(n.req).map(([gem, count]) => `
+                            ${CARD_GEM_ORDER.map(gem => n.req[gem] ? `
                                 <span class="px-1.5 py-0.5 rounded border font-bold ${CARD_COLORS[gem].badgeClass}">
-                                    ${CARD_COLORS[gem].name}${count}張
+                                    ${CARD_COLORS[gem].name}${n.req[gem]}張
                                 </span>
-                            `).join('')}
+                            ` : '').join('')}
                         </div>
                     </div>
                 </div>
@@ -636,10 +664,12 @@
         async function confirmTakeGems() {
             if (selectedGemsBuffer.length === 0) return;
             const player = gameState.players[myPlayerIndex];
+            const gemNamesSummary = selectedGemsBuffer.map(g => BANK_ITEMS[g].name).join('、');
             selectedGemsBuffer.forEach(gem => {
                 gameState.bank[gem] -= 1;
                 player.gems[gem] += 1;
             });
+            addGameLog(`${player.name} 拿取了進化石：${gemNamesSummary}`);
             selectedGemsBuffer = [];
             finishActionAndCheckPhase();
         }
@@ -700,12 +730,12 @@
                                 <img src="${card.pokeImg}" class="w-14 h-14 object-contain drop-shadow-[0_6px_10px_rgba(0,0,0,0.85)] group-hover:scale-110 transition duration-200" />
                             </div>
                             <div class="flex flex-wrap gap-1 justify-end z-10 bg-slate-950/75 p-1 rounded-lg">
-                                ${Object.entries(card.cost).map(([g, c]) => `
+                                ${CARD_GEM_ORDER.map(g => card.cost[g] ? `
                                     <div class="flex items-center gap-1 px-1 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px]" title="${BANK_ITEMS[g].name}">
                                         ${getGemOrbHTML(g, 'w-3.5 h-3.5')}
-                                        <span class="font-bold text-amber-300">${c}</span>
+                                        <span class="font-bold text-amber-300">${card.cost[g]}</span>
                                     </div>
-                                `).join('')}
+                                ` : '').join('')}
                             </div>
                         </div>
                     `;
@@ -731,19 +761,36 @@
                             </div>
                             <span class="font-title font-black text-xl text-amber-400">${p.points}分</span>
                         </div>
-                        <div class="grid grid-cols-6 gap-1 text-center text-xs bg-slate-950/50 p-1.5 rounded-xl">
-                            ${ALL_GEMS.map(g => `<div><div class="text-[10px] text-slate-400">${BANK_ITEMS[g].short}</div><div class="${BANK_ITEMS[g].text} font-bold">${p.gems[g]}</div></div>`).join('')}
+
+                        <!-- 💡 寶石與屬性卡上下完全對齊排版：雷、水、草、火、月、大師球 -->
+                        <div class="grid grid-cols-6 gap-1 text-center text-xs bg-slate-950/60 p-2 rounded-xl border border-slate-800/80">
+                            ${CARD_GEM_ORDER.map(g => `
+                                <div class="flex flex-col items-center">
+                                    <span class="text-[10px] text-slate-400 mb-0.5">${BANK_ITEMS[g].short}</span>
+                                    <span class="${BANK_ITEMS[g].text} font-bold text-sm">${p.gems[g]}</span>
+                                </div>
+                            `).join('')}
+                            <div class="flex flex-col items-center">
+                                <span class="text-[10px] text-purple-400 mb-0.5">球</span>
+                                <span class="text-purple-300 font-bold text-sm">${p.gems.gold}</span>
+                            </div>
                         </div>
-                        <div class="flex flex-wrap gap-1 pt-0.5">
-                            ${['ruby', 'sapphire', 'emerald', 'diamond', 'onyx'].map(g => `
-                                <span class="px-1.5 py-0.5 rounded border text-[10px] font-bold ${CARD_COLORS[g].badgeClass}">
-                                    ${CARD_COLORS[g].name} ${p.bonuses[g]}
-                                </span>
+
+                        <div class="grid grid-cols-5 gap-1 text-center text-xs bg-slate-900/50 p-2 rounded-xl border border-slate-800/50">
+                            ${CARD_GEM_ORDER.map(g => `
+                                <div class="flex flex-col items-center">
+                                    <span class="px-1.5 py-0.5 rounded border text-[10px] font-bold w-full truncate ${CARD_COLORS[g].badgeClass}">
+                                        ${CARD_COLORS[g].name}
+                                    </span>
+                                    <span class="text-amber-300 font-bold mt-1">${p.bonuses[g]}</span>
+                                </div>
                             `).join('')}
                         </div>
+
+                        <!-- 💡 修正：即使不是你的回合，也可以點擊自己保留區的卡片查看/購買 -->
                         ${p.reserved && p.reserved.length > 0 ? `
                             <div class="pt-1.5 border-t border-slate-800/80">
-                                <div class="text-[10px] text-purple-300 font-bold mb-1">保留區 (${p.reserved.length}/3)：${isMe ? '點擊可購買' : ''}</div>
+                                <div class="text-[10px] text-purple-300 font-bold mb-1">保留區 (${p.reserved.length}/3)：${isMe ? '點擊可查看或收服' : ''}</div>
                                 <div class="flex gap-1.5 flex-wrap">
                                     ${p.reserved.map((rc, rIdx) => {
                                         let canAffordReserved = false;
@@ -769,7 +816,6 @@
         function openCardModal(source, level, idx) {
             const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
             if (hasWaiting) { alert('請先等待所有訓練家加入房間！'); return; }
-            if (gameState.currentPlayerIdx !== myPlayerIndex) { alert('還沒輪到你的回合！'); return; }
             if (gameState.winner) return;
 
             const player = gameState.players[myPlayerIndex];
@@ -779,6 +825,7 @@
             activeCardSelection = { card, source, level, idx };
             const colorInfo = CARD_COLORS[card.bonus];
             const payment = calculatePurchasePayment(player, card);
+            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex);
 
             document.getElementById('modal-card-preview').innerHTML = `
                 <div class="flex flex-col items-center gap-1.5">
@@ -787,27 +834,31 @@
                 </div>
             `;
 
-            document.getElementById('modal-cost-breakdown').innerHTML = Object.entries(card.cost).map(([g, c]) => {
-                const disc = player.bonuses[g] || 0;
-                const actual = Math.max(0, c - disc);
-                return `
-                    <div class="flex justify-between items-center py-0.5">
-                        <span class="flex items-center gap-1.5">
-                            ${getGemOrbHTML(g, 'w-4 h-4')}
-                            <span>${BANK_ITEMS[g].name}</span>
-                        </span>
-                        <span>
-                            <span class="text-slate-400">原價 ${c}</span>
-                            ${disc > 0 ? `<span class="text-emerald-400"> - 折扣 ${disc}</span>` : ''}
-                            <span class="font-bold text-amber-300"> ＝ 實付 ${actual}</span>
-                        </span>
-                    </div>
-                `;
-            }).join('');
+            document.getElementById('modal-cost-breakdown').innerHTML = CARD_GEM_ORDER.map(g => card.cost[g] ? `
+                <div class="flex justify-between items-center py-0.5">
+                    <span class="flex items-center gap-1.5">
+                        ${getGemOrbHTML(g, 'w-4 h-4')}
+                        <span>${BANK_ITEMS[g].name}</span>
+                    </span>
+                    <span>
+                        <span class="text-slate-400">原價 ${card.cost[g]}</span>
+                        ${(player.bonuses[g] || 0) > 0 ? `<span class="text-emerald-400"> - 折扣 ${player.bonuses[g]}</span>` : ''}
+                        <span class="font-bold text-amber-300"> ＝ 實付 ${Math.max(0, card.cost[g] - (player.bonuses[g] || 0))}</span>
+                    </span>
+                </div>
+            ` : '').join('');
 
             const statusEl = document.getElementById('modal-afford-status');
             const buyBtn = document.getElementById('modal-btn-buy');
             const reserveBtn = document.getElementById('modal-btn-reserve');
+
+            if (!isMyTurn) {
+                buyBtn.disabled = true;
+                reserveBtn.classList.add('hidden');
+                statusEl.innerHTML = `<span class="text-amber-300">目前為等待對手回合，僅供檢視卡片需求</span>`;
+                document.getElementById('card-action-modal').classList.remove('hidden');
+                return;
+            }
 
             if (payment.canAfford) {
                 buyBtn.disabled = false;
@@ -859,6 +910,8 @@
             player.bonuses[card.bonus] += 1;
             player.points += card.points;
 
+            addGameLog(`${player.name} 收服了 Lv.${card.level} ${CARD_COLORS[card.bonus].name}（+${card.points}分）`);
+
             if (source === 'market') {
                 gameState.market[level][idx] = gameState.decks[level].shift() || null;
             } else {
@@ -881,6 +934,8 @@
                 gameState.bank.gold -= 1;
                 player.gems.gold += 1;
             }
+
+            addGameLog(`${player.name} 保留了一張 Lv.${card.level} 卡片並獲得 1 顆大師球`);
 
             closeCardModal();
             finishActionAndCheckPhase();
@@ -908,6 +963,8 @@
                 gameState.bank.gold -= 1;
                 player.gems.gold += 1;
             }
+
+            addGameLog(`${player.name} 從 Level ${level} 牌庫頂盲抽保留 1 張卡片並獲得 1 顆大師球`);
 
             finishActionAndCheckPhase();
         }
@@ -978,6 +1035,7 @@
                 const player = gameState.players[myPlayerIndex];
                 player.nobles.push(noble);
                 player.points += noble.points;
+                addGameLog(`${player.name} 吸引了稀有寶可夢「${noble.name}」（+3分）`);
             }
             endPlayerTurn();
         }
@@ -986,9 +1044,14 @@
             const p = gameState.players[myPlayerIndex];
             if (p.points >= 15 && !gameState.finalRoundTriggered) {
                 gameState.finalRoundTriggered = true;
+                addGameLog(`⭐ 訓練家 ${p.name} 率先達成 15 分，觸發最終回合！`);
             }
 
             const totalPlayers = gameState.maxPlayers;
+            if (gameState.currentPlayerIdx === totalPlayers - 1) {
+                gameState.roundCount = (gameState.roundCount || 1) + 1;
+            }
+
             if (gameState.currentPlayerIdx === totalPlayers - 1 && gameState.finalRoundTriggered) {
                 let winner = gameState.players[0];
                 gameState.players.forEach(pl => {
@@ -999,6 +1062,7 @@
                     }
                 });
                 gameState.winner = winner.name;
+                addGameLog(`🏆 對戰結束！最終由 ${winner.name} 獲得勝利！`);
             } else {
                 gameState.currentPlayerIdx = (gameState.currentPlayerIdx + 1) % totalPlayers;
             }
@@ -1017,7 +1081,7 @@
                     <span class="font-title font-black">${pl.points} 分</span>
                 </div>
             `).join('');
-            document.getElementById('victory-modal').classList.add('hidden');
+            document.getElementById('victory-modal').classList.remove('hidden');
         }
 
         function toggleRulesModal(show) {
