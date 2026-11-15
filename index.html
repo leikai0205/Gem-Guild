@@ -155,8 +155,11 @@
                             <span>本回合已選進化石：<span id="selected-count-badge" class="text-amber-400 font-bold">0顆</span></span>
                             <span class="text-[11px] text-slate-400">規則：3異色 或 2同色(需剩≥4)</span>
                         </div>
-                        <div id="selected-gems-preview" class="min-h-[42px] flex items-center justify-center gap-2 bg-slate-950/60 rounded-xl p-1.5 border border-slate-800 mb-2.5">
+                        <div id="selected-gems-preview" class="min-h-[42px] flex items-center justify-center gap-2 bg-slate-950/60 rounded-xl p-1.5 border border-slate-800 mb-1.5">
                             <span class="text-xs text-slate-500">點擊上方進化石進行拿取</span>
+                        </div>
+                        <div id="over-limit-warning" class="hidden text-center text-[11px] text-rose-400 font-bold mb-2 bg-rose-950/40 p-1.5 rounded-lg border border-rose-500/30 animate-pulse">
+                            ⚠️ 道具總數將超過 10 個上限！請減少選取或先去收服卡片
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <button id="btn-clear-gems" onclick="clearSelectedGems()" disabled class="py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-medium text-slate-300 transition cursor-pointer">🔄 清空重選</button>
@@ -254,15 +257,6 @@
             <h3 class="font-bold text-lg text-amber-300">多位稀有寶可夢同時被吸引！</h3>
             <p class="text-xs text-slate-300">依規則，每回合只能選擇 <b>1 隻</b>稀有寶可夢來訪（其餘留待下回合）：</p>
             <div id="noble-choice-list" class="space-y-2.5 py-2"></div>
-        </div>
-    </div>
-
-    <div id="discard-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-rose-400/60 space-y-4 text-center">
-            <div class="text-3xl">⚖️</div>
-            <h3 class="font-bold text-lg text-rose-300">進化石與大師球超過上限（最多 10 個）</h3>
-            <p class="text-xs text-slate-300">你目前擁有 <b id="discard-current-count" class="text-amber-400 text-sm">11</b> 個道具，請點擊下方按鈕退回銀行：</p>
-            <div id="discard-gems-list" class="flex flex-wrap justify-center gap-3 py-3"></div>
         </div>
     </div>
 
@@ -653,6 +647,7 @@
             const btnClear = document.getElementById('btn-clear-gems');
             const btnConfirm = document.getElementById('btn-confirm-gems');
             const countBadge = document.getElementById('selected-count-badge');
+            const warningEl = document.getElementById('over-limit-warning');
             
             countBadge.textContent = `${selectedGemsBuffer.length}顆`;
 
@@ -660,11 +655,23 @@
                 preview.innerHTML = `<span class="text-xs text-slate-500">點擊上方進化石進行拿取</span>`;
                 btnClear.disabled = true; 
                 btnConfirm.disabled = true; 
+                warningEl.classList.add('hidden');
                 return;
             }
 
             preview.innerHTML = selectedGemsBuffer.map(g => getGemOrbHTML(g, 'w-7 h-7')).join('');
             btnClear.disabled = false;
+
+            // 檢查道具總數是否會超過 10 個
+            const player = gameState.players[myPlayerIndex];
+            const currentTotalGems = ALL_GEMS.reduce((sum, g) => sum + player.gems[g], 0);
+            const willExceed = (currentTotalGems + selectedGemsBuffer.length) > 10;
+
+            if (willExceed) {
+                warningEl.classList.remove('hidden');
+            } else {
+                warningEl.classList.add('hidden');
+            }
 
             // 判斷是否符合規則可以按確認
             const len = selectedGemsBuffer.length;
@@ -688,12 +695,16 @@
                 ruleHint = '⚠️ 規則規定每回合必須拿「3顆不同色」或「2顆同色」，只拿1顆無法確認！';
             }
 
-            if (isValid) {
+            if (isValid && !willExceed) {
                 btnConfirm.disabled = false;
                 btnConfirm.title = '';
             } else {
                 btnConfirm.disabled = true;
-                btnConfirm.title = ruleHint;
+                if (willExceed) {
+                    btnConfirm.title = '道具總數超過 10 個上限';
+                } else {
+                    btnConfirm.title = ruleHint;
+                }
             }
         }
 
@@ -779,7 +790,7 @@
             });
         }
 
-        // 💡 1*6 橫向屬性配置設定 (月黑改為紫卡配色 bg-purple-950/60 border-purple-500/60)
+        // 💡 1*6 橫向屬性配置設定
         const ROW_1X6_ATTRS = {
             diamond: { title: '雷|黃', bg: 'bg-amber-950/50 border-amber-500/60', gemColor: 'text-amber-200', cardBadge: 'bg-amber-100 text-amber-950 font-black border-amber-300' },
             sapphire: { title: '水|藍', bg: 'bg-blue-950/50 border-blue-500/60', gemColor: 'text-blue-300', cardBadge: 'bg-blue-950/80 text-blue-200 border-blue-400/50' },
@@ -807,7 +818,7 @@
                             <span class="font-title font-black text-xl text-amber-400">${p.points}分</span>
                         </div>
 
-                        <!-- 💡 1*6 橫向排版：把 5 個屬性卡與大師球並排成 1 行 6 列 -->
+                        <!-- 💡 1*6 橫向排版 -->
                         <div class="grid grid-cols-6 gap-1">
                             ${CARD_GEM_ORDER.map(g => {
                                 const attr = ROW_1X6_ATTRS[g];
@@ -822,7 +833,7 @@
                                 `;
                             }).join('')}
 
-                            <!-- 大師球 1*6 格子 (白色系) -->
+                            <!-- 大師球 1*6 格子 -->
                             <div class="flex flex-col items-center justify-between p-1 rounded-lg border bg-white/10 border-white/30 text-[10px] text-center">
                                 <span class="font-bold text-white">大師球</span>
                                 <span class="text-white font-black my-0.5">${p.gems.gold}</span>
@@ -886,7 +897,6 @@
                 </div>
             `;
 
-            // 💡 修正內文顯示：持有同色卡 X 張 ➔ 缺 X 顆
             document.getElementById('modal-cost-breakdown').innerHTML = CARD_GEM_ORDER.map(g => card.cost[g] ? `
                 <div class="flex justify-between items-center py-1 border-b border-slate-800/60 last:border-0">
                     <span class="flex items-center gap-1.5">
@@ -1046,7 +1056,7 @@
                     <span>退回 ${BANK_ITEMS[g].name} (${player.gems[g]})</span>
                 </button>
             ` : '').join('');
-            document.getElementById('discard-modal').classList.remove('hidden');
+            document.getElementById('discard-modal').classList.add('hidden'); // 改為直接略過退回彈窗，或保留原本邏輯
         }
 
         function discardOneGem(gem) {
