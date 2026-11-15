@@ -252,7 +252,7 @@
         <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-amber-400/70 space-y-4 text-center">
             <div class="text-3xl">⭐</div>
             <h3 class="font-bold text-lg text-amber-300">多位稀有寶可夢同時被吸引！</h3>
-            <p class="text-xs text-slate-300">依規則,每回合只能選擇 <b>1 隻</b>稀有寶可夢來訪（其餘留待下回合）：</p>
+            <p class="text-xs text-slate-300">依規則，每回合只能選擇 <b>1 隻</b>稀有寶可夢來訪（其餘留待下回合）：</p>
             <div id="noble-choice-list" class="space-y-2.5 py-2"></div>
         </div>
     </div>
@@ -783,7 +783,6 @@
                             `).join('')}
                         </div>
 
-                        <!-- 💡 修正：任何人（包括對手）的保留區卡片都可以點擊查看！若是自己且輪到你則可購買 -->
                         ${p.reserved && p.reserved.length > 0 ? `
                             <div class="pt-1.5 border-t border-slate-800/80">
                                 <div class="text-[10px] text-purple-300 font-bold mb-1">${isMe ? '你的' : `${p.name}的`}保留區 (${p.reserved.length}/3)：點擊可查看</div>
@@ -840,16 +839,16 @@
                 </div>
             `;
 
+            // 💡 調整後的全新白話說明排版：「雷之石：3顆 (持有同色卡 3 張 ➔ 0 顆)」
             document.getElementById('modal-cost-breakdown').innerHTML = CARD_GEM_ORDER.map(g => card.cost[g] ? `
-                <div class="flex justify-between items-center py-0.5">
+                <div class="flex justify-between items-center py-1 border-b border-slate-800/60 last:border-0">
                     <span class="flex items-center gap-1.5">
                         ${getGemOrbHTML(g, 'w-4 h-4')}
                         <span>${BANK_ITEMS[g].name}</span>
                     </span>
-                    <span>
-                        <span class="text-slate-400">原價 ${card.cost[g]}</span>
-                        ${(me.bonuses[g] || 0) > 0 ? `<span class="text-emerald-400"> - 折扣 ${me.bonuses[g]}</span>` : ''}
-                        <span class="font-bold text-amber-300"> ＝ 實付 ${Math.max(0, card.cost[g] - (me.bonuses[g] || 0))}</span>
+                    <span class="text-right">
+                        <span class="text-slate-300">${card.cost[g]}顆</span>
+                        <span class="text-slate-400 text-[11px] ml-1">(持有同色卡 ${me.bonuses[g] || 0} 張 ➔ <b class="text-amber-300">${Math.max(0, card.cost[g] - (me.bonuses[g] || 0))} 顆</b>)</span>
                     </span>
                 </div>
             ` : '').join('');
@@ -858,7 +857,6 @@
             const buyBtn = document.getElementById('modal-btn-buy');
             const reserveBtn = document.getElementById('modal-btn-reserve');
 
-            // 💡 如果是別人的保留區卡片，或是市場卡片但不是你的回合，只能檢視不能購買
             const isOwnReserved = (source === 'reserved' || (source === 'reservedPlayer' && targetPlayerIdx === myPlayerIndex));
 
             if (!isMyTurn || (source === 'reservedPlayer' && targetPlayerIdx !== myPlayerIndex)) {
