@@ -346,7 +346,16 @@
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const r = urlParams.get('room');
-            if (r) document.getElementById('input-room-id').value = r;
+            if (r) {
+                // 💡 智能解析網址房號（例如 8888-2p 自動切分出房號與人數）
+                const match = r.match(/^(.+)-(\d)p$/);
+                if (match) {
+                    document.getElementById('input-room-id').value = match[1];
+                    document.getElementById('input-max-players').value = match[2];
+                } else {
+                    document.getElementById('input-room-id').value = r;
+                }
+            }
         });
 
         function generateRandomRoom() {
@@ -379,7 +388,7 @@
             const maxPlayers = parseInt(document.getElementById('input-max-players').value);
             if (!rawRoomId) { alert('請輸入房號！'); return; }
             
-            // 💡 關鍵修正：將房號與人數合併作為資料庫 Key，讓 2 人局與 4 人局徹底獨立
+            // 房號與人數合併作為資料庫 Key
             currentRoomId = `${rawRoomId}-${maxPlayers}p`;
             document.getElementById('lobby-status-msg').textContent = '正在連線至房間...';
 
