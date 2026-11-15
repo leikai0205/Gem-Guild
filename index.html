@@ -740,13 +740,13 @@
             });
         }
 
-        // 💡 屬性背景配色對應表（左邊進化石、右邊屬性卡）
-        const ATTR_THEMES = {
-            diamond: { name: '雷｜黃', bg: 'bg-amber-950/40 border-amber-500/50', gemText: 'text-amber-200', cardBadge: 'bg-amber-900/90 text-amber-100 border-amber-600' },
-            sapphire: { name: '水｜藍', bg: 'bg-blue-950/40 border-blue-500/50', gemText: 'text-blue-300', cardBadge: 'bg-blue-950/80 text-blue-200 border-blue-400/50' },
-            emerald: { name: '葉｜綠', bg: 'bg-emerald-950/40 border-emerald-500/50', gemText: 'text-emerald-300', cardBadge: 'bg-emerald-950/80 text-emerald-200 border-emerald-400/50' },
-            ruby: { name: '火｜紅', bg: 'bg-rose-950/40 border-rose-500/50', gemText: 'text-rose-300', cardBadge: 'bg-red-950/80 text-red-200 border-red-400/50' },
-            onyx: { name: '月｜黑', bg: 'bg-purple-950/40 border-purple-500/50', gemText: 'text-purple-300', cardBadge: 'bg-zinc-950/90 text-zinc-200 border-zinc-500/60' }
+        // 💡 屬性主題設定（對應 2 欄格子：左邊進化石、右邊卡片）
+        const COMPACT_ATTRS = {
+            diamond: { title: '雷｜黃', bg: 'bg-amber-950/40 border-amber-500/50', gemColor: 'text-amber-200', cardBadge: 'bg-amber-900/90 text-amber-100 border-amber-600' },
+            sapphire: { title: '水｜藍', bg: 'bg-blue-950/40 border-blue-500/50', gemColor: 'text-blue-300', cardBadge: 'bg-blue-950/80 text-blue-200 border-blue-400/50' },
+            emerald: { title: '葉｜綠', bg: 'bg-emerald-950/40 border-emerald-500/50', gemColor: 'text-emerald-300', cardBadge: 'bg-emerald-950/80 text-emerald-200 border-emerald-400/50' },
+            ruby: { title: '火｜紅', bg: 'bg-rose-950/40 border-rose-500/50', gemColor: 'text-rose-300', cardBadge: 'bg-red-950/80 text-red-200 border-red-400/50' },
+            onyx: { title: '月｜黑', bg: 'bg-purple-950/40 border-purple-500/50', gemColor: 'text-purple-300', cardBadge: 'bg-zinc-950/90 text-zinc-200 border-zinc-500/60' }
         };
 
         function renderPlayers() {
@@ -758,7 +758,7 @@
                 const isMe = idx === myPlayerIndex;
                 const totalGems = ALL_GEMS.reduce((s, g) => s + p.gems[g], 0);
                 return `
-                    <div class="glass-panel rounded-2xl p-3.5 ${isCurrent ? 'active-turn-glow' : 'opacity-85'} space-y-2.5">
+                    <div class="glass-panel rounded-2xl p-3 ${isCurrent ? 'active-turn-glow' : 'opacity-85'} space-y-2">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-2 flex-wrap">
                                 <span class="font-bold text-sm text-white">${p.name} ${isMe ? '(你)' : ''}</span>
@@ -768,29 +768,35 @@
                             <span class="font-title font-black text-xl text-amber-400">${p.points}分</span>
                         </div>
 
-                        <!-- 💡 左右對應屬性面板：雷｜黃 水｜藍 格式，帶相應顏色背景 -->
-                        <div class="grid grid-cols-1 gap-1.5">
+                        <!-- 💡 2 欄精巧網格排版：雷｜黃 水｜藍 / 0｜0 2｜3 -->
+                        <div class="grid grid-cols-2 gap-1.5">
                             ${CARD_GEM_ORDER.map(g => {
-                                const theme = ATTR_THEMES[g];
+                                const attr = COMPACT_ATTRS[g];
                                 const gemCount = p.gems[g];
                                 const cardCount = p.bonuses[g];
                                 return `
-                                    <div class="flex items-center justify-between px-3 py-1.5 rounded-xl border ${theme.bg}">
-                                        <span class="text-xs font-bold text-slate-300">${theme.name}</span>
-                                        <div class="flex items-center gap-4 text-xs font-black">
-                                            <span class="${theme.gemText}">${gemCount} 顆</span>
-                                            <span class="text-slate-500">｜</span>
-                                            <span class="px-2 py-0.5 rounded border text-[11px] ${theme.cardBadge}">${cardCount} 張卡</span>
+                                    <div class="flex flex-col p-1.5 rounded-xl border ${attr.bg}">
+                                        <div class="flex justify-between items-center text-[11px] font-bold text-slate-300 px-1 border-b border-slate-800/60 pb-0.5">
+                                            <span>${attr.title}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center px-1 pt-1 text-xs font-black">
+                                            <span class="${attr.gemColor}" title="進化石">${gemCount}顆</span>
+                                            <span class="text-slate-600">|</span>
+                                            <span class="px-1.5 py-0.5 rounded border text-[10px] ${attr.cardBadge}" title="卡片加成">${cardCount}張卡</span>
                                         </div>
                                     </div>
                                 `;
                             }).join('')}
-                        </div>
 
-                        <!-- 大師球獨立一行顯示 -->
-                        <div class="flex items-center justify-between px-3 py-1.5 rounded-xl bg-purple-950/30 border border-purple-500/40 text-xs">
-                            <span class="font-bold text-purple-300">大師球 (萬用)</span>
-                            <span class="font-black text-purple-200">${p.gems.gold} 顆</span>
+                            <!-- 大師球方塊 -->
+                            <div class="flex flex-col p-1.5 rounded-xl border bg-purple-950/30 border-purple-500/40">
+                                <div class="flex justify-between items-center text-[11px] font-bold text-purple-300 px-1 border-b border-purple-900/50 pb-0.5">
+                                    <span>大師球(萬用)</span>
+                                </div>
+                                <div class="flex justify-end items-center px-1 pt-1 text-xs font-black">
+                                    <span class="text-purple-200">${p.gems.gold} 顆</span>
+                                </div>
+                            </div>
                         </div>
 
                         ${p.reserved && p.reserved.length > 0 ? `
