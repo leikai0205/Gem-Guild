@@ -338,7 +338,7 @@
         };
 
         const CARD_COLORS = {
-            diamond: { name: '黃卡', shortName: '黃', gemKey: 'diamond', bgClass: 'bg-gradient-to-br from-amber-100 via-yellow-200 to-amber-300 border-amber-500', badgeClass: 'bg-amber-900/90 text-amber-100 border-amber-600', textClass: 'text-amber-200', scoreClass: 'text-amber-950 font-black' },
+            diamond: { name: '黃卡', shortName: '黃', gemKey: 'diamond', bgClass: 'bg-gradient-to-br from-amber-100 via-yellow-200 to-amber-300 border-amber-500', badgeClass: 'bg-amber-100 text-amber-950 font-black border-amber-300', textClass: 'text-amber-200', scoreClass: 'text-amber-950 font-black' },
             sapphire: { name: '藍卡', shortName: '藍', gemKey: 'sapphire', bgClass: 'bg-gradient-to-br from-blue-700 via-sky-800 to-blue-950 border-blue-400/70', badgeClass: 'bg-blue-950/80 text-blue-200 border-blue-400/50', textClass: 'text-blue-300', scoreClass: 'text-amber-200 drop-shadow' },
             emerald: { name: '綠卡', shortName: '綠', gemKey: 'emerald', bgClass: 'bg-gradient-to-br from-emerald-700 via-green-800 to-emerald-950 border-emerald-400/70', badgeClass: 'bg-emerald-950/80 text-emerald-200 border-emerald-400/50', textClass: 'text-emerald-300', scoreClass: 'text-emerald-300 drop-shadow' },
             ruby: { name: '紅卡', shortName: '紅', gemKey: 'ruby', bgClass: 'bg-gradient-to-br from-red-700 via-rose-800 to-red-950 border-red-400/70', badgeClass: 'bg-red-950/80 text-red-200 border-red-400/50', textClass: 'text-rose-300', scoreClass: 'text-amber-200 drop-shadow' },
@@ -492,7 +492,6 @@
                     if (payload.new && payload.new.game_state) {
                         gameState = payload.new.game_state;
                         renderAll();
-                        if (gameState.winner) triggerVictoryModal(gameState.winner);
                     }
                 })
                 .subscribe();
@@ -743,13 +742,13 @@
             });
         }
 
-        // 💡 1*6 橫向屬性配置設定
+        // 💡 1*6 橫向屬性配置設定 (月黑調整為純黑 bg-zinc-950/80 border-zinc-700)
         const ROW_1X6_ATTRS = {
-            diamond: { title: '雷|黃', bg: 'bg-amber-950/50 border-amber-500/60', gemColor: 'text-amber-200', cardBadge: 'bg-amber-900/90 text-amber-100 border-amber-600' },
+            diamond: { title: '雷|黃', bg: 'bg-amber-950/50 border-amber-500/60', gemColor: 'text-amber-200', cardBadge: 'bg-amber-100 text-amber-950 font-black border-amber-300' },
             sapphire: { title: '水|藍', bg: 'bg-blue-950/50 border-blue-500/60', gemColor: 'text-blue-300', cardBadge: 'bg-blue-950/80 text-blue-200 border-blue-400/50' },
             emerald: { title: '葉|綠', bg: 'bg-emerald-950/50 border-emerald-500/60', gemColor: 'text-emerald-300', cardBadge: 'bg-emerald-950/80 text-emerald-200 border-emerald-400/50' },
             ruby: { title: '火|紅', bg: 'bg-rose-950/50 border-rose-500/60', gemColor: 'text-rose-300', cardBadge: 'bg-red-950/80 text-red-200 border-red-400/50' },
-            onyx: { title: '月|黑', bg: 'bg-purple-950/50 border-purple-500/60', gemColor: 'text-purple-300', cardBadge: 'bg-zinc-950/90 text-zinc-200 border-zinc-500/60' }
+            onyx: { title: '月|黑', bg: 'bg-zinc-950/80 border-zinc-700', gemColor: 'text-zinc-200', cardBadge: 'bg-zinc-950/90 text-zinc-200 border-zinc-500/60' }
         };
 
         function renderPlayers() {
