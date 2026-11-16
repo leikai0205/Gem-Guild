@@ -11,7 +11,7 @@
     <style>
         body { font-family: 'Noto Sans TC', sans-serif; background: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #0f172a 45%, #090d16 100%); color: #f8fafc; overflow-x: hidden; }
         .font-title { font-family: 'Cinzel', 'Noto Sans TC', serif; }
-        .glass-panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(251, 191, 36, 0.25); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); }
+        .glass-panel { background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(251, 191, 36, 0.25); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); }
         .glass-card { background: linear-gradient(145deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.96)); border: 1px solid rgba(251, 191, 36, 0.35); }
         .poke-color-card { transition: all 0.15s ease; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); }
         
@@ -30,10 +30,10 @@
         .gem-diamond { background: radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 40%, #ca8a04 80%, #422006 100%); border: 1px solid #fde047; }
         .gem-onyx { background: radial-gradient(circle at 35% 30%, #f3e8ff 0%, #c084fc 40%, #7e22ce 80%, #3b0764 100%); border: 1px solid #e879f9; }
 
-        /* 📱 手機專屬：強制單螢幕鎖死，絕不超出、不捲動 */
+        /* 📱 手機專屬排版優化：解鎖適度滑動，確保 3 排市場與所有玩家絕對完整顯示 */
         @media (max-width: 1023px) {
-            body { height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
-            #game-screen { height: 100dvh; display: flex; flex-direction: column; justify-content: space-between; padding: 4px !important; box-sizing: border-box; }
+            body { min-height: 100vh; overflow-y: auto; }
+            #game-screen { padding: 4px !important; }
         }
     </style>
 </head>
@@ -99,15 +99,15 @@
     </div>
 
     <!-- ==================== 2. 主遊戲桌面 ==================== -->
-    <div id="game-screen" class="hidden max-w-[1540px] mx-auto p-1 lg:p-4 space-y-1 lg:space-y-4 w-full">
+    <div id="game-screen" class="hidden max-w-[1540px] mx-auto p-1.5 lg:p-4 space-y-2 lg:space-y-4 w-full">
         <!-- 頂部 Header -->
-        <header class="glass-panel rounded-lg lg:rounded-2xl px-2 lg:px-4 py-1.5 lg:py-3 flex items-center justify-between gap-2 shrink-0">
-            <div class="flex items-center gap-1.5 lg:gap-3 min-w-0">
-                <span class="font-title font-black text-xs lg:text-xl text-amber-400 tracking-wider truncate">POKÉMON GUILD</span>
+        <header class="glass-panel rounded-xl lg:rounded-2xl px-3 py-2 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+                <span class="font-title font-black text-xs sm:text-sm lg:text-xl text-amber-400 tracking-wider truncate">POKÉMON GUILD</span>
                 <span class="px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-400/30 text-amber-300 text-[10px] lg:text-xs font-bold shrink-0">
                     #<span id="display-room-id">8888</span>
                 </span>
-                <span id="my-role-badge" class="px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-400 text-emerald-300 text-[10px] lg:text-xs font-bold truncate max-w-[90px] lg:max-w-none">
+                <span id="my-role-badge" class="px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-400 text-emerald-300 text-[10px] lg:text-xs font-bold truncate max-w-[90px] sm:max-w-none">
                     載入中...
                 </span>
                 <span id="final-round-badge" class="hidden px-1.5 py-0.5 rounded bg-rose-500/20 border border-rose-400 text-rose-300 text-[10px] font-bold animate-pulse shrink-0">
@@ -124,94 +124,96 @@
             </div>
         </header>
 
-        <!-- 遊戲主體網格：手機極致單頁自適應（不超出左右邊、上下不滾動），電腦維持原本 12 欄大版面 -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-1 lg:gap-4 items-start flex-1 min-h-0 overflow-hidden">
+        <!-- 遊戲主體網格 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-4 items-start">
             
             <!-- 左欄：稀有寶可夢與進化石銀行 -->
-            <div class="lg:col-span-3 space-y-1 lg:space-y-4 flex flex-col shrink-0">
+            <div class="lg:col-span-3 space-y-2 lg:space-y-4">
                 <!-- 稀有寶可夢 -->
-                <section class="glass-panel rounded-lg lg:rounded-2xl p-1.5 lg:p-4">
-                    <h2 class="text-[10px] lg:text-xs font-bold tracking-wider text-amber-300 uppercase mb-1 flex items-center gap-1">
+                <section class="glass-panel rounded-xl lg:rounded-2xl p-2 lg:p-4">
+                    <h2 class="text-[11px] lg:text-xs font-bold tracking-wider text-amber-300 uppercase mb-1.5 flex items-center gap-1">
                         <span>⭐</span> 稀有寶可夢（限1隻 +3分）
                     </h2>
-                    <div id="nobles-container" class="grid grid-cols-2 lg:grid-cols-1 gap-1"></div>
+                    <div id="nobles-container" class="grid grid-cols-2 lg:grid-cols-1 gap-1.5"></div>
                 </section>
 
                 <!-- 進化石銀行與拿取操作區 -->
-                <section class="glass-panel rounded-lg lg:rounded-2xl p-1.5 lg:p-4">
-                    <div class="flex items-center justify-between mb-1">
-                        <h2 class="text-[10px] lg:text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
+                <section class="glass-panel rounded-xl lg:rounded-2xl p-2 lg:p-4">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <h2 class="text-[11px] lg:text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
                             <span>💎</span> 進化石與大師球銀行
                         </h2>
-                        <span id="bank-limit-hint" class="text-[9px] text-slate-400">依人數調整</span>
+                        <span id="bank-limit-hint" class="text-[10px] text-slate-400">依人數調整</span>
                     </div>
-                    <div id="bank-gems-container" class="grid grid-cols-6 lg:grid-cols-3 gap-1 my-1"></div>
+                    <div id="bank-gems-container" class="grid grid-cols-6 lg:grid-cols-3 gap-1.5 my-1.5"></div>
                     
-                    <div class="mt-1 pt-1 border-t border-slate-700/60">
-                        <div class="flex items-center justify-between text-[10px] text-slate-300 mb-0.5">
+                    <div class="mt-1.5 pt-1.5 border-t border-slate-700/60">
+                        <div class="flex items-center justify-between text-[11px] text-slate-300 mb-1">
                             <span>已選：<span id="selected-count-badge" class="text-amber-400 font-bold">0顆</span></span>
-                            <span class="text-[9px] text-slate-400">3異色 或 2同色(≥4)</span>
+                            <span class="text-[10px] text-slate-400">3異色 或 2同色(≥4)</span>
                         </div>
-                        <div id="selected-gems-preview" class="min-h-[24px] flex items-center justify-center gap-1 bg-slate-950/60 rounded p-0.5 border border-slate-800 mb-1">
-                            <span class="text-[9px] text-slate-500">點上方石塊拿取</span>
+                        <div id="selected-gems-preview" class="min-h-[28px] flex items-center justify-center gap-1 bg-slate-950/60 rounded p-1 border border-slate-800 mb-1.5">
+                            <span class="text-[10px] text-slate-500">點上方石塊拿取</span>
                         </div>
-                        <div id="over-limit-warning" class="hidden text-center text-[9px] text-rose-400 font-bold mb-1 bg-rose-950/40 p-0.5 rounded animate-pulse">
+                        <div id="over-limit-warning" class="hidden text-center text-[10px] text-rose-400 font-bold mb-1 bg-rose-950/40 p-1 rounded animate-pulse">
                             ⚠️ 超過 10 個上限！
                         </div>
-                        <div class="grid grid-cols-2 gap-1">
-                            <button id="btn-clear-gems" onclick="clearSelectedGems()" disabled class="py-0.5 lg:py-2 rounded bg-slate-800 disabled:opacity-40 text-[10px] text-slate-300 cursor-pointer">🔄 重選</button>
-                            <button id="btn-confirm-gems" onclick="confirmTakeGems()" disabled class="py-0.5 lg:py-2 rounded bg-gradient-to-r from-amber-500 to-yellow-500 disabled:opacity-40 text-slate-950 font-bold text-[10px] shadow cursor-pointer">確認拿取</button>
+                        <div class="grid grid-cols-2 gap-1.5">
+                            <button id="btn-clear-gems" onclick="clearSelectedGems()" disabled class="py-1 rounded bg-slate-800 disabled:opacity-40 text-[11px] text-slate-300 cursor-pointer">🔄 重選</button>
+                            <button id="btn-confirm-gems" onclick="confirmTakeGems()" disabled class="py-1 rounded bg-gradient-to-r from-amber-500 to-yellow-500 disabled:opacity-40 text-slate-950 font-bold text-[11px] shadow cursor-pointer">確認拿取</button>
                         </div>
                     </div>
                 </section>
             </div>
 
-            <!-- 中欄：寶可夢屬性卡市場 -->
-            <main class="lg:col-span-5 glass-panel rounded-lg lg:rounded-2xl p-1.5 lg:p-4 space-y-1 lg:space-y-3 flex flex-col flex-1 min-h-0">
+            <!-- 中欄：寶可夢屬性卡市場（Lv.3, Lv.2, Lv.1 全部完整顯示） -->
+            <main class="lg:col-span-5 glass-panel rounded-xl lg:rounded-2xl p-2 lg:p-4 space-y-2 lg:space-y-3">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-[10px] lg:text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
+                    <h2 class="text-[11px] lg:text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
                         <span>🃏</span> 屬性卡市場（發光為可收服）
                     </h2>
-                    <span class="text-[9px] lg:text-[11px] text-slate-400">先達 15 分勝出</span>
+                    <span class="text-[10px] lg:text-[11px] text-slate-400">先達 15 分勝出</span>
                 </div>
                 
-                <!-- Level 3, 2, 1 牌組市場 -->
-                <div class="space-y-0.5">
-                    <div class="flex items-center justify-between text-[10px]">
-                        <span class="px-1 rounded bg-indigo-500/20 text-indigo-300 font-bold">Lv.3 (剩 <b id="deck-count-3">0</b>)</span>
-                        <button onclick="reserveBlindFromDeck(3)" class="px-1.5 py-0.2 rounded bg-purple-500/20 border border-purple-400/40 text-purple-200 text-[9px] cursor-pointer">盲抽 (+大師球)</button>
+                <!-- Level 3 -->
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between text-[11px]">
+                        <span class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold">Lv.3 頂級 (剩 <b id="deck-count-3">0</b>)</span>
+                        <button onclick="reserveBlindFromDeck(3)" class="px-2 py-0.5 rounded bg-purple-500/20 border border-purple-400/40 text-purple-200 text-[10px] cursor-pointer">盲抽 (+大師球)</button>
                     </div>
-                    <div id="market-row-3" class="grid grid-cols-4 gap-1 lg:gap-3"></div>
+                    <div id="market-row-3" class="grid grid-cols-4 gap-1.5 lg:gap-3"></div>
                 </div>
 
-                <div class="space-y-0.5">
-                    <div class="flex items-center justify-between text-[10px]">
-                        <span class="px-1 rounded bg-amber-500/20 text-amber-300 font-bold">Lv.2 (剩 <b id="deck-count-2">0</b>)</span>
-                        <button onclick="reserveBlindFromDeck(2)" class="px-1.5 py-0.2 rounded bg-purple-500/20 border border-purple-400/40 text-purple-200 text-[9px] cursor-pointer">盲抽 (+大師球)</button>
+                <!-- Level 2 -->
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between text-[11px]">
+                        <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">Lv.2 中階 (剩 <b id="deck-count-2">0</b>)</span>
+                        <button onclick="reserveBlindFromDeck(2)" class="px-2 py-0.5 rounded bg-purple-500/20 border border-purple-400/40 text-purple-200 text-[10px] cursor-pointer">盲抽 (+大師球)</button>
                     </div>
-                    <div id="market-row-2" class="grid grid-cols-4 gap-1 lg:gap-3"></div>
+                    <div id="market-row-2" class="grid grid-cols-4 gap-1.5 lg:gap-3"></div>
                 </div>
 
-                <div class="space-y-0.5">
-                    <div class="flex items-center justify-between text-[10px]">
-                        <span class="px-1 rounded bg-emerald-500/20 text-emerald-300 font-bold">Lv.1 (剩 <b id="deck-count-1">0</b>)</span>
-                        <button onclick="reserveBlindFromDeck(1)" class="px-1.5 py-0.2 rounded bg-purple-500/20 border border-purple-400/40 text-purple-200 text-[9px] cursor-pointer">盲抽 (+大師球)</button>
+                <!-- Level 1 -->
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between text-[11px]">
+                        <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">Lv.1 初階 (剩 <b id="deck-count-1">0</b>)</span>
+                        <button onclick="reserveBlindFromDeck(1)" class="px-2 py-0.5 rounded bg-purple-500/20 border border-purple-400/40 text-purple-200 text-[10px] cursor-pointer">盲抽 (+大師球)</button>
                     </div>
-                    <div id="market-row-1" class="grid grid-cols-4 gap-1 lg:gap-3"></div>
+                    <div id="market-row-1" class="grid grid-cols-4 gap-1.5 lg:gap-3"></div>
                 </div>
             </main>
 
             <!-- 右欄：玩家面板與戰報 -->
-            <aside class="lg:col-span-4 space-y-1 lg:space-y-4 flex flex-col shrink-0">
-                <section class="glass-panel rounded-lg lg:rounded-2xl p-1.5 lg:p-4 space-y-1">
-                    <h2 class="text-[10px] lg:text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
+            <aside class="lg:col-span-4 space-y-2 lg:space-y-4">
+                <section class="glass-panel rounded-xl lg:rounded-2xl p-2 lg:p-4 space-y-1.5">
+                    <h2 class="text-[11px] lg:text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
                         <span>📜</span> 即時戰報
                     </h2>
-                    <div id="battle-log-container" class="bg-slate-950/80 rounded p-1 h-14 lg:h-28 overflow-y-auto space-y-0.5 border border-slate-800 text-[9px] lg:text-xs text-slate-300">
+                    <div id="battle-log-container" class="bg-slate-950/80 rounded-lg p-1.5 h-20 lg:h-28 overflow-y-auto space-y-1 border border-slate-800 text-[10px] lg:text-xs text-slate-300">
                         <div class="text-slate-500">等待遊戲開始...</div>
                     </div>
                 </section>
-                <div id="players-container" class="space-y-1 lg:space-y-3"></div>
+                <div id="players-container" class="space-y-2 lg:space-y-3"></div>
             </aside>
         </div>
     </div>
@@ -982,7 +984,7 @@
         }
 
         function claimNobleAndEndTurn(nobleId) {
-            document.getElementById('noble-choice-modal').classList.add('hidden');
+            document.getElementById('noble-choice-modal'].classList.add('hidden');
             const nobleIdx = gameState.nobles.findIndex(n => n.id === nobleId);
             if (nobleIdx !== -1) {
                 const noble = gameState.nobles.splice(nobleIdx, 1)[0];
