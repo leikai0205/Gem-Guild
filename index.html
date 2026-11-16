@@ -589,27 +589,29 @@
         }
 
         function renderBank() {
-            const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
-            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !hasWaiting && !gameState.winner;
-            const container = document.getElementById('bank-gems-container');
-            document.getElementById('bank-limit-hint').textContent = `${gameState.maxPlayers}人局配置`;
+  const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
+  const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !hasWaiting && !gameState.winner;
+  const container = document.getElementById('bank-gems-container');
+  document.getElementById('bank-limit-hint').textContent = `${gameState.maxPlayers}人局配置`;
 
-            container.innerHTML = ALL_GEMS.map(gem => {
-                const total = gameState.bank[gem];
-                const selected = selectedGemsBuffer.filter(g => g === gem).length;
-                const info = BANK_ITEMS[gem];
-                const remaining = total - selected;
-                return `
-                    <div class="item-orb-btn relative flex flex-col items-center justify-center p-2 rounded-xl bg-slate-900/80 border border-slate-800 ${isMyTurn && gem !== 'gold' ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-70'}" onclick="${isMyTurn && gem !== 'gold' ? `handleSelectBankGem('${gem}')` : ''}">
-                        <span class="absolute top-1 right-1 w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-black text-[11px] flex items-center justify-center shadow-md border border-amber-300 z-10">
-                            ${remaining}
-                        </span>
-                        <div class="my-1">${getGemOrbHTML(gem, 'w-9 h-9')}</div>
-                        <span class="text-xs font-bold ${info.text} mt-0.5">${info.name}</span>
-                    </div>
-                `;
-            }).join('');
-        }
+  container.innerHTML = ALL_GEMS.map(gem => {
+    const total = gameState.bank[gem];
+    const selected = selectedGemsBuffer.filter(g => g === gem).length;
+    const info = BANK_ITEMS[gem];
+    const remaining = total - selected;
+
+    return `
+      <div class="item-orb-btn relative flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl bg-slate-900/80 border border-slate-800 ${isMyTurn && gem !== 'gold' ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-70'}"
+           onclick="${isMyTurn && gem !== 'gold' ? `handleSelectBankGem('${gem}')` : ''}">
+        <span class="absolute -top-1.5 -right-1 w-4 h-4 rounded-full bg-amber-500 text-slate-950 font-black text-[10px] flex items-center justify-center shadow border border-amber-300 z-10">
+          ${remaining}
+        </span>
+        <div class="my-0.5">${getGemOrbHTML(gem, 'w-6 h-6')}</div>
+        <span class="text-[10px] font-bold ${info.text} leading-tight">${info.short}</span>
+      </div>
+    `;
+  }).join('');
+}
 
         function handleSelectBankGem(gem) {
             if (gem === 'gold') return;
