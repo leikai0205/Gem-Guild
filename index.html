@@ -588,7 +588,7 @@
             `).join('');
         }
 
-        function renderBank() {
+    function renderBank() {
   const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
   const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !hasWaiting && !gameState.winner;
   const container = document.getElementById('bank-gems-container');
@@ -607,7 +607,7 @@
           ${remaining}
         </span>
         <div class="my-0.5">${getGemOrbHTML(gem, 'w-6 h-6')}</div>
-        <span class="text-[10px] font-bold ${info.text} leading-tight">${info.short}</span>
+        <span class="text-[9px] font-bold ${info.text} leading-tight whitespace-nowrap">${info.name}</span>
       </div>
     `;
   }).join('');
