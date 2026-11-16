@@ -345,6 +345,7 @@
         let selectedGemsBuffer = [];
         let activeCardSelection = null;
         let realtimeChannel = null;
+        let isActionProcessing = false; // 💡 防止連點的防呆鎖
 
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -626,6 +627,13 @@
                     alert('💡 遊戲規則提示：\n已拿取不同色進化石時，不能再拿同色第 2 顆！');
                 }
             } else if (alreadyCount === 0) {
+                // 💡 嚴格限制：如果要點選同色第 2 顆，必須確保銀行該色總庫存 >= 4
+                if (selectedGemsBuffer.length === 1 && selectedGemsBuffer[0] === gem) {
+                    if (bankStock < 4) {
+                        alert(`💡 遊戲規則提示：\n銀行「${BANK_ITEMS[gem].name}」總庫存僅剩 ${bankStock} 顆，必須 $\ge 4$ 顆才能拿 2 顆同色！`);
+                        return;
+                    }
+                }
                 const hasPair = selectedGemsBuffer.length === 2 && selectedGemsBuffer[0] === selectedGemsBuffer[1];
                 if (!hasPair && selectedGemsBuffer.length < 3) {
                     selectedGemsBuffer.push(gem);
@@ -662,7 +670,6 @@
             preview.innerHTML = selectedGemsBuffer.map(g => getGemOrbHTML(g, 'w-7 h-7')).join('');
             btnClear.disabled = false;
 
-            // 檢查道具總數是否會超過 10 個
             const player = gameState.players[myPlayerIndex];
             const currentTotalGems = ALL_GEMS.reduce((sum, g) => sum + player.gems[g], 0);
             const willExceed = (currentTotalGems + selectedGemsBuffer.length) > 10;
@@ -673,7 +680,6 @@
                 warningEl.classList.add('hidden');
             }
 
-            // 判斷是否符合規則可以按確認
             const len = selectedGemsBuffer.length;
             let isValid = false;
             let ruleHint = '';
@@ -687,7 +693,12 @@
                 }
             } else if (len === 2) {
                 if (selectedGemsBuffer[0] === selectedGemsBuffer[1]) {
-                    isValid = true;
+                    // 再次驗證庫存
+                    if (gameState.bank[selectedGemsBuffer[0]] >= 4) {
+                        isValid = true;
+                    } else {
+                        ruleHint = '❌ 該進化石銀行庫存不足 4 顆，不能拿 2 顆同色！';
+                    }
                 } else {
                     ruleHint = '❌ 2顆必須同色！若要拿不同色請滿3顆';
                 }
@@ -695,7 +706,7 @@
                 ruleHint = '⚠️ 規則規定每回合必須拿「3顆不同色」或「2顆同色」，只拿1顆無法確認！';
             }
 
-            if (isValid && !willExceed) {
+            if (isValid && !willExceed && !isActionProcessing) {
                 btnConfirm.disabled = false;
                 btnConfirm.title = '';
             } else {
@@ -709,7 +720,10 @@
         }
 
         async function confirmTakeGems() {
-            if (selectedGemsBuffer.length === 0) return;
+            if (isActionProcessing || selectedGemsBuffer.length === 0) return;
+            isActionProcessing = true;
+            document.getElementById('btn-confirm-gems').disabled = true;
+
             const player = gameState.players[myPlayerIndex];
             const gemNamesSummary = selectedGemsBuffer.map(g => BANK_ITEMS[g].name).join('、');
             selectedGemsBuffer.forEach(gem => {
@@ -718,7 +732,8 @@
             });
             addGameLog(`${player.name} 拿取了進化石：${gemNamesSummary}`);
             selectedGemsBuffer = [];
-            finishActionAndCheckPhase();
+            await finishActionAndCheckPhase();
+            isActionProcessing = false;
         }
 
         function calculatePurchasePayment(player, card) {
@@ -790,7 +805,6 @@
             });
         }
 
-        // 💡 1*6 橫向屬性配置設定
         const ROW_1X6_ATTRS = {
             diamond: { title: '雷|黃', bg: 'bg-amber-950/50 border-amber-500/60', gemColor: 'text-amber-200', cardBadge: 'bg-amber-100 text-amber-950 font-black border-amber-300' },
             sapphire: { title: '水|藍', bg: 'bg-blue-950/50 border-blue-500/60', gemColor: 'text-blue-300', cardBadge: 'bg-blue-950/80 text-blue-200 border-blue-400/50' },
@@ -818,7 +832,6 @@
                             <span class="font-title font-black text-xl text-amber-400">${p.points}分</span>
                         </div>
 
-                        <!-- 💡 1*6 橫向排版 -->
                         <div class="grid grid-cols-6 gap-1">
                             ${CARD_GEM_ORDER.map(g => {
                                 const attr = ROW_1X6_ATTRS[g];
@@ -833,7 +846,6 @@
                                 `;
                             }).join('')}
 
-                            <!-- 大師球 1*6 格子 -->
                             <div class="flex flex-col items-center justify-between p-1 rounded-lg border bg-white/10 border-white/30 text-[10px] text-center">
                                 <span class="font-bold text-white">大師球</span>
                                 <span class="text-white font-black my-0.5">${p.gems.gold}</span>
@@ -914,8 +926,6 @@
             const buyBtn = document.getElementById('modal-btn-buy');
             const reserveBtn = document.getElementById('modal-btn-reserve');
 
-            const isOwnReserved = (source === 'reserved' || (source === 'reservedPlayer' && targetPlayerIdx === myPlayerIndex));
-
             if (!isMyTurn || (source === 'reservedPlayer' && targetPlayerIdx !== myPlayerIndex)) {
                 buyBtn.classList.add('hidden');
                 reserveBtn.classList.add('hidden');
@@ -957,13 +967,17 @@
         }
 
         async function executeBuyCard() {
-            if (!activeCardSelection) return;
+            if (isActionProcessing || !activeCardSelection) return;
+            isActionProcessing = true;
+            document.getElementById('modal-btn-buy').disabled = true;
+
             const { card, source, level, idx, targetPlayerIdx } = activeCardSelection;
             const player = gameState.players[myPlayerIndex];
             const payment = calculatePurchasePayment(player, card);
 
             if (!payment.canAfford) {
                 alert('你的進化石與大師球不足以收服這張寶可夢卡！');
+                isActionProcessing = false;
                 return;
             }
 
@@ -987,14 +1001,21 @@
             }
 
             closeCardModal();
-            finishActionAndCheckPhase();
+            await finishActionAndCheckPhase();
+            isActionProcessing = false;
         }
 
         async function executeReserveCard() {
-            if (!activeCardSelection) return;
+            if (isActionProcessing || !activeCardSelection) return;
+            isActionProcessing = true;
+            document.getElementById('modal-btn-reserve').disabled = true;
+
             const { card, level, idx } = activeCardSelection;
             const player = gameState.players[myPlayerIndex];
-            if ((player.reserved || []).length >= 3) return;
+            if ((player.reserved || []).length >= 3) {
+                isActionProcessing = false;
+                return;
+            }
 
             player.reserved.push(card);
             gameState.market[level][idx] = gameState.decks[level].shift() || null;
@@ -1006,14 +1027,15 @@
             addGameLog(`${player.name} 保留了一張 Lv.${card.level} 卡片並獲得 1 顆大師球`);
 
             closeCardModal();
-            finishActionAndCheckPhase();
+            await finishActionAndCheckPhase();
+            isActionProcessing = false;
         }
 
         async function reserveBlindFromDeck(level) {
             const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
             if (hasWaiting) { alert('請先等待所有訓練家加入房間！'); return; }
             if (gameState.currentPlayerIdx !== myPlayerIndex) { alert('還沒輪到你的回合！'); return; }
-            if (gameState.winner) return;
+            if (gameState.winner || isActionProcessing) return;
 
             const player = gameState.players[myPlayerIndex];
             if ((player.reserved || []).length >= 3) {
@@ -1025,6 +1047,7 @@
                 return;
             }
 
+            isActionProcessing = true;
             const topCard = gameState.decks[level].shift();
             player.reserved.push(topCard);
             if (gameState.bank.gold > 0) {
@@ -1034,51 +1057,32 @@
 
             addGameLog(`${player.name} 從 Level ${level} 牌庫頂盲抽保留 1 張卡片並獲得 1 顆大師球`);
 
-            finishActionAndCheckPhase();
+            await finishActionAndCheckPhase();
+            isActionProcessing = false;
         }
 
-        function finishActionAndCheckPhase() {
+        async function finishActionAndCheckPhase() {
             const player = gameState.players[myPlayerIndex];
             const totalGems = ALL_GEMS.reduce((sum, g) => sum + player.gems[g], 0);
             if (totalGems > 10) {
                 openDiscardModal();
             } else {
-                checkNoblePhaseAndEndTurn();
+                await checkNoblePhaseAndEndTurn();
             }
         }
 
         function openDiscardModal() {
-            const player = gameState.players[myPlayerIndex];
-            document.getElementById('discard-current-count').textContent = ALL_GEMS.reduce((s, g) => s + player.gems[g], 0);
-            document.getElementById('discard-gems-list').innerHTML = ALL_GEMS.map(g => player.gems[g] > 0 ? `
-                <button onclick="discardOneGem('${g}')" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs text-white flex items-center gap-1.5 cursor-pointer">
-                    ${getGemOrbHTML(g, 'w-4 h-4')}
-                    <span>退回 ${BANK_ITEMS[g].name} (${player.gems[g]})</span>
-                </button>
-            ` : '').join('');
-            document.getElementById('discard-modal').classList.add('hidden'); // 改為直接略過退回彈窗，或保留原本邏輯
+            // 防呆預防超過 10 個時的暫停
         }
 
-        function discardOneGem(gem) {
-            const player = gameState.players[myPlayerIndex];
-            player.gems[gem] -= 1;
-            gameState.bank[gem] += 1;
-            if (ALL_GEMS.reduce((s, g) => s + player.gems[g], 0) <= 10) {
-                document.getElementById('discard-modal').classList.add('hidden');
-                checkNoblePhaseAndEndTurn();
-            } else {
-                openDiscardModal();
-            }
-        }
-
-        function checkNoblePhaseAndEndTurn() {
+        async function checkNoblePhaseAndEndTurn() {
             const player = gameState.players[myPlayerIndex];
             const eligibleNobles = gameState.nobles.filter(n => {
                 return Object.entries(n.req).every(([gem, reqCount]) => (player.bonuses[gem] || 0) >= reqCount);
             });
 
             if (eligibleNobles.length === 1) {
-                claimNobleAndEndTurn(eligibleNobles[0].id);
+                await claimNobleAndEndTurn(eligibleNobles[0].id);
             } else if (eligibleNobles.length > 1) {
                 document.getElementById('noble-choice-list').innerHTML = eligibleNobles.map(n => `
                     <button onclick="claimNobleAndEndTurn('${n.id}')" class="w-full p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-amber-400/50 flex items-center gap-3 cursor-pointer">
@@ -1091,11 +1095,11 @@
                 `).join('');
                 document.getElementById('noble-choice-modal').classList.remove('hidden');
             } else {
-                endPlayerTurn();
+                await endPlayerTurn();
             }
         }
 
-        function claimNobleAndEndTurn(nobleId) {
+        async function claimNobleAndEndTurn(nobleId) {
             document.getElementById('noble-choice-modal').classList.add('hidden');
             const nobleIdx = gameState.nobles.findIndex(n => n.id === nobleId);
             if (nobleIdx !== -1) {
@@ -1105,7 +1109,7 @@
                 player.points += noble.points;
                 addGameLog(`${player.name} 吸引了稀有寶可夢「${noble.name}」（+3分）`);
             }
-            endPlayerTurn();
+            await endPlayerTurn();
         }
 
         async function endPlayerTurn() {
@@ -1132,6 +1136,7 @@
                 gameState.winner = winner.name;
                 addGameLog(`🏆 對戰結束！最終由 ${winner.name} 獲得勝利！`);
             } else {
+                // 💡 確保安全輪轉到下一位玩家
                 gameState.currentPlayerIdx = (gameState.currentPlayerIdx + 1) % totalPlayers;
             }
 
