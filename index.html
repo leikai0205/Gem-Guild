@@ -40,32 +40,31 @@ body {
 }
 
 /* ==========================================================
-   1. 解決卡片間距太大、浪費空間的問題
-   將寬度從 55% 改為自適應填滿格子 (92% ~ 96%)，讓卡片變大、間距變緊湊
+   精簡化寶可夢卡片：對標原版緊湊、不佔版面、免捲動的黃金比例
    ========================================================== */
 .poke-color-card { 
     position: relative;
     transform-style: preserve-3d; 
-    width: 94% !important;       /* 放大卡片佔格子的比例，消除過大間距 */
-    max-width: 150px !important; /* 限制最大寬度避免在大螢幕過大 */
+    width: 72% !important;       /* 縮小卡片寬度佔比，讓多張牌並排時不擁擠、不浪費空間 */
+    max-width: 110px !important; /* 限制最大寬度，對齊原版精緻小巧的視覺感 */
     margin: 0 auto !important; 
     aspect-ratio: 3 / 4 !important; 
     min-height: auto !important; 
     max-height: none !important; 
-    padding: 4px 2px !important; 
+    padding: 2px 1px !important; /* 極度壓縮邊距，省下空間 */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border-radius: .36em;
+    border-radius: .3em;
     background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
     border: 1px solid rgba(251, 191, 36, 0.35);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4); 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); 
     transition: transform 0.22s cubic-bezier(.2,.8,.2,1), box-shadow .22s, border-color .22s; 
 }
 
 .poke-color-card:hover { 
-    transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-4px) scale(1.03); 
-    box-shadow: 0 1.2em 1.8em rgba(0,0,0,.65), 0 0 1.2em rgba(251,231,168,.35); 
+    transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px) scale(1.04); 
+    box-shadow: 0 1em 1.5em rgba(0,0,0,.65), 0 0 1em rgba(251,231,168,.35); 
     border-color: rgba(251, 191, 36, 0.85);
     z-index: 20; 
 }
@@ -73,7 +72,7 @@ body {
 .poke-color-card .c-glare {
     position: absolute;
     inset: 0;
-    border-radius: .36em;
+    border-radius: .3em;
     background: radial-gradient(circle at var(--mx, 50%) var(--my, 20%), rgba(255,255,255,.35), transparent 50%);
     opacity: 0;
     transition: opacity 0.2s ease;
@@ -86,81 +85,83 @@ body {
 .poke-color-card:hover .font-title,
 .poke-color-card:hover img,
 .poke-color-card:hover .card-cost-container {
-    transform: translateZ(1.1em);
+    transform: translateZ(1em);
 }
 
 .nobles-flex-container { display: flex; gap: 4px; width: 100%; }
-.noble-mini-card { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 3px 2px; border-radius: 8px; }
+.noble-mini-card { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 2px 1px; border-radius: 6px; }
 
 @keyframes affordableGlow {
-    0%, 100% { border-color: #34d399; box-shadow: 0 0 10px rgba(52, 211, 153, 0.5); }
-    50% { border-color: #6ee7b7; box-shadow: 0 0 18px rgba(110, 231, 183, 0.8); }
+    0%, 100% { border-color: #34d399; box-shadow: 0 0 8px rgba(52, 211, 153, 0.5); }
+    50% { border-color: #6ee7b7; box-shadow: 0 0 14px rgba(110, 231, 183, 0.8); }
 }
 .affordable-card { animation: affordableGlow 1.8s infinite; }
 
 .item-orb-btn { transition: transform 0.15s ease; }
 .item-orb-btn:hover:not(:disabled) { transform: translateY(-2px); }
-.active-turn-glow { border-color: #fbbf24 !important; box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
+.active-turn-glow { border-color: #fbbf24 !important; box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
 
 @keyframes pulseGold { 
-    0%, 100% { box-shadow: 0 0 10px rgba(251, 191, 36, 0.4); } 
-    50% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.8); } 
+    0%, 100% { box-shadow: 0 0 8px rgba(251, 191, 36, 0.4); } 
+    50% { box-shadow: 0 0 16px rgba(251, 191, 36, 0.8); } 
 }
 .btn-gold-glow { animation: pulseGold 2.2s infinite; }
 
-.gem-ruby { background: radial-gradient(circle at 35% 30%, #fca5a5 0%, #dc2626 40%, #7f1d1d 80%, #450a0a 100%); box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 6px rgba(220,38,38,0.4); border: 1px solid #f87171; }
-.gem-sapphire { background: radial-gradient(circle at 35% 30%, #7dd3fc 0%, #0284c7 40%, #0369a1 80%, #082f49 100%); box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 6px rgba(2,132,199,0.4); border: 1px solid #38bdf8; }
-.gem-emerald { background: radial-gradient(circle at 35% 30%, #6ee7b7 0%, #059669 40%, #047857 80%, #022c22 100%); box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 6px rgba(5,150,105,0.4); border: 1px solid #34d399; }
-.gem-diamond { background: radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 40%, #ca8a04 80%, #422006 100%); box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 6px rgba(234,179,8,0.4); border: 1px solid #fde047; }
-.gem-onyx { background: radial-gradient(circle at 35% 30%, #f3e8ff 0%, #c084fc 40%, #7e22ce 80%, #3b0764 100%); box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 6px rgba(192,132,252,0.4); border: 1px solid #e879f9; }
+.gem-ruby { background: radial-gradient(circle at 35% 30%, #fca5a5 0%, #dc2626 40%, #7f1d1d 80%, #450a0a 100%); box-shadow: inset -1px -1px 3px rgba(0,0,0,0.6), 0 0 4px rgba(220,38,38,0.4); border: 1px solid #f87171; }
+.gem-sapphire { background: radial-gradient(circle at 35% 30%, #7dd3fc 0%, #0284c7 40%, #0369a1 80%, #082f49 100%); box-shadow: inset -1px -1px 3px rgba(0,0,0,0.6), 0 0 4px rgba(2,132,199,0.4); border: 1px solid #38bdf8; }
+.gem-emerald { background: radial-gradient(circle at 35% 30%, #6ee7b7 0%, #059669 40%, #047857 80%, #022c22 100%); box-shadow: inset -1px -1px 3px rgba(0,0,0,0.6), 0 0 4px rgba(5,150,105,0.4); border: 1px solid #34d399; }
+.gem-diamond { background: radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 40%, #ca8a04 80%, #422006 100%); box-shadow: inset -1px -1px 3px rgba(0,0,0,0.6), 0 0 4px rgba(234,179,8,0.4); border: 1px solid #fde047; }
+.gem-onyx { background: radial-gradient(circle at 35% 30%, #f3e8ff 0%, #c084fc 40%, #7e22ce 80%, #3b0764 100%); box-shadow: inset -1px -1px 3px rgba(0,0,0,0.6), 0 0 4px rgba(192,132,252,0.4); border: 1px solid #e879f9; }
 
+/* 圖片等比例縮小，配合緊湊排版 */
 .poke-color-card img,
 .noble-mini-card img {
     width: auto !important;
-    height: 70px !important; 
-    max-width: 85% !important;
+    height: 48px !important; /* 縮小圖片高度，釋放縱向空間避免卡片過長 */
+    max-width: 80% !important;
     object-fit: contain;
     margin: auto auto !important; 
     image-rendering: -webkit-optimize-contrast; 
     transition: transform 0.2s ease;
 }
 
+/* 標籤字體微調縮小 */
 .poke-color-card span.border {
-    font-size: 10px !important; 
-    padding: 1px 3px !important;
+    font-size: 8px !important; 
+    padding: 0px 2px !important;
 }
 
 .poke-color-card .font-title {
-    font-size: 12px !important; 
+    font-size: 10px !important; 
 }
 
 .noble-mini-card span {
-    font-size: 9px !important;
+    font-size: 8px !important;
 }
 
 /* ==========================================================
-   2. 解決第四種進化石被吃掉 / 顯示不出的問題
-   強制所有進化石在同一行、去掉會造成位移的負 margin，改用輕量縮放
+   進化石成本列：完美容納 4 顆並緊密貼合底部
    ========================================================== */
 .card-cost-container {
     display: flex !important;
     flex-direction: row !important;
-    flex-wrap: nowrap !important; /* 絕對不換行，全部擠同一行 */
+    flex-wrap: nowrap !important; 
     justify-content: center !important;
     align-items: center !important;
-    gap: 1px !important;          
+    gap: 0px !important;          
     width: 100% !important;
     overflow: visible !important;
-    padding: 0 1px !important;
+    padding: 0 !important;
+    margin-bottom: 2px !important;
 }
 
-/* 針對進化石圖標與數字的小元件進行適度縮小，確保 4 個能完美塞進卡片底部 */
+/* 完美將 4 顆進化石與數字整體縮放，塞進精巧的卡片底部 */
 .card-cost-container > div,
 .card-cost-container .flex {
-    transform: scale(0.62) !important; /* 再稍微縮小一點點確保 4 個一律塞得下 */
+    transform: scale(0.52) !important; /* 縮小至 52%，讓 4 種圖標毫無壓力全部排在同一行 */
     transform-origin: center bottom !important;
-    margin: 0 -2px !important;         /* 緊密靠攏但不重疊 */
-    flex-shrink: 0 !important;        /* 防止圖標被壓縮變形 */
+    margin: 0 -4px !important;         
+    flex-shrink: 0 !important;        
 }
     </style>
 </head>
