@@ -85,9 +85,8 @@ html, body {
 .poke-color-card { 
     position: relative;
     transform-style: preserve-3d; 
-    width: 100% !important;        
-    max-width: 82px !important;  
-    margin: 0 auto !important; 
+    width: 82px !important;       /* 固定精準寬度，緊密靠攏 */
+    min-width: 82px !important;
     aspect-ratio: 1 / 1.22 !important; 
     min-height: auto !important; 
     max-height: none !important; 
@@ -260,7 +259,7 @@ html, body {
                         <div id="nobles-container"></div>
                     </section>
 
-                    <!-- 標準 3 欄卡片市場 + 標題列後方放盲抽按鈕 -->
+                    <!-- 市場卡片採用緊密靠左（justify-start），妙蛙花與拉普拉斯完美緊鄰 -->
                     <main class="glass-panel rounded-xl p-2.5 space-y-2.5">
                         <div class="flex items-center justify-between">
                             <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
@@ -280,7 +279,7 @@ html, body {
                                             <button onclick="reserveBlindFromDeck(3)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition shadow">🎲 Lv.3 盲抽 (+大師球)</button>
                                         </div>
                                     </div>
-                                    <div id="market-row-3" class="grid grid-cols-3 gap-2"></div>
+                                    <div id="market-row-3" class="flex flex-wrap gap-2 justify-start"></div>
                                 </div>
 
                                 <div class="space-y-1">
@@ -290,7 +289,7 @@ html, body {
                                             <button onclick="reserveBlindFromDeck(2)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition shadow">🎲 Lv.2 盲抽 (+大師球)</button>
                                         </div>
                                     </div>
-                                    <div id="market-row-2" class="grid grid-cols-3 gap-2"></div>
+                                    <div id="market-row-2" class="flex flex-wrap gap-2 justify-start"></div>
                                 </div>
 
                                 <div class="space-y-1">
@@ -300,7 +299,7 @@ html, body {
                                             <button onclick="reserveBlindFromDeck(1)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition shadow">🎲 Lv.1 盲抽 (+大師球)</button>
                                         </div>
                                     </div>
-                                    <div id="market-row-1" class="grid grid-cols-3 gap-2"></div>
+                                    <div id="market-row-1" class="flex flex-wrap gap-2 justify-start"></div>
                                 </div>
                             </div>
 
@@ -436,7 +435,7 @@ html, body {
 
     <!-- 遊戲核心邏輯 -->
     <script>
-        // 渲染市場（維持 3 張明牌緊湊排列，盲抽按鈕移至左上角等級標題後方）
+        // 渲染市場（使用緊湊靠左排列，讓妙蛙花與拉普拉斯緊鄰）
         function renderMarket() {
             const currentPlayer = gameState.players[myPlayerIndex];
             const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !gameState.winner;
