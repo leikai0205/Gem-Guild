@@ -279,7 +279,7 @@ html, body {
             </div>
         </div>
 
-<!-- ==================== 2. 遊戲主畫面 ==================== -->
+        <!-- ==================== 2. 遊戲主畫面 ==================== -->
         <div id="game-screen" class="game-main-layout hidden absolute inset-0 z-20 flex flex-col p-2.5 gap-2">
             
             <!-- 1. 頂部狀態列（獨立在最上方，強制單行、橫跨全寬） -->
@@ -333,7 +333,7 @@ html, body {
                         <div id="nobles-container"></div>
                     </section>
 
-<!-- 🃏 寶可夢資源卡市場與右側 3 格保留卡區 -->
+                    <!-- 🃏 寶可夢資源卡市場與右側 3 格保留卡區 -->
                     <main class="glass-panel rounded-xl p-2.5 space-y-2">
                         <div class="flex items-center justify-between">
                             <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
@@ -342,7 +342,7 @@ html, body {
                             <span class="text-[10px] text-slate-400">先達 15 分觸發終局</span>
                         </div>
                         
-                        <!-- 關鍵：用 flex 讓市場與右側預留卡「左右並排」而不是上下堆疊 -->
+                        <!-- 關鍵：用 flex 讓左側市場與右側預留卡「左右並排」 -->
                         <div class="flex flex-col xl:flex-row gap-2.5 items-start">
                             
                             <!-- 左側 12 宮格市場區 -->
@@ -381,8 +381,8 @@ html, body {
                                 </div>
                             </div>
 
-                            <!-- 右側直立 3 格保留卡區：固定在市場的右側 -->
-                            <aside class="w-full xl:w-[100px] bg-slate-950/60 rounded-xl p-2 border border-slate-800 flex flex-col justify-between shrink-0 space-y-2">
+                            <!-- 右側直立 3 格保留卡區：固定在市場的右側，對齊你的紅框位置 -->
+                            <aside class="w-full xl:w-[110px] bg-slate-950/60 rounded-xl p-2 border border-slate-800 flex flex-col justify-between shrink-0 space-y-2">
                                 <div class="text-[10px] font-bold text-amber-300/90 text-center border-b border-slate-800 pb-1">
                                     📦 預留卡 (<span id="reserved-count-text">0</span>/3)
                                 </div>
@@ -393,6 +393,7 @@ html, body {
 
                         </div>
                     </main>
+                </div>
 
                 <!-- ==================== 右邊欄位（銀行在上 ➔ 玩家資訊 ➔ 可內滑戰報） ==================== -->
                 <aside class="lg:col-span-4 space-y-2.5 overflow-y-auto h-full pr-1">
@@ -442,7 +443,9 @@ html, body {
             </div>
         </div>
 
-    <!-- ==================== 3. 彈窗區塊（獨立置於最外層，不受限制） ==================== -->
+    </div>
+
+    <!-- ==================== 3. 彈窗區塊 ==================== -->
     <div id="card-action-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel max-w-sm w-full rounded-3xl p-5 border border-amber-400/50 space-y-4">
             <div class="flex items-center justify-between">
@@ -518,61 +521,64 @@ html, body {
     <!-- ==================== 4. 遊戲核心邏輯 ==================== -->
     <script>
         // ==================== 渲染我的保留卡專區（直立 3 格） ====================
-function renderMyReservedCards(myReservedCards) {
-    const container = document.getElementById('reserved-cards-container');
-    const countText = document.getElementById('reserved-count-text');
-    if (!container) return;
+        function renderMyReservedCards(myReservedCards) {
+            const container = document.getElementById('reserved-cards-container');
+            const countText = document.getElementById('reserved-count-text');
+            if (!container) return;
 
-    if (countText) {
-        countText.innerText = myReservedCards ? myReservedCards.length : 0;
-    }
-
-    if (!myReservedCards || myReservedCards.length === 0) {
-        container.innerHTML = `
-            <div class="h-20 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[10px] text-slate-600">空間 1</div>
-            <div class="h-20 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[10px] text-slate-600">空間 2</div>
-            <div class="h-20 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[10px] text-slate-600">空間 3</div>
-        `;
-        return;
-    }
-
-    let html = '';
-    for (let i = 0; i < 3; i++) {
-        const card = myReservedCards[i];
-        if (card) {
-            const colorCfg = CARD_COLORS[card.color] || CARD_COLORS['diamond'];
-            
-            let costHtml = '';
-            for (let gemKey of CARD_GEM_ORDER) {
-                if (card.cost && card.cost[gemKey] > 0) {
-                    costHtml += `<div class="flex items-center text-[8px] font-bold px-1 rounded bg-slate-900/80 border border-slate-700 text-slate-200">
-                        ${BANK_ITEMS[gemKey]?.short || gemKey}:${card.cost[gemKey]}
-                    </div>`;
-                }
+            if (countText) {
+                countText.innerText = myReservedCards ? myReservedCards.length : 0;
             }
 
-            html += `
-                <div onclick="openCardModalByReserved(${i})" class="poke-color-card ${colorCfg.bgClass} rounded-lg p-1 flex flex-col justify-between cursor-pointer hover:scale-105 transition shadow w-full max-w-[85px] mx-auto">
-                    <div class="flex justify-between items-center text-[9px] font-bold">
-                        <span class="${colorCfg.scoreClass}">${card.points || 0}分</span>
-                        ${getGemOrbHTML(colorCfg.gemKey, 'w-2.5 h-2.5')}
-                    </div>
-                    <div class="text-center font-title font-bold text-[9px] truncate text-white">${card.name || '寶可夢'}</div>
-                    <div class="flex flex-wrap justify-center gap-0.5">
-                        ${costHtml}
-                    </div>
-                </div>
-            `;
-        } else {
-            html += `
-                <div class="h-20 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[10px] text-slate-600">
-                    <span>空間 ${i+1}</span>
-                </div>
-            `;
+            if (!myReservedCards || myReservedCards.length === 0) {
+                container.innerHTML = `
+                    <div class="h-20 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[10px] text-slate-600">空間 1</div>
+                    <div class="h-20 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[10px] text-slate-600">空間 2</div>
+                    <div class="h-20 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[10px] text-slate-600">空間 3</div>
+                `;
+                return;
+            }
+
+            let html = '';
+            for (let i = 0; i < 3; i++) {
+                const card = myReservedCards[i];
+                if (card) {
+                    const colorCfg = CARD_COLORS[card.bonus] || CARD_COLORS['diamond'];
+                    
+                    let costHtml = '';
+                    for (const [g, costVal] of Object.entries(card.cost)) {
+                        if (costVal > 0) {
+                            costHtml += `
+                                <div class="flex flex-col items-center justify-center px-0.5 py-0.2 rounded bg-slate-900/95 border border-slate-700/80 text-[7px] shrink-0">
+                                    <span class="font-bold text-amber-300 leading-none">${costVal}</span>
+                                    ${getGemOrbHTML(g, 'w-2 h-2')}
+                                </div>
+                            `;
+                        }
+                    }
+
+                    html += `
+                        <div onclick="openCardModal('reserved', ${card.level}, ${i})" class="poke-color-card border ${colorStyle ? colorStyle.bgClass : ''} rounded-lg p-1 flex flex-col justify-between cursor-pointer relative overflow-group shadow hover:scale-105 transition">
+                            <div class="flex justify-between items-center z-10">
+                                <span class="font-title font-bold text-xs text-amber-200 leading-none">${card.points > 0 ? '+' + card.points : ''}</span>
+                            </div>
+                            <div class="text-center font-title font-bold text-[9px] truncate text-white my-auto">${card.name || '寶可夢'}</div>
+                            <div class="flex flex-nowrap items-center justify-center gap-1 z-10 bg-slate-950/90 px-1 py-0.5 rounded w-full">
+                                ${costHtml}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="h-20 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[10px] text-slate-600">
+                            <span>空間 ${i+1}</span>
+                        </div>
+                    `;
+                }
+            }
+            container.innerHTML = html;
         }
-    }
-    container.innerHTML = html;
-}
+
         const SUPABASE_URL = 'https://dmxipeshvgmwurhqbczy.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_ORPXi3B43DueDPAIpfSiHQ_idGTk1QT';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -1032,15 +1038,15 @@ function renderMyReservedCards(myReservedCards) {
                         canAffordCard = calculatePurchasePayment(currentPlayer, card).canAfford;
                     }
 
-let costHTML = CARD_GEM_ORDER.map(g => {
-    if (!card.cost[g]) return '';
-    return `
-        <div class="flex flex-col items-center justify-center px-0.5 py-0.2 rounded bg-slate-900/95 border border-slate-700/80 text-[7px] shrink-0">
-            <span class="font-bold text-amber-300 leading-none">${card.cost[g]}</span>
-            ${getGemOrbHTML(g, 'w-2 h-2')}
-        </div>
-    `;
-}).join('');
+                    let costHTML = CARD_GEM_ORDER.map(g => {
+                        if (!card.cost[g]) return '';
+                        return `
+                            <div class="flex flex-col items-center justify-center px-0.5 py-0.2 rounded bg-slate-900/95 border border-slate-700/80 text-[7px] shrink-0">
+                                <span class="font-bold text-amber-300 leading-none">${card.cost[g]}</span>
+                                ${getGemOrbHTML(g, 'w-2 h-2')}
+                            </div>
+                        `;
+                    }).join('');
 
                     return `
                       <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border ${colorStyle.bgClass} rounded-lg p-1 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
@@ -1057,13 +1063,18 @@ let costHTML = CARD_GEM_ORDER.map(g => {
                           <img src="${card.pokeImg}" class="w-9 h-9 object-contain drop-shadow group-hover:scale-105 transition" />
                         </div>
 
-<div class="flex flex-nowrap items-center justify-center gap-1 z-10 bg-slate-950/90 px-1 py-0.5 rounded w-full">
-    ${costHTML}
-</div>
+                        <div class="flex flex-nowrap items-center justify-center gap-1 z-10 bg-slate-950/90 px-1 py-0.5 rounded w-full">
+                            ${costHTML}
+                        </div>
                       </div>
                     `;
                 }).join('');
             });
+
+            // 同步渲染左側市場右側的「3格直立保留卡」
+            if (currentPlayer && currentPlayer.reserved) {
+                renderMyReservedCards(currentPlayer.reserved);
+            }
         }
 
         const ROW_1X6_ATTRS = {
@@ -1168,24 +1179,24 @@ let costHTML = CARD_GEM_ORDER.map(g => {
                 </div>
             `;
 
-document.getElementById('modal-cost-breakdown').innerHTML = Object.entries(card.cost).map(([g, costVal]) => {
-    if (costVal <= 0) return '';
-    const itemInfo = BANK_ITEMS[g] || { name: g };
-    const ownedBonus = (me.bonuses && me.bonuses[g]) || 0;
-    const shortCount = Math.max(0, costVal - ownedBonus);
-    return `
-        <div class="flex justify-between items-center py-0.5 border-b border-slate-800/60 last:border-0 text-xs">
-            <span class="flex items-center gap-1">
-                ${getGemOrbHTML(g, 'w-3.5 h-3.5')}
-                <span>${itemInfo.name}</span>
-            </span>
-            <span class="text-right">
-                <span>${costVal}顆</span>
-                <span class="text-slate-400 text-[10px] ml-1">(持有 ${ownedBonus} ➔ <b class="text-amber-300">缺 ${shortCount}</b>)</span>
-            </span>
-        </div>
-    `;
-}).join('');
+            document.getElementById('modal-cost-breakdown').innerHTML = Object.entries(card.cost).map(([g, costVal]) => {
+                if (costVal <= 0) return '';
+                const itemInfo = BANK_ITEMS[g] || { name: g };
+                const ownedBonus = (me.bonuses && me.bonuses[g]) || 0;
+                const shortCount = Math.max(0, costVal - ownedBonus);
+                return `
+                    <div class="flex justify-between items-center py-0.5 border-b border-slate-800/60 last:border-0 text-xs">
+                        <span class="flex items-center gap-1">
+                            ${getGemOrbHTML(g, 'w-3.5 h-3.5')}
+                            <span>${itemInfo.name}</span>
+                        </span>
+                        <span class="text-right">
+                            <span>${costVal}顆</span>
+                            <span class="text-slate-400 text-[10px] ml-1">(持有 ${ownedBonus} ➔ <b class="text-amber-300">缺 ${shortCount}</b>)</span>
+                        </span>
+                    </div>
+                `;
+            }).join('');
 
             const statusEl = document.getElementById('modal-afford-status');
             const buyBtn = document.getElementById('modal-btn-buy');
