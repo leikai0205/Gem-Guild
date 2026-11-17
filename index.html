@@ -897,13 +897,15 @@ body {
                         canAffordCard = calculatePurchasePayment(currentPlayer, card).canAfford;
                     }
 
-                    let costHTML = CARD_GEM_ORDER.map(g => {
-                        if (!card.cost[g]) return '';
-                        return '<div class="flex items-center gap-0.5 px-1 py-0.5 rounded bg-slate-900/90 border border-slate-700/80 text-[8px] leading-none shrink-0">' +
-                               getGemOrbHTML(g, 'w-2.5 h-2.5') +
-                               '<span class="font-bold text-amber-300">' + card.cost[g] + '</span>' +
-                               '</div>';
-                    }).join('');
+      let costHTML = CARD_GEM_ORDER.map(g => {
+    if (!card.cost[g]) return '';
+    return `
+        <div class="flex flex-col items-center justify-center p-1 rounded bg-slate-900/95 border border-slate-700/80 text-[9px] shrink-0 min-w-[24px]">
+            ${getGemOrbHTML(g, 'w-3.5 h-3.5')}
+            <span class="font-bold text-amber-300 mt-0.5">${card.cost[g]}</span>
+        </div>
+    `;
+}).join('');
 
                     return `
                       <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border ${colorStyle.bgClass} rounded-lg p-1 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
@@ -920,9 +922,9 @@ body {
                           <img src="${card.pokeImg}" class="w-9 h-9 object-contain drop-shadow group-hover:scale-105 transition" />
                         </div>
 
-                        <div class="flex flex-nowrap items-center justify-end gap-0.5 z-10 bg-slate-950/80 px-1 py-0.5 rounded w-full overflow-hidden">
-                          ${costHTML}
-                        </div>
+                    <div class="flex flex-wrap items-center justify-center gap-1 z-10 bg-slate-950/90 p-1 rounded w-full">
+    ${costHTML}
+</div>
                       </div>
                     `;
                 }).join('');
