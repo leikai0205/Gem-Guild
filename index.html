@@ -1130,23 +1130,60 @@ html, body {
                             </div>
                         </div>
 
+             function renderPlayers() {
+            const container = document.getElementById('players-container');
+            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !gameState.winner;
+
+            container.innerHTML = gameState.players.map((p, idx) => {
+                const isCurrent = idx === gameState.currentPlayerIdx;
+                const isMe = idx === myPlayerIndex;
+                const totalGems = ALL_GEMS.reduce((s, g) => s + p.gems[g], 0);
+                return `
+                    <div class="glass-panel rounded-xl p-2.5 ${isCurrent ? 'active-turn-glow' : 'opacity-85'} space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="font-bold text-xs text-white">${p.name} ${isMe ? '(你)' : ''}</span>
+                                <span class="text-[9px] px-1 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">道具 ${totalGems}/10</span>
+                                <span class="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">稀有 ${p.nobles.length}</span>
+                            </div>
+                            <span class="font-title font-black text-base text-amber-400">${p.points}分</span>
+                        </div>
+
+                        <div class="grid grid-cols-6 gap-1">
+                            ${CARD_GEM_ORDER.map(g => {
+                                const attr = ROW_1X6_ATTRS[g];
+                                const gemCount = p.gems[g];
+                                const cardCount = p.bonuses[g];
+                                return `
+                                    <div class="flex flex-col items-center justify-between p-0.5 rounded border ${attr.bg} text-[9px] text-center">
+                                        <span class="font-bold text-slate-300">${attr.title}</span>
+                                        <span class="${attr.gemColor} font-black my-0.2">${gemCount}</span>
+                                        <span class="px-0.5 rounded border text-[8px] ${attr.cardBadge}">${cardCount}卡</span>
+                                    </div>
+                                `;
+                            }).join('')}
+
+                            <div class="flex flex-col items-center justify-between p-0.5 rounded border bg-white/10 border-white/30 text-[9px] text-center">
+                                <span class="font-bold text-white">大師球</span>
+                                <span class="text-white font-black my-0.2">${p.gems.gold}</span>
+                                <span class="text-[8px] text-slate-200">萬用</span>
+                            </div>
+                        </div>
+
                         ${p.reserved && p.reserved.length > 0 ? `
                             <div class="pt-1 border-t border-slate-800/80">
                                 <div class="text-[9px] text-purple-300 font-bold mb-0.5">${isMe ? '你的' : `${p.name}的`}保留區 (${p.reserved.length}/3)：</div>
                                 <div class="flex gap-1 flex-wrap">
-                                    ${p.reserved.map((rc, rIdx) => {
-                                        let canAffordReserved = false;
-                                        if (isMe && isMyTurn) {
-                                            canAffordReserved = calculatePurchasePayment(p, rc).canAfford;
-                                        }
+                                    ${p.reserved.map((rc) => {
                                         return `
-                                            <button onclick="openCardModal('reservedPlayer', ${rc.level}, ${rIdx}, ${idx})" class="px-1.5 py-0.5 rounded border text-[9px] font-bold flex items-center gap-0.5 ${CARD_COLORS[rc.bonus].badgeClass} cursor-pointer hover:brightness-125 ${canAffordReserved ? 'ring-1 ring-emerald-400 animate-pulse' : ''}">
-                                                <span>Lv.${rc.level} ${CARD_COLORS[rc.bonus].name}</span>
-                                                ${rc.points > 0 ? `<span class="text-amber-300">+${rc.points}分</span>` : ''}
-                                                ${canAffordReserved ? '<span class="text-emerald-300 font-black">⚡</span>' : ''}
-                                            </button>
+                                            <div class="px-2 py-0.5 rounded border border-purple-500/40 bg-purple-950/40 text-purple-200 text-[9px] font-bold">
+                                                🔒 Lv.${rc.level} 卡
+                                            </div>
                                         `;
                                     }).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             }).join('');
