@@ -520,7 +520,7 @@ html, body {
 
     <!-- ==================== 4. 遊戲核心邏輯 ==================== -->
     <script>
-        // ==================== 渲染我的保留卡專區（直立 3 格） ====================
+// ==================== 渲染我的保留卡專區（直立 3 格） ====================
         function renderMyReservedCards(myReservedCards) {
             const container = document.getElementById('reserved-cards-container');
             const countText = document.getElementById('reserved-count-text');
@@ -543,10 +543,11 @@ html, body {
             for (let i = 0; i < 3; i++) {
                 const card = myReservedCards[i];
                 if (card) {
-                    const colorCfg = CARD_COLORS[card.bonus] || CARD_COLORS['diamond'];
+                    // 修正：改用 card.bonus 抓取正確的顏色配置
+                    const colorStyle = CARD_COLORS[card.bonus] || CARD_COLORS['diamond'];
                     
                     let costHtml = '';
-                    for (const [g, costVal] of Object.entries(card.cost)) {
+                    for (const [g, costVal] of Object.entries(card.cost || {})) {
                         if (costVal > 0) {
                             costHtml += `
                                 <div class="flex flex-col items-center justify-center px-0.5 py-0.2 rounded bg-slate-900/95 border border-slate-700/80 text-[7px] shrink-0">
@@ -558,11 +559,15 @@ html, body {
                     }
 
                     html += `
-                        <div onclick="openCardModal('reserved', ${card.level}, ${i})" class="poke-color-card border ${colorStyle ? colorStyle.bgClass : ''} rounded-lg p-1 flex flex-col justify-between cursor-pointer relative overflow-group shadow hover:scale-105 transition">
-                            <div class="flex justify-between items-center z-10">
-                                <span class="font-title font-bold text-xs text-amber-200 leading-none">${card.points > 0 ? '+' + card.points : ''}</span>
+                        <div onclick="openCardModal('reserved', ${card.level}, ${i})" class="poke-color-card border ${colorStyle.bgClass} rounded-lg p-1 flex flex-col justify-between cursor-pointer relative overflow-hidden group shadow hover:scale-105 transition w-full max-w-[85px] mx-auto">
+                            <div class="flex justify-between items-center z-10 text-[9px] font-bold">
+                                <span class="${colorStyle.scoreClass}">${card.points > 0 ? '+' + card.points : ''}分</span>
+                                ${getGemOrbHTML(card.bonus, 'w-2.5 h-2.5')}
                             </div>
-                            <div class="text-center font-title font-bold text-[9px] truncate text-white my-auto">${card.name || '寶可夢'}</div>
+                            <div class="text-center my-auto z-10">
+                                <img src="${card.pokeImg}" class="w-8 h-8 object-contain drop-shadow" />
+                                <div class="font-title font-bold text-[9px] truncate text-white mt-0.5">${card.name || '寶可夢'}</div>
+                            </div>
                             <div class="flex flex-nowrap items-center justify-center gap-1 z-10 bg-slate-950/90 px-1 py-0.5 rounded w-full">
                                 ${costHtml}
                             </div>
