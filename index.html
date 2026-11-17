@@ -333,7 +333,7 @@ html, body {
                         <div id="nobles-container"></div>
                     </section>
 
-     <!-- 🃏 寶可夢資源卡市場（左側 12 宮格市場，右側帶有 3 格保留卡區） -->
+<!-- 🃏 寶可夢資源卡市場與右側 3 格保留卡區 -->
                     <main class="glass-panel rounded-xl p-2.5 space-y-2">
                         <div class="flex items-center justify-between">
                             <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
@@ -342,10 +342,10 @@ html, body {
                             <span class="text-[10px] text-slate-400">先達 15 分觸發終局</span>
                         </div>
                         
-                        <!-- 外層包裝：用 flex 或適當的 grid 讓市場（4欄）與右側預留卡並排 -->
+                        <!-- 關鍵：用 flex 讓市場與右側預留卡「左右並排」而不是上下堆疊 -->
                         <div class="flex flex-col xl:flex-row gap-2.5 items-start">
                             
-                            <!-- 左側市場區：確保每一層都是 4 個橫向排列 (grid-cols-4) -->
+                            <!-- 左側 12 宮格市場區 -->
                             <div class="flex-1 space-y-2 w-full">
                                 <!-- Level 3 -->
                                 <div class="space-y-1">
@@ -381,8 +381,8 @@ html, body {
                                 </div>
                             </div>
 
-                            <!-- 右側保留卡直立 3 格區 (獨立在市場右側，剛好對應你截圖的紅框位置) -->
-                            <aside class="w-full xl:w-[110px] bg-slate-950/60 rounded-xl p-2 border border-slate-800 flex flex-col justify-between shrink-0 space-y-2">
+                            <!-- 右側直立 3 格保留卡區：固定在市場的右側 -->
+                            <aside class="w-full xl:w-[100px] bg-slate-950/60 rounded-xl p-2 border border-slate-800 flex flex-col justify-between shrink-0 space-y-2">
                                 <div class="text-[10px] font-bold text-amber-300/90 text-center border-b border-slate-800 pb-1">
                                     📦 預留卡 (<span id="reserved-count-text">0</span>/3)
                                 </div>
