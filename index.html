@@ -78,6 +78,22 @@ body { font-family: 'Noto Sans TC', sans-serif; background: radial-gradient(circ
         .noble-mini-card span {
             font-size: 9px !important;
         }
+/* 寶可夢卡片下方進化石需求：強制單行不換行、縮小間距與尺寸以適應手機 */
+        .card-cost-container {
+            display: flex;
+            flex-wrap: nowrap !important; /* 強制不換行，全部擠在同一行 */
+            justify-content: center;
+            gap: 2px !important;          /* 縮小圖標間距 */
+            overflow: visible;
+        }
+
+        /* 縮小同一行內的進化石圖標與數字，確保 4 個能完美塞進手機畫面 */
+        .card-cost-container > div,
+        .card-cost-container .flex {
+            transform: scale(0.82);       /* 微調至適合的大小 */
+            transform-origin: center;
+            margin: 0 -1.5px !important;
+        }
     </style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
