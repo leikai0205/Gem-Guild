@@ -897,12 +897,12 @@ body {
                         canAffordCard = calculatePurchasePayment(currentPlayer, card).canAfford;
                     }
 
-      let costHTML = CARD_GEM_ORDER.map(g => {
+let costHTML = CARD_GEM_ORDER.map(g => {
     if (!card.cost[g]) return '';
     return `
-        <div class="flex flex-col items-center justify-center p-1 rounded bg-slate-900/95 border border-slate-700/80 text-[9px] shrink-0 min-w-[24px]">
-            ${getGemOrbHTML(g, 'w-3.5 h-3.5')}
-            <span class="font-bold text-amber-300 mt-0.5">${card.cost[g]}</span>
+        <div class="flex items-center gap-0.5 px-1 py-0.5 rounded bg-slate-900/95 border border-slate-700/80 text-[8px] shrink-0">
+            ${getGemOrbHTML(g, 'w-3 h-3')}
+            <span class="font-bold text-amber-300">${card.cost[g]}</span>
         </div>
     `;
 }).join('');
@@ -922,7 +922,7 @@ body {
                           <img src="${card.pokeImg}" class="w-9 h-9 object-contain drop-shadow group-hover:scale-105 transition" />
                         </div>
 
-                    <div class="flex flex-wrap items-center justify-center gap-1 z-10 bg-slate-950/90 p-1 rounded w-full">
+                <div class="flex flex-nowrap items-center justify-end gap-0.5 z-10 bg-slate-950/90 px-1 py-0.5 rounded w-full overflow-x-auto">
     ${costHTML}
 </div>
                       </div>
