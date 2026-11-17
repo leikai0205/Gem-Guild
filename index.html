@@ -9,12 +9,44 @@
     <script src="cards-data.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
     <style>
-body { 
+/* ==========================================================
+   1. 基礎頁面鎖定（強制單頁、無捲軸）
+   ========================================================== */
+html, body { 
     font-family: 'Noto Sans TC', sans-serif; 
     background: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #0f172a 45%, #090d16 100%); 
     color: #f8fafc; 
-    min-height: 100vh; 
-    overflow-x: hidden; 
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* 強制關閉頁面捲軸 */
+    box-sizing: border-box;
+}
+
+/* ==========================================================
+   2. 主畫面佈局：自動適應螢幕大小與方向
+   ========================================================== */
+.game-main-layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 4px;
+}
+
+/* 手機橫式或電腦寬螢幕時：改為左右兩欄分欄排版（對標範例網頁） */
+@media (min-width: 768px) or (orientation: landscape) {
+    .game-main-layout {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr; /* 左側牌面市場、右側交易所與玩家區 */
+        gap: 6px;
+        padding: 6px;
+    }
 }
 
 .font-title { font-family: 'Cinzel', 'Noto Sans TC', serif; }
@@ -40,15 +72,15 @@ body {
 }
 
 /* ==========================================================
-   對標 1920x1080 原版完美比例：極致壓縮卡片與區塊，免滑動一眼看完
+   3. 極致壓縮卡片與區塊（免滑動一眼看完）
    ========================================================== */
 .poke-color-card { 
     position: relative;
     transform-style: preserve-3d; 
-    width: 60% !important;       
-    max-width: 85px !important;  /* 縮小卡片寬度，對齊原版精緻感 */
+    width: 100% !important;        
+    max-width: 82px !important;  /* 確保卡片精緻適中 */
     margin: 0 auto !important; 
-    aspect-ratio: 1 / 1.22 !important; /* 將高瘦比例稍微壓扁，省下垂直高度 */
+    aspect-ratio: 1 / 1.22 !important; /* 壓扁高瘦比例，省下垂直高度 */
     min-height: auto !important; 
     max-height: none !important; 
     padding: 1px !important;     
@@ -117,7 +149,7 @@ body {
 .poke-color-card img,
 .noble-mini-card img {
     width: auto !important;
-    height: 34px !important; /* 將圖片高度降至 34px，大幅壓低整張牌的高瘦感 */
+    height: 32px !important; /* 確保圖片高度適中，不撐開版面 */
     max-width: 80% !important;
     object-fit: contain;
     margin: auto auto !important; 
@@ -139,7 +171,7 @@ body {
 }
 
 /* ==========================================================
-   進化石成本列：完美容納 4 顆同行
+   4. 進化石成本列：完美容納 4 顆同行
    ========================================================== */
 .card-cost-container {
     display: flex !important;
@@ -156,16 +188,25 @@ body {
 
 .card-cost-container > div,
 .card-cost-container .flex {
-    transform: scale(0.42) !important; /* 縮放至 42%，確保 4 種成本毫無壓力並排同行 */
+    transform: scale(0.42) !important; /* 縮放至 42%，讓 4 種成本完美並排同行 */
     transform-origin: center bottom !important;
-    margin: 0 -5px !important;         
-    flex-shrink: 0 !important;        
+    margin: 0 -5px !important;           
+    flex-shrink: 0 !important;         
+}
+
+/* 額外優化市場牌組排列 */
+.market-board-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+    width: 100%;
 }
     </style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
     <!-- ==================== 1. 大廳登入畫面 ==================== -->
+    <div id="app" class="game-main-layout">
     <div id="lobby-screen" class="min-h-screen flex items-center justify-center p-4">
         <div class="glass-panel max-w-lg w-full rounded-3xl p-6 sm:p-8 relative overflow-hidden">
             <div class="text-center mb-6">
