@@ -465,7 +465,7 @@ html, body {
 
                     return `
                       <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border ${colorStyle.bgClass} rounded-lg p-1 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
-                        ${canAffordCard ? `<span class="absolute top-0.5 right-0.5 px-1 py-0.2 rounded bg-emerald-500 text-slate-950 font-black text-[8px] shadow animate-pulse z-25">可收服</span>` : ''}
+                        ${canAffordCard ? `<span class="absolute top-0.5 right-0.5 px-1 py-0.2 rounded bg-emerald-500 text-slate-950 font-black text-[8px] shadow animate-pulse z-40">可收服</span>` : ''}
                         
                         <div class="flex justify-between items-center z-10">
                           <span class="font-title font-bold text-xs ${colorStyle.scoreClass} leading-none">${card.points > 0 ? '+' + card.points : ''}</span>
