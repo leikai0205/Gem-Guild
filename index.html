@@ -56,6 +56,21 @@
             margin: 2px auto !important; /* 上下留出一點安全距離 */
             image-rendering: -webkit-optimize-contrast; 
         }
+        /* 1. 只放大卡片右上角的屬性標籤（如「紅卡」、「藍卡」） */
+        .poke-color-card span.border {
+            font-size: 10px !important; /* 從原本極小的字稍微放大 */
+            padding: 1px 3px !important;
+        }
+
+        /* 2. 只放大卡片左上角的加分數字 */
+        .poke-color-card .font-title {
+            font-size: 14px !important; 
+        }
+
+        /* 3. 稀有夥伴卡的文字精準放大 */
+        .noble-mini-card span {
+            font-size: 9px !important;
+        }
     </style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
