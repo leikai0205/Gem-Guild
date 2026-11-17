@@ -900,7 +900,7 @@ body {
 let costHTML = CARD_GEM_ORDER.map(g => {
     if (!card.cost[g]) return '';
     return `
-        <div class="flex flex-col items-center justify-center px-1 py-0.5 rounded bg-slate-900/95 border border-slate-700/80 text-[9px] shrink-0">
+        <div class="flex flex-col items-center justify-center px-0.5 py-0.2 rounded bg-slate-900/95 border border-slate-700/80 text-[7px] shrink-0">
             <span class="font-bold text-amber-300 leading-tight">${card.cost[g]}</span>
             ${getGemOrbHTML(g, 'w-2 h-2')}
         </div>
