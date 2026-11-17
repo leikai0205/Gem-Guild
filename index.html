@@ -103,7 +103,8 @@
     </div>
 
     <!-- ==================== 2. 主遊戲桌面 ==================== -->
-    <div id="game-screen" class="hidden max-w-[1540px] mx-auto p-2.5 sm:p-4 space-y-3">
+    <div id="game-screen" class="hidden max-w-[1600px] mx-auto p-2.5 sm:p-4 space-y-3">
+        <!-- 頂部狀態列 -->
         <header class="glass-panel rounded-2xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
                 <span class="font-title font-black text-lg sm:text-xl text-amber-400 tracking-wider">POKÉMON GUILD</span>
@@ -133,20 +134,73 @@
             </div>
         </header>
 
-        <!-- 💡 頂部專屬橫向稀有寶可夢夥伴區塊 -->
-        <section class="glass-panel rounded-2xl p-3">
-            <div class="flex items-center justify-between mb-2">
-                <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-                    <span>⭐</span> 稀有寶可夢夥伴（每回合限 1 隻 +3分）
-                </h2>
-                <span class="text-[11px] text-slate-400">滿足條件自動吸引</span>
-            </div>
-            <div id="nobles-container"></div>
-        </section>
-
+        <!-- 主遊戲雙欄排版 -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
-            <!-- 左欄：進化石銀行 -->
-            <div class="lg:col-span-4 space-y-3.5">
+            
+            <!-- ==================== 左邊欄位（稀有寶可夢 -> 卡牌市場 -> 進化石銀行） ==================== -->
+            <div class="lg:col-span-8 space-y-3.5">
+                
+                <!-- 1. ⭐ 稀有寶可夢夥伴 -->
+                <section class="glass-panel rounded-2xl p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
+                            <span>⭐</span> 稀有寶可夢夥伴（每回合限 1 隻 +3分）
+                        </h2>
+                        <span class="text-[11px] text-slate-400">滿足條件自動吸引</span>
+                    </div>
+                    <div id="nobles-container"></div>
+                </section>
+
+                <!-- 2. 🃏 寶可夢資源卡市場 -->
+                <main class="glass-panel rounded-2xl p-3.5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
+                            <span>🃏</span> 寶可夢資源卡市場（可收服會發光提示）
+                        </h2>
+                        <span class="text-[11px] text-slate-400">先達 15 聲望觸發終局</span>
+                    </div>
+                    
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 text-[10px] font-bold">LEVEL 3 頂級</span>
+                                <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-3" class="text-slate-200">0</b> 張</span>
+                            </div>
+                            <button onclick="reserveBlindFromDeck(3)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition">
+                                盲抽保留 (+大師球)
+                            </button>
+                        </div>
+                        <div id="market-row-3" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] font-bold">LEVEL 2 中階</span>
+                                <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-2" class="text-slate-200">0</b> 張</span>
+                            </div>
+                            <button onclick="reserveBlindFromDeck(2)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition">
+                                盲抽保留 (+大師球)
+                            </button>
+                        </div>
+                        <div id="market-row-2" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-bold">LEVEL 1 初階</span>
+                                <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-1" class="text-slate-200">0</b> 張</span>
+                            </div>
+                            <button onclick="reserveBlindFromDeck(1)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition">
+                                盲抽保留 (+大師球)
+                            </button>
+                        </div>
+                        <div id="market-row-1" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
+                    </div>
+                </main>
+
+                <!-- 3. 💎 進化石與大師球銀行 -->
                 <section class="glass-panel rounded-2xl p-3.5">
                     <div class="flex items-center justify-between mb-2">
                         <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
@@ -154,7 +208,7 @@
                         </h2>
                         <span id="bank-limit-hint" class="text-[11px] text-slate-400">依人數自動調整</span>
                     </div>
-                    <div id="bank-gems-container" class="grid grid-cols-6 gap-1 my-2"></div>
+                    <div id="bank-gems-container" class="grid grid-cols-6 gap-1.5 my-2"></div>
                     
                     <div class="mt-3 pt-3 border-t border-slate-700/70">
                         <div class="flex items-center justify-between text-xs text-slate-300 mb-2">
@@ -175,69 +229,23 @@
                 </section>
             </div>
 
-            <!-- 中欄：寶可夢屬性卡市場 -->
-            <main class="lg:col-span-8 glass-panel rounded-2xl p-3.5 space-y-3">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-                        <span>🃏</span> 寶可夢資源卡市場（可收服會發光提示）
-                    </h2>
-                    <span class="text-[11px] text-slate-400">先達 15 聲望觸發終局</span>
-                </div>
+            <!-- ==================== 右邊欄位（玩家資訊 -> 對戰即時戰報紀錄） ==================== -->
+            <aside class="lg:col-span-4 space-y-3.5">
                 
-                <div class="space-y-1.5">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 text-[10px] font-bold">LEVEL 3 頂級</span>
-                            <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-3" class="text-slate-200">0</b> 張</span>
-                        </div>
-                        <button onclick="reserveBlindFromDeck(3)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition">
-                            盲抽保留 (+大師球)
-                        </button>
-                    </div>
-                    <div id="market-row-3" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
-                </div>
+                <!-- 1. 玩家資訊 -->
+                <div id="players-container" class="space-y-3"></div>
 
-                <div class="space-y-1.5">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] font-bold">LEVEL 2 中階</span>
-                            <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-2" class="text-slate-200">0</b> 張</span>
-                        </div>
-                        <button onclick="reserveBlindFromDeck(2)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition">
-                            盲抽保留 (+大師球)
-                        </button>
-                    </div>
-                    <div id="market-row-2" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
-                </div>
-
-                <div class="space-y-1.5">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-bold">LEVEL 1 初階</span>
-                            <span class="text-[11px] text-slate-400">牌庫剩餘 <b id="deck-count-1" class="text-slate-200">0</b> 張</span>
-                        </div>
-                        <button onclick="reserveBlindFromDeck(1)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition">
-                            盲抽保留 (+大師球)
-                        </button>
-                    </div>
-                    <div id="market-row-1" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
-                </div>
-            </main>
-        </div>
-
-        <!-- 下方區塊：所有玩家面板與戰報 -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
-            <div id="players-container" class="lg:col-span-8 space-y-3"></div>
-            <aside class="lg:col-span-4 space-y-3">
+                <!-- 2. 📜 對戰即時戰報紀錄 -->
                 <section class="glass-panel rounded-2xl p-3.5 space-y-2">
                     <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
                         <span>📜</span> 對戰即時戰報紀錄
                     </h2>
-                    <div id="battle-log-container" class="bg-slate-950/80 rounded-xl p-2.5 h-44 overflow-y-auto space-y-1.5 border border-slate-800 text-xs text-slate-300">
+                    <div id="battle-log-container" class="bg-slate-950/80 rounded-xl p-2.5 h-56 overflow-y-auto space-y-1.5 border border-slate-800 text-xs text-slate-300">
                         <div class="text-slate-500">遊戲剛開始，等待訓練家們進行第一手操作...</div>
                     </div>
                 </section>
             </aside>
+
         </div>
     </div>
 
@@ -256,6 +264,18 @@
                 <button id="modal-btn-reserve" onclick="executeReserveCard()" class="w-full py-2.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 disabled:opacity-40 disabled:cursor-not-allowed border border-purple-400/50 text-purple-200 font-bold text-sm transition cursor-pointer">保留卡片（+1 大師球萬用）</button>
                 <button onclick="closeCardModal()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-medium transition cursor-pointer">關閉返回</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 超過 10 顆進化石退回彈窗 -->
+    <div id="discard-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-rose-400/70 space-y-4 text-center">
+            <div class="text-3xl">⚠️</div>
+            <h3 class="font-bold text-lg text-rose-300">進化石與大師球超過上限！</h3>
+            <p class="text-xs text-slate-300">
+                目前持有 <b id="discard-current-count" class="text-amber-300">11</b> 個道具（上限 10 個），請點擊下方按鈕退回多餘的進化石至銀行：
+            </p>
+            <div id="discard-gems-list" class="flex flex-wrap justify-center gap-2 py-2"></div>
         </div>
     </div>
 
@@ -611,13 +631,13 @@
                 const remaining = total - selected;
 
                 return `
-                  <div class="item-orb-btn relative flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl bg-slate-900/80 border border-slate-800 ${isMyTurn && gem !== 'gold' ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-70'}"
+                  <div class="item-orb-btn relative flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-slate-900/80 border border-slate-800 ${isMyTurn && gem !== 'gold' ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-70'}"
                        onclick="${isMyTurn && gem !== 'gold' ? `handleSelectBankGem('${gem}')` : ''}">
                     <span class="absolute -top-1.5 -right-1 w-4 h-4 rounded-full bg-amber-500 text-slate-950 font-black text-[10px] flex items-center justify-center shadow border border-amber-300 z-10">
                       ${remaining}
                     </span>
-                    <div class="my-0.5">${getGemOrbHTML(gem, 'w-6 h-6')}</div>
-                    <span class="text-[9px] font-bold ${info.text} leading-tight whitespace-nowrap">${info.name}</span>
+                    <div class="my-0.5">${getGemOrbHTML(gem, 'w-7 h-7')}</div>
+                    <span class="text-[10px] font-bold ${info.text} leading-tight whitespace-nowrap">${info.name}</span>
                   </div>
                 `;
             }).join('');
@@ -766,7 +786,7 @@
                 document.getElementById(`deck-count-${level}`).textContent = gameState.decks[level].length;
                 const container = document.getElementById(`market-row-${level}`);
                 container.innerHTML = gameState.market[level].map((card, idx) => {
-                    if (!card) return `<div class="h-36 rounded-xl border border-dashed border-slate-800 flex items-center justify-center text-xs text-slate-600">已售罄</div>`;
+                    if (!card) return `<div class="h-32 rounded-xl border border-dashed border-slate-800 flex items-center justify-center text-xs text-slate-600">已售罄</div>`;
                     const colorStyle = CARD_COLORS[card.bonus];
                     
                     let canAffordCard = false;
@@ -1067,6 +1087,7 @@
                     <span>退回 ${BANK_ITEMS[g].name} (${player.gems[g]})</span>
                 </button>
             ` : '').join('');
+            document.getElementById('discard-modal').classList.remove('hidden');
         }
 
         function discardOneGem(gem) {
@@ -1074,6 +1095,7 @@
             player.gems[gem] -= 1;
             gameState.bank[gem] += 1;
             if (ALL_GEMS.reduce((s, g) => s + player.gems[g], 0) <= 10) {
+                document.getElementById('discard-modal').classList.add('hidden');
                 checkNoblePhaseAndEndTurn();
             } else {
                 openDiscardModal();
