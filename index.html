@@ -17,6 +17,10 @@
         .poke-color-card { transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55); }
         .poke-color-card:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 14px 28px rgba(251, 191, 36, 0.28), 0 0 15px rgba(255, 255, 255, 0.18); }
         
+        /* 稀有寶可夢一排橫向顯示專用樣式 */
+        .nobles-horizontal-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+        .noble-mini-card { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 5px 4px; border-radius: 10px; }
+
         @keyframes affordableGlow {
             0%, 100% { border-color: #34d399; box-shadow: 0 0 12px rgba(52, 211, 153, 0.6), inset 0 0 6px rgba(52, 211, 153, 0.3); }
             50% { border-color: #6ee7b7; box-shadow: 0 0 24px rgba(110, 231, 183, 0.9), inset 0 0 12px rgba(110, 231, 183, 0.5); }
@@ -129,18 +133,20 @@
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
-            <!-- 左欄：稀有寶可夢夥伴與進化石銀行 -->
-            <div class="lg:col-span-3 space-y-3.5">
-                <section class="glass-panel rounded-2xl p-3.5">
-                    <div class="flex items-center justify-between mb-2.5">
-                        <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
-                            <span>⭐</span> 稀有寶可夢夥伴（每回合限 1 隻 +3分）
-                        </h2>
-                    </div>
-                    <div id="nobles-container" class="grid grid-cols-1 gap-2.5"></div>
-                </section>
+        <!-- 💡 頂部專屬橫向稀有寶可夢夥伴區塊 -->
+        <section class="glass-panel rounded-2xl p-3">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
+                    <span>⭐</span> 稀有寶可夢夥伴（每回合限 1 隻 +3分）
+                </h2>
+                <span class="text-[11px] text-slate-400">滿足條件自動吸引</span>
+            </div>
+            <div id="nobles-container"></div>
+        </section>
 
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
+            <!-- 左欄：進化石銀行 -->
+            <div class="lg:col-span-4 space-y-3.5">
                 <section class="glass-panel rounded-2xl p-3.5">
                     <div class="flex items-center justify-between mb-2">
                         <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
@@ -170,7 +176,7 @@
             </div>
 
             <!-- 中欄：寶可夢屬性卡市場 -->
-            <main class="lg:col-span-5 glass-panel rounded-2xl p-3.5 space-y-3">
+            <main class="lg:col-span-8 glass-panel rounded-2xl p-3.5 space-y-3">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
                         <span>🃏</span> 寶可夢資源卡市場（可收服會發光提示）
@@ -217,15 +223,17 @@
                     <div id="market-row-1" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
                 </div>
             </main>
+        </div>
 
-            <!-- 右欄：所有玩家面板（含即時戰報區與公開保留卡片區） -->
+        <!-- 下方區塊：所有玩家面板與戰報 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
+            <div id="players-container" class="lg:col-span-8 space-y-3"></div>
             <aside class="lg:col-span-4 space-y-3">
-                <div id="players-container" class="space-y-3"></div>
                 <section class="glass-panel rounded-2xl p-3.5 space-y-2">
                     <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1.5">
                         <span>📜</span> 對戰即時戰報紀錄
                     </h2>
-                    <div id="battle-log-container" class="bg-slate-950/80 rounded-xl p-2.5 h-32 overflow-y-auto space-y-1.5 border border-slate-800 text-xs text-slate-300">
+                    <div id="battle-log-container" class="bg-slate-950/80 rounded-xl p-2.5 h-44 overflow-y-auto space-y-1.5 border border-slate-800 text-xs text-slate-300">
                         <div class="text-slate-500">遊戲剛開始，等待訓練家們進行第一手操作...</div>
                     </div>
                 </section>
@@ -568,50 +576,52 @@
 
         function renderNobles() {
             const container = document.getElementById('nobles-container');
-            container.innerHTML = gameState.nobles.map(n => `
-                <div class="glass-card rounded-2xl p-2.5 flex items-center gap-3 border-amber-500/40">
-                    <img src="${n.img}" alt="${n.name}" class="w-14 h-14 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] bg-slate-900/60 rounded-xl p-1 border border-slate-700" />
-                    <div class="flex-1">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-amber-200">${n.name}</span>
-                            <span class="px-2 py-0.5 rounded-lg bg-amber-500 text-slate-950 font-black text-xs">+${n.points}分</span>
+            container.innerHTML = `
+                <div class="nobles-horizontal-container">
+                    ${gameState.nobles.map(n => `
+                        <div class="glass-card noble-mini-card border-amber-500/40">
+                            <div class="flex justify-between items-center w-full px-1 mb-0.5">
+                                <span class="text-[11px] font-bold text-amber-200 truncate" title="${n.name}">${n.name}</span>
+                                <span class="px-1.5 py-0.2 rounded bg-amber-500 text-slate-950 font-black text-[10px]">+${n.points}</span>
+                            </div>
+                            <img src="${n.img}" alt="${n.name}" class="w-10 h-10 object-contain drop-shadow my-0.5 bg-slate-900/60 rounded-lg p-0.5 border border-slate-700" />
+                            <div class="flex flex-wrap justify-center gap-0.5 mt-0.5 text-[9px]">
+                                ${CARD_GEM_ORDER.map(gem => n.req[gem] ? `
+                                    <span class="px-1 py-0.2 rounded border font-bold ${CARD_COLORS[gem].badgeClass}">
+                                        ${CARD_COLORS[gem].shortName || CARD_COLORS[gem].name[0]}${n.req[gem]}
+                                    </span>
+                                ` : '').join('')}
+                            </div>
                         </div>
-                        <div class="flex flex-wrap gap-1 mt-1.5 text-[10px]">
-                            ${CARD_GEM_ORDER.map(gem => n.req[gem] ? `
-                                <span class="px-1.5 py-0.5 rounded border font-bold ${CARD_COLORS[gem].badgeClass}">
-                                    ${CARD_COLORS[gem].name}${n.req[gem]}張
-                                </span>
-                            ` : '').join('')}
-                        </div>
-                    </div>
+                    `).join('')}
                 </div>
-            `).join('');
+            `;
         }
 
-    function renderBank() {
-  const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
-  const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !hasWaiting && !gameState.winner;
-  const container = document.getElementById('bank-gems-container');
-  document.getElementById('bank-limit-hint').textContent = `${gameState.maxPlayers}人局配置`;
+        function renderBank() {
+            const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
+            const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !hasWaiting && !gameState.winner;
+            const container = document.getElementById('bank-gems-container');
+            document.getElementById('bank-limit-hint').textContent = `${gameState.maxPlayers}人局配置`;
 
-  container.innerHTML = ALL_GEMS.map(gem => {
-    const total = gameState.bank[gem];
-    const selected = selectedGemsBuffer.filter(g => g === gem).length;
-    const info = BANK_ITEMS[gem];
-    const remaining = total - selected;
+            container.innerHTML = ALL_GEMS.map(gem => {
+                const total = gameState.bank[gem];
+                const selected = selectedGemsBuffer.filter(g => g === gem).length;
+                const info = BANK_ITEMS[gem];
+                const remaining = total - selected;
 
-    return `
-      <div class="item-orb-btn relative flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl bg-slate-900/80 border border-slate-800 ${isMyTurn && gem !== 'gold' ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-70'}"
-           onclick="${isMyTurn && gem !== 'gold' ? `handleSelectBankGem('${gem}')` : ''}">
-        <span class="absolute -top-1.5 -right-1 w-4 h-4 rounded-full bg-amber-500 text-slate-950 font-black text-[10px] flex items-center justify-center shadow border border-amber-300 z-10">
-          ${remaining}
-        </span>
-        <div class="my-0.5">${getGemOrbHTML(gem, 'w-6 h-6')}</div>
-        <span class="text-[9px] font-bold ${info.text} leading-tight whitespace-nowrap">${info.name}</span>
-      </div>
-    `;
-  }).join('');
-}
+                return `
+                  <div class="item-orb-btn relative flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl bg-slate-900/80 border border-slate-800 ${isMyTurn && gem !== 'gold' ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-70'}"
+                       onclick="${isMyTurn && gem !== 'gold' ? `handleSelectBankGem('${gem}')` : ''}">
+                    <span class="absolute -top-1.5 -right-1 w-4 h-4 rounded-full bg-amber-500 text-slate-950 font-black text-[10px] flex items-center justify-center shadow border border-amber-300 z-10">
+                      ${remaining}
+                    </span>
+                    <div class="my-0.5">${getGemOrbHTML(gem, 'w-6 h-6')}</div>
+                    <span class="text-[9px] font-bold ${info.text} leading-tight whitespace-nowrap">${info.name}</span>
+                  </div>
+                `;
+            }).join('');
+        }
 
         function handleSelectBankGem(gem) {
             if (gem === 'gold') return;
@@ -664,7 +674,6 @@
             preview.innerHTML = selectedGemsBuffer.map(g => getGemOrbHTML(g, 'w-7 h-7')).join('');
             btnClear.disabled = false;
 
-            // 檢查道具總數是否會超過 10 個
             const player = gameState.players[myPlayerIndex];
             const currentTotalGems = ALL_GEMS.reduce((sum, g) => sum + player.gems[g], 0);
             const willExceed = (currentTotalGems + selectedGemsBuffer.length) > 10;
@@ -675,7 +684,6 @@
                 warningEl.classList.add('hidden');
             }
 
-            // 判斷是否符合規則可以按確認
             const len = selectedGemsBuffer.length;
             let isValid = false;
             let ruleHint = '';
@@ -750,7 +758,7 @@
             }
         }
 
-function renderMarket() {
+        function renderMarket() {
             const currentPlayer = gameState.players[myPlayerIndex];
             const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !gameState.winner;
 
@@ -766,7 +774,6 @@ function renderMarket() {
                         canAffordCard = calculatePurchasePayment(currentPlayer, card).canAfford;
                     }
 
-                    // 修正後的卡片內部 HTML 產生邏輯
                     let costHTML = CARD_GEM_ORDER.map(g => {
                         if (!card.cost[g]) return '';
                         return '<div class="flex items-center gap-0.5 px-1 py-0.5 rounded bg-slate-900/90 border border-slate-700/80 text-[9px] leading-none shrink-0" title="' + BANK_ITEMS[g].name + '">' +
@@ -798,7 +805,7 @@ function renderMarket() {
                 }).join('');
             });
         }
-        // 💡 1*6 橫向屬性配置設定
+
         const ROW_1X6_ATTRS = {
             diamond: { title: '雷|黃', bg: 'bg-amber-950/50 border-amber-500/60', gemColor: 'text-amber-200', cardBadge: 'bg-amber-100 text-amber-950 font-black border-amber-300' },
             sapphire: { title: '水|藍', bg: 'bg-blue-950/50 border-blue-500/60', gemColor: 'text-blue-300', cardBadge: 'bg-blue-950/80 text-blue-200 border-blue-400/50' },
@@ -826,7 +833,6 @@ function renderMarket() {
                             <span class="font-title font-black text-xl text-amber-400">${p.points}分</span>
                         </div>
 
-                        <!-- 💡 1*6 橫向排版 -->
                         <div class="grid grid-cols-6 gap-1">
                             ${CARD_GEM_ORDER.map(g => {
                                 const attr = ROW_1X6_ATTRS[g];
@@ -841,7 +847,6 @@ function renderMarket() {
                                 `;
                             }).join('')}
 
-                            <!-- 大師球 1*6 格子 -->
                             <div class="flex flex-col items-center justify-between p-1 rounded-lg border bg-white/10 border-white/30 text-[10px] text-center">
                                 <span class="font-bold text-white">大師球</span>
                                 <span class="text-white font-black my-0.5">${p.gems.gold}</span>
@@ -921,8 +926,6 @@ function renderMarket() {
             const statusEl = document.getElementById('modal-afford-status');
             const buyBtn = document.getElementById('modal-btn-buy');
             const reserveBtn = document.getElementById('modal-btn-reserve');
-
-            const isOwnReserved = (source === 'reserved' || (source === 'reservedPlayer' && targetPlayerIdx === myPlayerIndex));
 
             if (!isMyTurn || (source === 'reservedPlayer' && targetPlayerIdx !== myPlayerIndex)) {
                 buyBtn.classList.add('hidden');
@@ -1064,7 +1067,6 @@ function renderMarket() {
                     <span>退回 ${BANK_ITEMS[g].name} (${player.gems[g]})</span>
                 </button>
             ` : '').join('');
-            document.getElementById('discard-modal').classList.add('hidden'); // 改為直接略過退回彈窗，或保留原本邏輯
         }
 
         function discardOneGem(gem) {
@@ -1072,7 +1074,6 @@ function renderMarket() {
             player.gems[gem] -= 1;
             gameState.bank[gem] += 1;
             if (ALL_GEMS.reduce((s, g) => s + player.gems[g], 0) <= 10) {
-                document.getElementById('discard-modal').classList.add('hidden');
                 checkNoblePhaseAndEndTurn();
             } else {
                 openDiscardModal();
