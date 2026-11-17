@@ -14,7 +14,15 @@
         .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(251, 191, 36, 0.25); box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
         .glass-card { background: linear-gradient(145deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.96)); border: 1px solid rgba(251, 191, 36, 0.35); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); transition: all 0.2s ease; }
         .glass-card:hover { transform: translateY(-2px); border-color: rgba(251, 191, 36, 0.85); }
-        .poke-color-card { transition: all 0.18s ease; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); max-width: 130px; margin: 0 auto; }
+        
+        /* 統一所有寶可夢資源卡的固定大小與寬度 */
+        .poke-color-card { 
+            transition: all 0.18s ease; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); 
+            width: 100%; 
+            min-height: 96px; 
+            max-height: 96px; 
+        }
         .poke-color-card:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 8px 20px rgba(251, 191, 36, 0.25); }
         
         .nobles-flex-container { display: flex; gap: 4px; width: 100%; }
@@ -148,7 +156,7 @@
                     <div id="nobles-container"></div>
                 </section>
 
-                <!-- 2. 🃏 寶可夢資源卡市場 (卡片已套用 poke-color-card 限制寬度) -->
+                <!-- 2. 🃏 寶可夢資源卡市場 -->
                 <main class="glass-panel rounded-xl p-2.5 space-y-2">
                     <div class="flex items-center justify-between">
                         <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
@@ -191,7 +199,7 @@
                     </div>
                 </main>
 
-                <!-- 3. 💎 進化石與大師球銀行 (全新精簡同行排版) -->
+                <!-- 3. 💎 進化石與大師球銀行 -->
                 <section class="glass-panel rounded-xl p-2.5 space-y-2">
                     <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700/60 pb-2">
                         <div class="flex items-center gap-2">
@@ -215,7 +223,6 @@
                         ⚠️ 道具總數將超過 10 個上限！
                     </div>
 
-                    <!-- 五個石頭與大師球按鈕橫向並排 -->
                     <div id="bank-gems-container" class="grid grid-cols-6 gap-1.5"></div>
                 </section>
             </div>
@@ -766,7 +773,7 @@
                 document.getElementById(`deck-count-${level}`).textContent = gameState.decks[level].length;
                 const container = document.getElementById(`market-row-${level}`);
                 container.innerHTML = gameState.market[level].map((card, idx) => {
-                    if (!card) return `<div class="h-24 rounded-lg border border-dashed border-slate-800 flex items-center justify-center text-[10px] text-slate-600">已售罄</div>`;
+                    if (!card) return `<div class="poke-color-card rounded-lg border border-dashed border-slate-800 flex items-center justify-center text-[10px] text-slate-600">已售罄</div>`;
                     const colorStyle = CARD_COLORS[card.bonus];
                     
                     let canAffordCard = false;
@@ -783,7 +790,7 @@
                     }).join('');
 
                     return `
-                      <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border ${colorStyle.bgClass} rounded-lg p-1 h-24 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
+                      <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border ${colorStyle.bgClass} rounded-lg p-1 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
                         ${canAffordCard ? `<span class="absolute top-0.5 right-0.5 px-1 py-0.2 rounded bg-emerald-500 text-slate-950 font-black text-[8px] shadow animate-pulse z-25">可收服</span>` : ''}
                         
                         <div class="flex justify-between items-center z-10">
