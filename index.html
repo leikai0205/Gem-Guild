@@ -766,30 +766,34 @@
                         canAffordCard = calculatePurchasePayment(currentPlayer, card).canAfford;
                     }
 
-                    return `
-                        <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border-2 ${colorStyle.bgClass} rounded-xl p-2 h-36 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
-                            ${canAffordCard ? `<span class="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[9px] shadow animate-pulse z-20">可收服！</span>` : ''}
-                            <div class="flex justify-between items-center z-10">
-                                <span class="font-title font-black text-base ${colorStyle.scoreClass}">${card.points > 0 ? '+' + card.points : ''}</span>
-                                <span class="px-1.5 py-0.5 rounded border text-[10px] font-bold ${colorStyle.badgeClass}">
-                                    ${colorStyle.name}
-                                </span>
-                            </div>
-                            <div class="flex justify-center my-auto">
-                                <img src="${card.pokeImg}" class="w-14 h-14 object-contain drop-shadow-[0_6px_10px_rgba(0,0,0,0.85)] group-hover:scale-110 transition duration-200" />
-                            </div>
-                            <div class="flex flex-wrap gap-1 justify-end z-10 bg-slate-950/75 p-1 rounded-lg">
-                                ${CARD_GEM_ORDER.map(g => card.cost[g] ? `
-                                    <div class="flex items-center gap-1 px-1 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px]" title="${BANK_ITEMS[g].name}">
-                                        ${getGemOrbHTML(g, 'w-3.5 h-3.5')}
-                                        <span class="font-bold text-amber-300">${card.cost[g]}</span>
-                                    </div>
-                                ` : '').join('')}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            });
+return `
+  <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border-2 ${colorStyle.bgClass} rounded-xl p-1.5 h-32 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
+    ${canAffordCard ? `<span class="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[9px] shadow animate-pulse z-20">可收服！</span>` : ''}
+    
+    <!-- 頂部：分數與屬性標籤 -->
+    <div class="flex justify-between items-center z-10">
+      <span class="font-title font-black text-sm ${colorStyle.scoreClass} leading-none">${card.points > 0 ? '+' + card.points : ''}</span>
+      <span class="px-1.5 py-0.5 rounded border text-[9px] font-bold leading-none ${colorStyle.badgeClass}">
+        ${colorStyle.name}
+      </span>
+    </div>
+
+    <!-- 中間：寶可夢圖片（稍微縮小一點點配合緊湊版面） -->
+    <div class="flex justify-center my-auto">
+      <img src="${card.pokeImg}" class="w-12 h-12 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.85)] group-hover:scale-110 transition duration-200" />
+    </div>
+
+    <!-- 底部：強制單行不換行成本區 -->
+    <div class="flex flex-nowrap items-center justify-end gap-0.5 z-10 bg-slate-950/80 px-1 py-0.5 rounded-lg w-full overflow-hidden">
+      ${CARD_GEM_ORDER.map(g => card.cost[g] ? `
+        <div class="flex items-center gap-0.5 px-1 py-0.5 rounded bg-slate-900/90 border border-slate-700/80 text-[9px] leading-none shrink-0" title="${BANK_ITEMS[g].name}">
+          ${getGemOrbHTML(g, 'w-2.5 h-2.5')}
+          <span class="font-bold text-amber-300">${card.cost[g]}</span>
+        </div>
+      ` : '').join('')}
+    </div>
+  </div>
+`;
         }
 
         // 💡 1*6 橫向屬性配置設定
