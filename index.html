@@ -1056,7 +1056,8 @@ html, body {
         };
 
         // 右側玩家欄位渲染（保留區統一簡化為 🔒 Lv.X 卡，不佔版面且保有盲區）
-function renderPlayers() {
+// 右側玩家欄位渲染（保留區統一簡化為 🔒 Lv.X 卡，不佔版面且保有盲區，全部擠在第一行）
+        function renderPlayers() {
             const container = document.getElementById('players-container');
 
             container.innerHTML = gameState.players.map((p, idx) => {
@@ -1105,25 +1106,6 @@ function renderPlayers() {
                                 <span class="text-[8px] text-slate-200">萬用</span>
                             </div>
                         </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-                        ${p.reserved && p.reserved.length > 0 ? `
-                            <div class="pt-1 border-t border-slate-800/80">
-                                <div class="text-[9px] text-purple-300 font-bold mb-0.5">${isMe ? '你的' : `${p.name}的`}保留區 (${p.reserved.length}/3)：</div>
-                                <div class="flex gap-1 flex-wrap">
-                                    ${p.reserved.map((rc) => {
-                                        return `
-                                            <div class="px-2 py-0.5 rounded border border-purple-500/40 bg-purple-950/40 text-purple-200 text-[9px] font-bold">
-                                                🔒 Lv.${rc.level} 卡
-                                            </div>
-                                        `;
-                                    }).join('')}
-                                </div>
-                            </div>
-                        ` : ''}
                     </div>
                 `;
             }).join('');
