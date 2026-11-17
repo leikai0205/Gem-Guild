@@ -279,10 +279,10 @@ html, body {
             </div>
         </div>
 
-        <!-- ==================== 2. 遊戲主畫面（完整包在 game-main-layout 內，滿版不偏左） ==================== -->
-        <div id="game-screen" class="game-main-layout hidden absolute inset-0 z-20">
+<!-- ==================== 2. 遊戲主畫面 ==================== -->
+        <div id="game-screen" class="game-main-layout hidden absolute inset-0 z-20 flex flex-col p-2.5 gap-2">
             
-            <!-- 頂部狀態列（強制單行、隨螢幕寬度自適應） -->
+            <!-- 1. 頂部狀態列（獨立在最上方，強制單行、橫跨全寬） -->
             <header class="glass-panel rounded-xl px-3 py-1.5 flex items-center justify-between gap-2 w-full flex-nowrap shrink-0">
                 <!-- 左側：標題與房號、身分 -->
                 <div class="flex items-center gap-2 flex-nowrap shrink-0">
@@ -317,13 +317,13 @@ html, body {
                 </div>
             </header>
 
-            <!-- 主遊戲雙欄排版 -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-start mt-2">
+            <!-- 2. 下方主遊戲雙欄排版（市場在左、銀行/玩家/戰報在右） -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-start flex-1 overflow-hidden">
                 
                 <!-- ==================== 左邊欄位（市場與稀有夥伴） ==================== -->
-                <div class="lg:col-span-8 space-y-2.5">
+                <div class="lg:col-span-8 space-y-2.5 overflow-y-auto h-full pr-1">
                     
-                    <!-- 1. ⭐ 稀有寶可夢夥伴 -->
+                    <!-- ⭐ 稀有寶可夢夥伴 -->
                     <section class="glass-panel rounded-xl p-2.5">
                         <div class="flex items-center justify-between mb-1.5">
                             <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
@@ -333,7 +333,7 @@ html, body {
                         <div id="nobles-container"></div>
                     </section>
 
-                    <!-- 2. 🃏 寶可夢資源卡市場 -->
+                    <!-- 🃏 寶可夢資源卡市場 -->
                     <main class="glass-panel rounded-xl p-2.5 space-y-2">
                         <div class="flex items-center justify-between">
                             <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
@@ -378,7 +378,7 @@ html, body {
                 </div>
 
                 <!-- ==================== 右邊欄位（銀行在上 ➔ 玩家資訊 ➔ 可內滑戰報） ==================== -->
-                <aside class="lg:col-span-4 space-y-2.5">
+                <aside class="lg:col-span-4 space-y-2.5 overflow-y-auto h-full pr-1">
                     
                     <!-- 1. 💎 進化石與大師球銀行 -->
                     <section class="glass-panel rounded-xl p-2.5 space-y-2">
@@ -423,10 +423,7 @@ html, body {
                 </aside>
 
             </div>
-
         </div>
-
-    </div>
 
     <!-- ==================== 3. 彈窗區塊（獨立置於最外層，不受限制） ==================== -->
     <div id="card-action-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
