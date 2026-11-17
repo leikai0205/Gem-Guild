@@ -260,8 +260,8 @@ html, body {
                         <div id="nobles-container"></div>
                     </section>
 
-                    <!-- 標準 4 欄網格：前 3 格放明牌，第 4 格放盲抽保留按鈕 -->
-                    <main class="glass-panel rounded-xl p-2.5 space-y-2">
+                    <!-- 標準 3 欄卡片市場 + 標題列後方放盲抽按鈕 -->
+                    <main class="glass-panel rounded-xl p-2.5 space-y-2.5">
                         <div class="flex items-center justify-between">
                             <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
                                 <span>🃏</span> 寶可夢資源卡市場（可收服會發光提示）
@@ -269,29 +269,38 @@ html, body {
                             <span class="text-[10px] text-slate-400">先達 15 分觸發終局</span>
                         </div>
                         
-                        <div class="flex gap-2 items-start">
+                        <div class="flex gap-2.5 items-start">
                             
-                            <!-- 左側市場 3 個等級區塊：每一列使用 grid-cols-4 完美切成 4 等分 -->
-                            <div class="flex-1 space-y-2">
+                            <!-- 左側市場 3 個等級區塊 -->
+                            <div class="flex-1 space-y-3">
                                 <div class="space-y-1">
                                     <div class="flex items-center justify-between text-[11px]">
-                                        <span class="px-1.5 py-0.2 rounded bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 font-bold">Lv.3 頂級 (剩 <b id="deck-count-3">0</b>)</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-1.5 py-0.2 rounded bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 font-bold">Lv.3 頂級 (剩 <b id="deck-count-3">0</b>)</span>
+                                            <button onclick="reserveBlindFromDeck(3)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition shadow">🎲 Lv.3 盲抽 (+大師球)</button>
+                                        </div>
                                     </div>
-                                    <div id="market-row-3" class="grid grid-cols-4 gap-2"></div>
+                                    <div id="market-row-3" class="grid grid-cols-3 gap-2"></div>
                                 </div>
 
                                 <div class="space-y-1">
                                     <div class="flex items-center justify-between text-[11px]">
-                                        <span class="px-1.5 py-0.2 rounded bg-amber-500/20 border border-amber-400/40 text-amber-300 font-bold">Lv.2 中階 (剩 <b id="deck-count-2">0</b>)</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-1.5 py-0.2 rounded bg-amber-500/20 border border-amber-400/40 text-amber-300 font-bold">Lv.2 中階 (剩 <b id="deck-count-2">0</b>)</span>
+                                            <button onclick="reserveBlindFromDeck(2)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition shadow">🎲 Lv.2 盲抽 (+大師球)</button>
+                                        </div>
                                     </div>
-                                    <div id="market-row-2" class="grid grid-cols-4 gap-2"></div>
+                                    <div id="market-row-2" class="grid grid-cols-3 gap-2"></div>
                                 </div>
 
                                 <div class="space-y-1">
                                     <div class="flex items-center justify-between text-[11px]">
-                                        <span class="px-1.5 py-0.2 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-bold">Lv.1 初階 (剩 <b id="deck-count-1">0</b>)</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-1.5 py-0.2 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-bold">Lv.1 初階 (剩 <b id="deck-count-1">0</b>)</span>
+                                            <button onclick="reserveBlindFromDeck(1)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition shadow">🎲 Lv.1 盲抽 (+大師球)</button>
+                                        </div>
                                     </div>
-                                    <div id="market-row-1" class="grid grid-cols-4 gap-2"></div>
+                                    <div id="market-row-1" class="grid grid-cols-3 gap-2"></div>
                                 </div>
                             </div>
 
@@ -427,7 +436,7 @@ html, body {
 
     <!-- 遊戲核心邏輯 -->
     <script>
-        // 渲染市場（使用 4 欄網格：前 3 格放明牌卡片，第 4 格放盲抽按鈕）
+        // 渲染市場（維持 3 張明牌緊湊排列，盲抽按鈕移至左上角等級標題後方）
         function renderMarket() {
             const currentPlayer = gameState.players[myPlayerIndex];
             const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !gameState.winner;
@@ -436,8 +445,7 @@ html, body {
                 document.getElementById(`deck-count-${level}`).textContent = gameState.decks[level].length;
                 const container = document.getElementById(`market-row-${level}`);
                 
-                // 前 3 張明牌 HTML
-                let cardsHtml = gameState.market[level].map((card, idx) => {
+                container.innerHTML = gameState.market[level].map((card, idx) => {
                     if (!card) return `<div class="poke-color-card rounded-lg border border-dashed border-slate-800 flex items-center justify-center text-[10px] text-slate-600">已售罄</div>`;
                     const colorStyle = CARD_COLORS[card.bonus];
                     
@@ -477,17 +485,6 @@ html, body {
                       </div>
                     `;
                 }).join('');
-
-                // 第 4 格放入盲抽保留按鈕
-                cardsHtml += `
-                    <div onclick="reserveBlindFromDeck(${level})" class="poke-color-card border border-purple-400/50 bg-purple-950/30 hover:bg-purple-900/50 rounded-lg p-2 flex flex-col items-center justify-center cursor-pointer group shadow transition text-center">
-                        <div class="text-xl mb-1 group-hover:scale-110 transition">🎲</div>
-                        <div class="text-[9px] font-bold text-purple-200 leading-tight">盲抽保留</div>
-                        <div class="text-[7px] text-amber-300/90 mt-1 bg-amber-500/10 px-1 py-0.5 rounded border border-amber-400/30">(+大師球)</div>
-                    </div>
-                `;
-
-                container.innerHTML = cardsHtml;
             });
 
             if (currentPlayer && currentPlayer.reserved) {
@@ -693,9 +690,9 @@ html, body {
                     players: initialPlayers
                 };
                 gameState.market = {
-                    1: gameState.decks[1].splice(0, 4),
-                    2: gameState.decks[2].splice(0, 4),
-                    3: gameState.decks[3].splice(0, 4)
+                    1: gameState.decks[1].splice(0, 3),
+                    2: gameState.decks[2].splice(0, 3),
+                    3: gameState.decks[3].splice(0, 3)
                 };
                 myPlayerIndex = 0;
 
@@ -1229,7 +1226,7 @@ html, body {
                     <span>退回 ${BANK_ITEMS[g].name} (${player.gems[g]})</span>
                 </button>
             ` : '').join('');
-            document.getElementById('discard-modal').classList.add('hidden');
+            document.getElementById('discard-modal').classList.remove('hidden');
         }
 
         function discardOneGem(gem) {
