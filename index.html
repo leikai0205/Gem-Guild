@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
     <style>
 /* ==========================================================
-   1. 基礎頁面與全螢幕強制置中填滿
+   1. 基礎頁面與全螢幕強制 80% 視覺比例配置
    ========================================================== */
 html, body { 
     font-family: 'Noto Sans TC', sans-serif; 
@@ -24,15 +24,26 @@ html, body {
     box-sizing: border-box;
 }
 
+/* 將整體畫面以 CSS 縮放到 80%，讓 100% 瀏覽器視窗直接完美呈現 */
+#app {
+    width: 125vw !important; /* 100 / 0.8 = 125 */
+    height: 125vh !important;
+    transform: scale(0.8);
+    transform-origin: top left;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 /* ==========================================================
-   2. 主畫面與大廳容器：強制 100% 寬高、絕對不靠左偏心
+   2. 主畫面與大廳容器
    ========================================================== */
 .game-main-layout, 
 #lobby-screen, 
 #game-screen {
-    width: 100vw !important;
+    width: 125vw !important;
     max-width: 100% !important;
-    height: 100vh !important;
+    height: 125vh !important;
     margin: 0 !important;
     box-sizing: border-box;
 }
@@ -46,11 +57,10 @@ html, body {
     padding: 8px;
 }
 
-/* 電腦大螢幕或橫式下：左右雙欄自動撐滿整個視窗 */
 @media (min-width: 1024px) or (orientation: landscape) {
     .game-main-layout {
         display: grid;
-        grid-template-columns: 1fr 440px; /* 左側市場 1fr 自動向右填滿剩餘所有空間，右側固定 440px */
+        grid-template-columns: 1fr 440px;
         gap: 10px;
         padding: 10px;
         overflow: hidden; 
@@ -80,7 +90,7 @@ html, body {
 }
 
 /* ==========================================================
-   3. 極致壓縮卡片與區塊
+   3. 寶可夢卡片與區塊
    ========================================================== */
 .poke-color-card { 
     position: relative;
@@ -109,19 +119,6 @@ html, body {
     z-index: 20; 
 }
 
-.poke-color-card .c-glare {
-    position: absolute;
-    inset: 0;
-    border-radius: .25em;
-    background: radial-gradient(circle at var(--mx, 50%) var(--my, 20%), rgba(255,255,255,.35), transparent 50%);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    pointer-events: none;
-    mix-blend-mode: overlay;
-    z-index: 10;
-}
-.poke-color-card:hover .c-glare { opacity: 1; }
-
 .nobles-flex-container { display: flex; gap: 3px; width: 100%; }
 .noble-mini-card { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 2px 1px; border-radius: 6px; }
 
@@ -147,34 +144,21 @@ html, body {
 .gem-diamond { background: radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 40%, #ca8a04 80%, #422006 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(234,179,8,0.4); border: 1px solid #fde047; }
 .gem-onyx { background: radial-gradient(circle at 35% 30%, #f3e8ff 0%, #c084fc 40%, #7e22ce 80%, #3b0764 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(192,132,252,0.4); border: 1px solid #e879f9; }
 
-/* 圖片與字體緊緻縮小 */
 .poke-color-card img,
 .noble-mini-card img {
     width: auto !important;
     height: 32px !important; 
     max-width: 80% !important;
-    object-fit: contain;
+    object-file: contain;
     margin: auto auto !important; 
     image-rendering: -webkit-optimize-contrast; 
     transition: transform 0.2s ease;
 }
 
-.poke-color-card span.border {
-    font-size: 7px !important; 
-    padding: 0px 2px !important;
-}
+.poke-color-card span.border { font-size: 7px !important; padding: 0px 2px !important; }
+.poke-color-card .font-title { font-size: 9px !important; }
+.noble-mini-card span { font-size: 7px !important; }
 
-.poke-color-card .font-title {
-    font-size: 9px !important; 
-}
-
-.noble-mini-card span {
-    font-size: 7px !important;
-}
-
-/* ==========================================================
-   4. 進化石成本列
-   ========================================================== */
 .card-cost-container {
     display: flex !important;
     flex-direction: row !important;
@@ -206,11 +190,10 @@ html, body {
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
-    <!-- ==================== 根容器 ==================== -->
-    <div id="app" class="w-screen h-screen overflow-hidden m-0 p-0 relative">
+    <div id="app">
         
-        <!-- ==================== 1. 大廳登入畫面 ==================== -->
-        <div id="lobby-screen" class="w-screen h-screen flex flex-col items-center justify-center p-4 box-border absolute inset-0 z-10">
+        <!-- 1. 大廳登入畫面 -->
+        <div id="lobby-screen" class="flex flex-col items-center justify-center p-4 box-border absolute inset-0 z-10">
             <div class="glass-panel max-w-lg w-full rounded-3xl p-6 sm:p-8 relative overflow-hidden">
                 <div class="text-center mb-6">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-medium tracking-wider mb-2">
@@ -268,8 +251,8 @@ html, body {
             </div>
         </div>
 
-        <!-- ==================== 2. 遊戲主畫面 ==================== -->
-        <div id="game-screen" class="game-main-layout hidden absolute inset-0 z-20 flex flex-col p-2.5 gap-2">
+        <!-- 2. 遊戲主畫面 -->
+        <div id="game-screen" class="game-main-layout hidden absolute inset-0 z-25 flex flex-col p-2.5 gap-2">
             
             <header class="glass-panel rounded-xl px-3 py-1.5 flex items-center justify-between gap-2 w-full flex-nowrap shrink-0">
                 <div class="flex items-center gap-2 flex-nowrap shrink-0">
@@ -315,7 +298,6 @@ html, body {
                         <div id="nobles-container"></div>
                     </section>
 
-                    <!-- 12 宮格市場與右側保留卡區 -->
                     <main class="glass-panel rounded-xl p-2.5 space-y-2">
                         <div class="flex items-center justify-between">
                             <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
@@ -413,7 +395,7 @@ html, body {
 
     </div>
 
-    <!-- ==================== 3. 彈窗區塊 ==================== -->
+    <!-- 彈窗區塊 -->
     <div id="card-action-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel max-w-sm w-full rounded-3xl p-5 border border-amber-400/50 space-y-4">
             <div class="flex items-center justify-between">
@@ -485,9 +467,8 @@ html, body {
         </div>
     </div>
 
-    <!-- ==================== 4. 遊戲核心邏輯 ==================== -->
+    <!-- 遊戲核心邏輯 -->
     <script>
-        // 渲染左側市場的 3 格直立保留卡
         function renderMyReservedCards(myReservedCards) {
             const container = document.getElementById('reserved-cards-container');
             const countText = document.getElementById('reserved-count-text');
@@ -1055,8 +1036,6 @@ html, body {
             onyx: { title: '月|紫', bg: 'bg-purple-950/60 border-purple-500/60', gemColor: 'text-purple-300', cardBadge: 'bg-purple-950/90 text-purple-200 border-purple-400/60' }
         };
 
-        // 右側玩家欄位渲染（保留區統一簡化為 🔒 Lv.X 卡，不佔版面且保有盲區）
-// 右側玩家欄位渲染（保留區統一簡化為 🔒 Lv.X 卡，不佔版面且保有盲區，全部擠在第一行）
         function renderPlayers() {
             const container = document.getElementById('players-container');
 
@@ -1065,7 +1044,6 @@ html, body {
                 const isMe = idx === myPlayerIndex;
                 const totalGems = ALL_GEMS.reduce((s, g) => s + p.gems[g], 0);
 
-                // 產生保留區的簡短標示（例如 🔒 Lv.3卡 🔒 Lv.2卡）
                 let reservedHtml = '';
                 if (p.reserved && p.reserved.length > 0) {
                     const cardsText = p.reserved.map(rc => `🔒 Lv.${rc.level}卡`).join(' ');
@@ -1074,7 +1052,6 @@ html, body {
 
                 return `
                     <div class="glass-panel rounded-xl p-2.5 ${isCurrent ? 'active-turn-glow' : 'opacity-85'} space-y-1.5">
-                        <!-- 第一行：全部擠在同一行（名字、道具、稀有、保留區），右側是分數 -->
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <span class="font-bold text-xs text-white">${p.name} ${isMe ? '(你)' : ''}</span>
@@ -1085,7 +1062,6 @@ html, body {
                             <span class="font-title font-black text-base text-amber-400 shrink-0">${p.points}分</span>
                         </div>
 
-                        <!-- 第二行：五色進化石與大師球持有數 -->
                         <div class="grid grid-cols-6 gap-1">
                             ${CARD_GEM_ORDER.map(g => {
                                 const attr = ROW_1X6_ATTRS[g];
