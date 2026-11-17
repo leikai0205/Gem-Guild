@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
     <style>
 /* ==========================================================
-   1. 基礎頁面鎖定（強制單頁、無全頁捲軸）
+   1. 基礎頁面與全螢幕強制置中填滿
    ========================================================== */
 html, body { 
     font-family: 'Noto Sans TC', sans-serif; 
@@ -20,35 +20,40 @@ html, body {
     height: 100vh;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* 強制關閉網頁外層捲軸 */
+    overflow: hidden; 
     box-sizing: border-box;
 }
 
 /* ==========================================================
-   2. 主畫面佈局：智慧響應式（自動向右填滿視窗，不留黑邊）
+   2. 主畫面與大廳容器：強制 100% 寬高、絕對不靠左偏心
    ========================================================== */
+.game-main-layout, 
+#lobby-screen, 
+#game-screen {
+    width: 100vw !important;
+    max-width: 100% !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+}
+
 .game-main-layout {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    width: 100vw;
-    height: 100vh;
-    max-width: 100% !important;
-    max-height: 100vh;
-    box-sizing: border-box;
-    overflow-y: auto; /* 手機直立時若高度不夠允許內部捲動 */
+    overflow-y: auto; 
     overflow-x: hidden;
-    padding: 6px;
+    padding: 8px;
 }
 
-/* 當切換為電腦大螢幕或手機橫式（寬度大於 1024px 或橫向）時：自動向右延展並分配雙欄 */
+/* 電腦大螢幕或橫式下：左右雙欄自動撐滿整個視窗 */
 @media (min-width: 1024px) or (orientation: landscape) {
     .game-main-layout {
         display: grid;
-        grid-template-columns: 1fr 420px; /* 左側市場自動向右填滿剩餘空間，右側固定 420px 舒適寬度 */
-        gap: 8px;
-        padding: 8px;
-        overflow: hidden; /* 電腦與橫式畫面固定不捲動 */
+        grid-template-columns: 1fr 440px; /* 左側市場 1fr 自動向右填滿剩餘所有空間，右側固定 440px */
+        gap: 10px;
+        padding: 10px;
+        overflow: hidden; 
     }
 }
 
@@ -75,15 +80,15 @@ html, body {
 }
 
 /* ==========================================================
-   3. 極致壓縮卡片與區塊（免滑動一眼看完）
+   3. 極致壓縮卡片與區塊
    ========================================================== */
 .poke-color-card { 
     position: relative;
     transform-style: preserve-3d; 
     width: 100% !important;        
-    max-width: 82px !important;  /* 確保卡片精緻適中 */
+    max-width: 82px !important;  
     margin: 0 auto !important; 
-    aspect-ratio: 1 / 1.22 !important; /* 壓扁高瘦比例，省下垂直高度 */
+    aspect-ratio: 1 / 1.22 !important; 
     min-height: auto !important; 
     max-height: none !important; 
     padding: 1px !important;     
@@ -152,7 +157,7 @@ html, body {
 .poke-color-card img,
 .noble-mini-card img {
     width: auto !important;
-    height: 32px !important; /* 確保圖片高度適中，不撐開版面 */
+    height: 32px !important; 
     max-width: 80% !important;
     object-fit: contain;
     margin: auto auto !important; 
@@ -174,7 +179,7 @@ html, body {
 }
 
 /* ==========================================================
-   4. 進化石成本列：完美容納 4 顆同行
+   4. 進化石成本列
    ========================================================== */
 .card-cost-container {
     display: flex !important;
@@ -191,13 +196,12 @@ html, body {
 
 .card-cost-container > div,
 .card-cost-container .flex {
-    transform: scale(0.42) !important; /* 縮放至 42%，讓 4 種成本完美並排同行 */
+    transform: scale(0.42) !important; 
     transform-origin: center bottom !important;
     margin: 0 -5px !important;           
     flex-shrink: 0 !important;         
 }
 
-/* 額外優化市場牌組排列 */
 .market-board-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -208,12 +212,20 @@ html, body {
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
-    <!-- ==================== 1. 大廳登入畫面 ==================== -->
-    <div id="app" class="game-main-layout">
-    <div id="lobby-screen" class="min-h-screen flex items-center justify-center p-4">
-        <div class="glass-panel max-w-lg w-full rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-            <div class="text-center mb-6">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-medium tracking-wider mb-2">
+<!-- ==================== 根容器與大廳/遊戲畫面 ==================== -->
+    <div id="app" class="w-screen h-screen overflow-hidden m-0 p-0">
+        
+        <!-- 大廳登入畫面（改為強制 100vw/100vh 鋪滿，取消置中侷限） -->
+        <div id="lobby-screen" class="w-screen h-screen flex flex-col items-center justify-center p-4 box-border">
+            <!-- 你的大廳登入表單內容保持不變放這裡 -->
+        </div>
+
+        <!-- 遊戲主畫面（套用我們剛才優化的雙欄排版與滿版設定） -->
+        <div id="game-screen" class="game-main-layout hidden">
+            <!-- 這裡放你的頂部狀態列、雙欄市場與右側區塊 -->
+        </div>
+
+    </div>
                     <span>⚡</span> POKÉMON GUILD <span>⚡</span>
                 </div>
                 <h1 class="font-title text-3xl sm:text-4xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
