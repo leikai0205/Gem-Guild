@@ -15,7 +15,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: radial-gradient(circ
         .glass-card { background: linear-gradient(145deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.96)); border: 1px solid rgba(251, 191, 36, 0.35); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); transition: all 0.2s ease; }
         .glass-card:hover { transform: translateY(-2px); border-color: rgba(251, 191, 36, 0.85); }
         
-        /* 統一寶可夢資源卡改為「直向長方形」黃金比例 (寬3比長4) */
+/* 統一寶可夢資源卡改為「直向長方形」黃金比例 (寬3比長4) */
         .poke-color-card { 
             transition: all 0.18s ease; 
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); 
@@ -23,7 +23,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: radial-gradient(circ
             aspect-ratio: 3 / 4 !important; /* 直向長方形比例 */
             min-height: auto !important; 
             max-height: none !important;
-            padding: 6px 4px;
+            padding: 12px 10px !important; /* 增加上下左右邊距，讓卡片更有質感 */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -51,6 +51,15 @@ body { font-family: 'Noto Sans TC', sans-serif; background: radial-gradient(circ
         .gem-diamond { background: radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 40%, #ca8a04 80%, #422006 100%); box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 6px rgba(234,179,8,0.4); border: 1px solid #fde047; }
         .gem-onyx { background: radial-gradient(circle at 35% 30%, #f3e8ff 0%, #c084fc 40%, #7e22ce 80%, #3b0764 100%); box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 6px rgba(192,132,252,0.4); border: 1px solid #e879f9; }
 
+        /* 讓寶可夢圖片配合直立卡片放大並置中 */
+        .poke-color-card img {
+            width: auto !important;
+            height: 110px !important;  
+            max-width: 90% !important;
+            object-fit: contain;
+            margin: auto auto !important; 
+            image-rendering: -webkit-optimize-contrast; 
+        }
         /* 調整卡片內部寶可夢圖案的高畫質與大小（維持清晰不模糊、不遮擋底部） */
         .poke-color-card img,
         .noble-mini-card img {
