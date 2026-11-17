@@ -85,9 +85,8 @@ html, body {
 .poke-color-card { 
     position: relative;
     transform-style: preserve-3d; 
-    width: 100% !important;        
-    max-width: 82px !important;  
-    margin: 0 auto !important; 
+    width: 82px !important;       /* 固定卡片寬度，緊密靠攏 */
+    min-width: 82px !important;
     aspect-ratio: 1 / 1.22 !important; 
     min-height: auto !important; 
     max-height: none !important; 
@@ -260,7 +259,7 @@ html, body {
                         <div id="nobles-container"></div>
                     </section>
 
-                    <!-- 還原 002 格式：左側 4 張卡，最右側獨立一欄放「盲抽按鈕」與「直立 3 格保留卡」 -->
+                    <!-- 市場與右側保留區採用緊密靠左（justify-start）排列，消除卡片間距過遠的問題 -->
                     <main class="glass-panel rounded-xl p-2.5 space-y-2">
                         <div class="flex items-center justify-between">
                             <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
@@ -269,47 +268,38 @@ html, body {
                             <span class="text-[10px] text-slate-400">先達 15 分觸發終局</span>
                         </div>
                         
-                        <div class="flex flex-col xl:flex-row gap-2.5 items-start">
+                        <div class="flex gap-2.5 items-start">
                             
-                            <!-- 左側市場區 -->
-                            <div class="flex-1 space-y-2 w-full">
+                            <!-- 左側市場 3 個等級區塊：改用 flex 緊密靠左對齊，妙蛙花與拉普拉斯自然緊鄰 -->
+                            <div class="flex-1 space-y-2">
                                 <div class="space-y-1">
                                     <div class="flex items-center justify-between text-[11px]">
                                         <span class="px-1.5 py-0.2 rounded bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 font-bold">Lv.3 頂級 (剩 <b id="deck-count-3">0</b>)</span>
-                                        <button onclick="reserveBlindFromDeck(3)" class="px-2 py-0.2 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 font-bold cursor-pointer transition">
-                                            盲抽保留 (+大師球)
-                                        </button>
                                     </div>
-                                    <div id="market-row-3" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+                                    <div id="market-row-3" class="flex flex-wrap gap-2 justify-start"></div>
                                 </div>
 
                                 <div class="space-y-1">
                                     <div class="flex items-center justify-between text-[11px]">
                                         <span class="px-1.5 py-0.2 rounded bg-amber-500/20 border border-amber-400/40 text-amber-300 font-bold">Lv.2 中階 (剩 <b id="deck-count-2">0</b>)</span>
-                                        <button onclick="reserveBlindFromDeck(2)" class="px-2 py-0.2 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 font-bold cursor-pointer transition">
-                                            盲抽保留 (+大師球)
-                                        </button>
                                     </div>
-                                    <div id="market-row-2" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+                                    <div id="market-row-2" class="flex flex-wrap gap-2 justify-start"></div>
                                 </div>
 
                                 <div class="space-y-1">
                                     <div class="flex items-center justify-between text-[11px]">
                                         <span class="px-1.5 py-0.2 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-bold">Lv.1 初階 (剩 <b id="deck-count-1">0</b>)</span>
-                                        <button onclick="reserveBlindFromDeck(1)" class="px-2 py-0.2 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 font-bold cursor-pointer transition">
-                                            盲抽保留 (+大師球)
-                                        </button>
                                     </div>
-                                    <div id="market-row-1" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+                                    <div id="market-row-1" class="flex flex-wrap gap-2 justify-start"></div>
                                 </div>
                             </div>
 
-                            <!-- 右側直立 3 格保留卡區（002 樣式） -->
-                            <aside class="w-full xl:w-[110px] bg-slate-950/60 rounded-xl p-2 border border-slate-800 flex flex-col justify-between shrink-0 space-y-2">
+                            <!-- 右側：將「盲抽按鈕」與「3格預留卡」整合在同一個緊湊直立欄位 -->
+                            <aside class="w-[110px] bg-slate-950/60 rounded-xl p-2 border border-slate-800 flex flex-col justify-between shrink-0 space-y-2">
                                 <div class="text-[10px] font-bold text-amber-300/90 text-center border-b border-slate-800 pb-1">
                                     📦 預留卡 (<span id="reserved-count-text">0</span>/3)
                                 </div>
-                                <div id="reserved-cards-container" class="flex xl:flex-col justify-around gap-2 h-full">
+                                <div id="reserved-cards-container" class="flex flex-col gap-2 h-full">
                                     <div class="text-center text-[10px] text-slate-500 py-6">尚未保留卡片</div>
                                 </div>
                             </aside>
@@ -436,7 +426,7 @@ html, body {
 
     <!-- 遊戲核心邏輯 -->
     <script>
-        // 渲染我的 3 格直立保留卡專區（002 標準排版）
+        // 渲染我的保留區：上方放盲抽按鈕，下方放 3 格直立預留卡
         function renderMyReservedCards(myReservedCards) {
             const container = document.getElementById('reserved-cards-container');
             const countText = document.getElementById('reserved-count-text');
@@ -446,18 +436,17 @@ html, body {
                 countText.innerText = myReservedCards ? myReservedCards.length : 0;
             }
 
-            if (!myReservedCards || myReservedCards.length === 0) {
-                container.innerHTML = `
-                    <div class="h-20 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[10px] text-slate-600">空間 1</div>
-                    <div class="h-20 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[10px] text-slate-600">空間 2</div>
-                    <div class="h-20 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[10px] text-slate-600">空間 3</div>
-                `;
-                return;
-            }
+            let html = `
+                <div class="space-y-1 pb-2 border-b border-slate-800">
+                    <div class="text-[9px] font-bold text-purple-300">牌庫盲抽保留</div>
+                    <button onclick="reserveBlindFromDeck(3)" class="w-full py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[9px] font-bold cursor-pointer transition">🎲 Lv.3 盲抽</button>
+                    <button onclick="reserveBlindFromDeck(2)" class="w-full py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[9px] font-bold cursor-pointer transition">🎲 Lv.2 盲抽</button>
+                    <button onclick="reserveBlindFromDeck(1)" class="w-full py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[9px] font-bold cursor-pointer transition">🎲 Lv.1 盲抽</button>
+                </div>
+            `;
 
-            let html = '';
             for (let i = 0; i < 3; i++) {
-                const card = myReservedCards[i];
+                const card = myReservedCards ? myReservedCards[i] : null;
                 if (card) {
                     const colorStyle = CARD_COLORS[card.bonus] || CARD_COLORS['diamond'];
                     
@@ -465,33 +454,32 @@ html, body {
                     for (const [g, costVal] of Object.entries(card.cost || {})) {
                         if (costVal > 0) {
                             costHtml += `
-                                <div class="flex flex-col items-center justify-center px-0.5 py-0.2 rounded bg-slate-900/95 border border-slate-700/80 text-[7px] shrink-0">
+                                <div class="flex flex-col items-center justify-center px-0.5 py-0.2 rounded bg-slate-900/95 border border-slate-700/80 text-[6px] shrink-0">
                                     <span class="font-bold text-amber-300 leading-none">${costVal}</span>
-                                    ${getGemOrbHTML(g, 'w-2 h-2')}
+                                    ${getGemOrbHTML(g, 'w-1.5 h-1.5')}
                                 </div>
                             `;
                         }
                     }
 
                     html += `
-                        <div onclick="openCardModal('reserved', ${card.level}, ${i})" class="poke-color-card border ${colorStyle.bgClass} rounded-lg p-1 flex flex-col justify-between cursor-pointer relative overflow-hidden group shadow hover:scale-105 transition w-full max-w-[85px] mx-auto">
-                            <div class="flex justify-between items-center z-10 text-[9px] font-bold">
+                        <div onclick="openCardModal('reserved', ${card.level}, ${i})" class="poke-color-card border ${colorStyle.bgClass} rounded-lg p-1 flex flex-col justify-between cursor-pointer relative overflow-hidden group shadow hover:scale-105 transition w-full max-w-[80px] mx-auto">
+                            <div class="flex justify-between items-center z-10 text-[8px] font-bold">
                                 <span class="${colorStyle.scoreClass}">${card.points > 0 ? '+' + card.points : ''}分</span>
-                                ${getGemOrbHTML(card.bonus, 'w-2.5 h-2.5')}
+                                ${getGemOrbHTML(card.bonus, 'w-2 h-2')}
                             </div>
                             <div class="text-center my-auto z-10">
-                                <img src="${card.pokeImg}" class="w-8 h-8 object-contain drop-shadow" />
-                                <div class="font-title font-bold text-[9px] truncate text-white mt-0.5">${card.name || '寶可夢'}</div>
+                                <img src="${card.pokeImg}" class="w-7 h-7 object-contain drop-shadow" />
                             </div>
-                            <div class="flex flex-nowrap items-center justify-center gap-1 z-10 bg-slate-950/90 px-1 py-0.5 rounded w-full">
+                            <div class="flex flex-nowrap items-center justify-center gap-0.5 z-10 bg-slate-950/90 px-0.5 py-0.2 rounded w-full">
                                 ${costHtml}
                             </div>
                         </div>
                     `;
                 } else {
                     html += `
-                        <div class="h-20 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[10px] text-slate-600">
-                            <span>空間 ${i+1}</span>
+                        <div class="h-16 rounded-lg border border-dashed border-slate-700/60 bg-slate-950/40 flex items-center justify-center text-[9px] text-slate-600">
+                            <span>空位 ${i+1}</span>
                         </div>
                     `;
                 }
@@ -1322,7 +1310,7 @@ html, body {
                     <span class="font-title font-black">${pl.points}分</span>
                 </div>
             `).join('');
-            document.getElementById('victory-modal').classList.remove('hidden');
+            document.getElementById('victory-modal').classList.add('hidden');
         }
 
         function toggleRulesModal(show) {
