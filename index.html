@@ -1282,29 +1282,41 @@ html, body {
             endPlayerTurn();
         }
 
-        async function endPlayerTurn() {
+async function endPlayerTurn() {
             const p = gameState.players[myPlayerIndex];
-            if (p.points >= 15 && !gameState.finalRoundTriggered) {
-                gameState.finalRoundTriggered = true;
-                addGameLog(`⭐ 訓練家 ${p.name} 率先達成 15 分，觸發最終回合！`);
-            }
+            
+            // 檢查是否有人達到 15 分，若有則標記進入最終回合
+            gameState.players.forEach(pl => {
+                if (pl.points >= 15 && !gameState.finalRoundTriggered) {
+                    gameState.finalRoundTriggered = true;
+                    addGameLog(`⭐ 訓練家 ${pl.name} 率先達成 15 分，觸發最終回合！`);
+                }
+            });
 
             const totalPlayers = gameState.maxPlayers;
-            if (gameState.currentPlayerIdx === totalPlayers - 1) {
+            const isLastPlayerOfRound = (gameState.currentPlayerIdx === totalPlayers - 1);
+
+            // 如果剛好是這一輪的最後一個玩家結束回合
+            if (isLastPlayerOfRound) {
                 gameState.roundCount = (gameState.roundCount || 1) + 1;
+
+                // 如果已經處於最終回合，且最後一位玩家也跑完了，正式結算勝負！
+                if (gameState.finalRoundTriggered) {
+                    let winner = gameState.players[0];
+                    gameState.players.forEach(pl => {
+                        if (pl.points > winner.points) {
+                            winner = pl;
+                        } else if (pl.points === winner.points && pl.cards.length < winner.cards.length) {
+                            winner = pl;
+                        }
+                    });
+                    gameState.winner = winner.name;
+                    addGameLog(`🏆 遊戲結束！由 ${winner.name} 獲勝！`);
+                }
             }
 
-            if (gameState.currentPlayerIdx === totalPlayers - 1 && gameState.finalRoundTriggered) {
-                let winner = gameState.players[0];
-                gameState.players.forEach(pl => {
-                    if (pl.points > winner.points) winner = pl;
-                    else if (pl.points === winner.points && pl.cards.length < winner.cards.length) winner = pl;
-                });
-                gameState.winner = winner.name;
-                addGameLog(`🏆 遊戲結束！由 ${winner.name} 獲勝！`);
-            } else {
-                gameState.currentPlayerIdx = (gameState.currentPlayerIdx + 1) % totalPlayers;
-            }
+            // 推進到下一位玩家
+            gameState.currentPlayerIdx = (gameState.currentPlayerIdx + 1) % totalPlayers;
 
             await saveGameState();
             renderAll();
