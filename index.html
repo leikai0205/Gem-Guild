@@ -144,15 +144,24 @@ html, body {
     transition: transform 0.2s ease;
 }
 
-.poke-color-card span.border { font-size: 8px !important; padding: 0px 2px !important; }
-.poke-color-card .font-title { font-size: 11px !important; }
+.poke-color-card span.border { font-size: 8px !important; padding: 0px 2px !important; z-index: 10; position: relative; }
+.poke-color-card .font-title { font-size: 11px !important; z-index: 10; position: relative; }
 .noble-mini-card span { font-size: 9px !important; }
 
-        /* 放大右側玩家面板的各項文字與數字 */
-#players-container .text-[11px] { font-size: 13px !important; }
+/* 放大右側玩家面板的各項文字與數字 */
 #players-container .text-[11px] { font-size: 13px !important; }
 #players-container .font-title { font-size: 22px !important; }
-        
+
+/* 換人浮動提示動畫 (0.5秒自動消失) */
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: scale(0.9); }
+    15% { opacity: 1; transform: scale(1); }
+    85% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.05); }
+}
+.toast-popup {
+    animation: fadeInOut 0.5s ease-in-out forwards;
+}
     </style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
@@ -367,6 +376,9 @@ html, body {
 
     </div>
 
+    <!-- 換人自動消失彈窗（Toast 提示容器） -->
+    <div id="turn-toast-container" class="fixed inset-0 z-50 pointer-events-none flex items-center justify-center"></div>
+
     <!-- 彈窗區塊 -->
     <div id="card-action-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel max-w-sm w-full rounded-3xl p-5 border border-amber-400/50 space-y-4">
@@ -471,7 +483,7 @@ html, body {
 
                     return `
                       <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border ${colorStyle.bgClass} rounded-lg p-1 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
-                        ${canAffordCard ? `<span class="absolute top-0.5 right-0.5 px-1 py-0.2 rounded bg-emerald-500 text-slate-950 font-black text-[8px] shadow animate-pulse z-40">可收服</span>` : ''}
+                        ${canAffordCard ? `<span class="absolute top-0.5 right-0.5 px-1 py-0.2 rounded bg-emerald-500 text-slate-950 font-black text-[9px] shadow animate-pulse z-40">可收服</span>` : ''}
                         
                         <div class="flex justify-between items-center z-10">
                           <span class="font-title font-bold text-xs ${colorStyle.scoreClass} leading-none">${card.points > 0 ? '+' + card.points : ''}</span>
@@ -497,7 +509,7 @@ html, body {
             }
         }
 
-        // 渲染我的 3 格直立保留卡專區
+        // 渲染我的 3 格直立保留卡專區（已移除「分」字）
         function renderMyReservedCards(myReservedCards) {
             const container = document.getElementById('reserved-cards-container');
             const countText = document.getElementById('reserved-count-text');
@@ -599,6 +611,7 @@ html, body {
         let selectedGemsBuffer = [];
         let activeCardSelection = null;
         let realtimeChannel = null;
+        let lastNotifiedPlayerIdx = null; // 用來追蹤換人提示
 
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -766,6 +779,7 @@ html, body {
             currentRoomId = null;
             myPlayerIndex = null;
             selectedGemsBuffer = [];
+            lastNotifiedPlayerIdx = null;
 
             document.getElementById('victory-modal').classList.add('hidden');
             document.getElementById('game-screen').classList.add('hidden');
@@ -780,11 +794,42 @@ html, body {
             renderPlayers();
             renderBattleLogs();
             updateStatusBanner();
+            checkAndShowTurnToast(); // 檢查並跳出換人提示框
+
             if (gameState.finalRoundTriggered) {
                 document.getElementById('final-round-badge').classList.remove('hidden');
             }
             if (gameState.winner) {
                 triggerVictoryModal(gameState.winner);
+            }
+        }
+
+        // 換人自動彈出 0.5 秒消失提示
+        function checkAndShowTurnToast() {
+            if (!gameState || gameState.winner) return;
+            const currentIdx = gameState.currentPlayerIdx;
+            const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
+            if (hasWaiting) return;
+
+            if (lastNotifiedPlayerIdx !== currentIdx) {
+                lastNotifiedPlayerIdx = currentIdx;
+                const curPlayer = gameState.players[currentIdx];
+                const isMe = (currentIdx === myPlayerIndex);
+                const toastText = isMe ? '⚡ 輪到你了！ ⚡' : `輪到：${curPlayer.name}`;
+
+                const container = document.getElementById('turn-toast-container');
+                const toastEl = document.createElement('div');
+                toastEl.className = `toast-popup px-6 py-3 rounded-2xl bg-slate-900/95 border-2 ${isMe ? 'border-amber-400 text-amber-300 shadow-[0_0_20px_rgba(251,191,36,0.5)]' : 'border-indigo-400/60 text-indigo-200 shadow-[0_0_15px_rgba(99,102,241,0.4)]'} font-black text-lg sm:text-xl tracking-wider backdrop-blur-md`;
+                toastEl.innerHTML = toastText;
+                
+                container.innerHTML = '';
+                container.appendChild(toastEl);
+
+                setTimeout(() => {
+                    if (toastEl && toastEl.parentNode) {
+                        toastEl.parentNode.removeChild(toastEl);
+                    }
+                }, 500); // 0.5秒自動消失
             }
         }
 
@@ -1282,10 +1327,8 @@ html, body {
             endPlayerTurn();
         }
 
-async function endPlayerTurn() {
-            const p = gameState.players[myPlayerIndex];
-            
-            // 檢查是否有人達到 15 分，若有則標記進入最終回合
+        async function endPlayerTurn() {
+            // 掃描是否有人達到 15 分，若有則觸發最終回合
             gameState.players.forEach(pl => {
                 if (pl.points >= 15 && !gameState.finalRoundTriggered) {
                     gameState.finalRoundTriggered = true;
@@ -1331,7 +1374,7 @@ async function endPlayerTurn() {
                     <span class="font-title font-black">${pl.points}分</span>
                 </div>
             `).join('');
-            document.getElementById('victory-modal').classList.add('hidden');
+            document.getElementById('victory-modal').classList.remove('hidden');
         }
 
         function toggleRulesModal(show) {
