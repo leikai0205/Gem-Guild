@@ -15,20 +15,21 @@ body { font-family: 'Noto Sans TC', sans-serif; background: radial-gradient(circ
         .glass-card { background: linear-gradient(145deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.96)); border: 1px solid rgba(251, 191, 36, 0.35); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); transition: all 0.2s ease; }
         .glass-card:hover { transform: translateY(-2px); border-color: rgba(251, 191, 36, 0.85); }
         
-/* 統一寶可夢資源卡改為「直向長方形」黃金比例 (寬3比長4) */
+        /* 統一寶可夢資源卡改為「直向長方形」黃金比例，並適度縮小體積不佔版面 */
         .poke-color-card { 
             transition: all 0.18s ease; 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); 
-            width: 100% !important; 
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4); 
+            width: 82% !important;       /* 稍微縮小卡片寬度，讓市場排版更精緻 */
+            margin: 0 auto !important;    /* 讓卡片在格子裡置中 */
             aspect-ratio: 3 / 4 !important; /* 直向長方形比例 */
             min-height: auto !important; 
             max-height: none !important;
-            padding: 12px 10px !important; /* 增加上下左右邊距，讓卡片更有質感 */
+            padding: 8px 6px !important;  /* 適中的內部留白 */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
-        .poke-color-card:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 8px 20px rgba(251, 191, 36, 0.25); }
+        .poke-color-card:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 16px rgba(251, 191, 36, 0.25); }
         
         .nobles-flex-container { display: flex; gap: 4px; width: 100%; }
         .noble-mini-card { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 3px 2px; border-radius: 8px; }
@@ -51,24 +52,15 @@ body { font-family: 'Noto Sans TC', sans-serif; background: radial-gradient(circ
         .gem-diamond { background: radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 40%, #ca8a04 80%, #422006 100%); box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 6px rgba(234,179,8,0.4); border: 1px solid #fde047; }
         .gem-onyx { background: radial-gradient(circle at 35% 30%, #f3e8ff 0%, #c084fc 40%, #7e22ce 80%, #3b0764 100%); box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 6px rgba(192,132,252,0.4); border: 1px solid #e879f9; }
 
-        /* 讓寶可夢圖片配合直立卡片放大並置中 */
-        .poke-color-card img {
-            width: auto !important;
-            height: 110px !important;  
-            max-width: 90% !important;
-            object-fit: contain;
-            margin: auto auto !important; 
-            image-rendering: -webkit-optimize-contrast; 
-        }
-        /* 調整卡片內部寶可夢圖案的高畫質與大小（維持清晰不模糊、不遮擋底部） */
+        /* 寶可夢圖片大小與高畫質優化（配合縮小的直向卡片，設定適中且清晰的高度） */
         .poke-color-card img,
         .noble-mini-card img {
             width: auto !important;
-            height: 55px !important;   /* 可依視覺喜好微調高度 (如 50px 或 55px) */
-            max-width: 100% !important;
+            height: 75px !important;  /* 調整至 75px，在縮小的卡片內大小剛好、不會太小也不會佔版面 */
+            max-width: 85% !important;
             object-fit: contain;
-            margin: 2px auto !important; 
-            image-rendering: -webkit-optimize-contrast; 
+            margin: auto auto !important; /* 完美垂直置中 */
+            image-rendering: -webkit-optimize-contrast; /* 確保放大後邊緣銳利清晰 */
         }
 
         /* 1. 精準放大卡片右上角的屬性標籤（如「紅卡」、「藍卡」），不影響底部費用 */
@@ -79,7 +71,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: radial-gradient(circ
 
         /* 2. 精準放大卡片左上角的加分數字 */
         .poke-color-card .font-title {
-            font-size: 14px !important; 
+            font-size: 13px !important; 
         }
 
         /* 3. 稀有夥伴卡的文字精準放大 */
