@@ -1029,7 +1029,7 @@ async function proceedTakeGems() {
             } else if (source === 'reserved') {
                 card = me.reserved[idx];
             } else if (source === 'reservedPlayer') {
-                ownerPlayer = gameState.players[targetPlayerIdx];
+                ownerPlayer = player.reserved.splice(idx, 1);
                 card = ownerPlayer.reserved[idx];
             }
 
