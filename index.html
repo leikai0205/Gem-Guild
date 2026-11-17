@@ -750,7 +750,7 @@
             }
         }
 
-        function renderMarket() {
+function renderMarket() {
             const currentPlayer = gameState.players[myPlayerIndex];
             const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !gameState.winner;
 
@@ -766,36 +766,38 @@
                         canAffordCard = calculatePurchasePayment(currentPlayer, card).canAfford;
                     }
 
-return `
-  <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border-2 ${colorStyle.bgClass} rounded-xl p-1.5 h-32 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
-    ${canAffordCard ? `<span class="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[9px] shadow animate-pulse z-20">可收服！</span>` : ''}
-    
-    <!-- 頂部：分數與屬性標籤 -->
-    <div class="flex justify-between items-center z-10">
-      <span class="font-title font-black text-sm ${colorStyle.scoreClass} leading-none">${card.points > 0 ? '+' + card.points : ''}</span>
-      <span class="px-1.5 py-0.5 rounded border text-[9px] font-bold leading-none ${colorStyle.badgeClass}">
-        ${colorStyle.name}
-      </span>
-    </div>
+                    // 修正後的卡片內部 HTML 產生邏輯
+                    let costHTML = CARD_GEM_ORDER.map(g => {
+                        if (!card.cost[g]) return '';
+                        return '<div class="flex items-center gap-0.5 px-1 py-0.5 rounded bg-slate-900/90 border border-slate-700/80 text-[9px] leading-none shrink-0" title="' + BANK_ITEMS[g].name + '">' +
+                               getGemOrbHTML(g, 'w-2.5 h-2.5') +
+                               '<span class="font-bold text-amber-300">' + card.cost[g] + '</span>' +
+                               '</div>';
+                    }).join('');
 
-    <!-- 中間：寶可夢圖片（稍微縮小一點點配合緊湊版面） -->
-    <div class="flex justify-center my-auto">
-      <img src="${card.pokeImg}" class="w-12 h-12 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.85)] group-hover:scale-110 transition duration-200" />
-    </div>
+                    return `
+                      <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border-2 ${colorStyle.bgClass} rounded-xl p-1.5 h-32 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
+                        ${canAffordCard ? `<span class="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[9px] shadow animate-pulse z-20">可收服！</span>` : ''}
+                        
+                        <div class="flex justify-between items-center z-10">
+                          <span class="font-title font-black text-sm ${colorStyle.scoreClass} leading-none">${card.points > 0 ? '+' + card.points : ''}</span>
+                          <span class="px-1.5 py-0.5 rounded border text-[9px] font-bold leading-none ${colorStyle.badgeClass}">
+                            ${colorStyle.name}
+                          </span>
+                        </div>
 
-    <!-- 底部：強制單行不換行成本區 -->
-    <div class="flex flex-nowrap items-center justify-end gap-0.5 z-10 bg-slate-950/80 px-1 py-0.5 rounded-lg w-full overflow-hidden">
-      ${CARD_GEM_ORDER.map(g => card.cost[g] ? `
-        <div class="flex items-center gap-0.5 px-1 py-0.5 rounded bg-slate-900/90 border border-slate-700/80 text-[9px] leading-none shrink-0" title="${BANK_ITEMS[g].name}">
-          ${getGemOrbHTML(g, 'w-2.5 h-2.5')}
-          <span class="font-bold text-amber-300">${card.cost[g]}</span>
-        </div>
-      ` : '').join('')}
-    </div>
-  </div>
-`;
+                        <div class="flex justify-center my-auto">
+                          <img src="${card.pokeImg}" class="w-12 h-12 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.85)] group-hover:scale-110 transition duration-200" />
+                        </div>
+
+                        <div class="flex flex-nowrap items-center justify-end gap-0.5 z-10 bg-slate-950/80 px-1 py-0.5 rounded-lg w-full overflow-hidden">
+                          ${costHTML}
+                        </div>
+                      </div>
+                    `;
+                }).join('');
+            });
         }
-
         // 💡 1*6 橫向屬性配置設定
         const ROW_1X6_ATTRS = {
             diamond: { title: '雷|黃', bg: 'bg-amber-950/50 border-amber-500/60', gemColor: 'text-amber-200', cardBadge: 'bg-amber-100 text-amber-950 font-black border-amber-300' },
