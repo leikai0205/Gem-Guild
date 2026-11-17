@@ -25,7 +25,7 @@ html, body {
 }
 
 /* ==========================================================
-   2. 主畫面佈局：智慧響應式（手機直立單欄可內捲、電腦/橫式雙欄）
+   2. 主畫面佈局：智慧響應式（自動向右填滿視窗，不留黑邊）
    ========================================================== */
 .game-main-layout {
     display: flex;
@@ -33,20 +33,21 @@ html, body {
     justify-content: flex-start;
     width: 100vw;
     height: 100vh;
+    max-width: 100% !important;
     max-height: 100vh;
     box-sizing: border-box;
-    overflow-y: auto; /* 手機直立時若高度不夠，允許內部順暢捲動，絕不裁切下方內容 */
+    overflow-y: auto; /* 手機直立時若高度不夠允許內部捲動 */
     overflow-x: hidden;
-    padding: 4px;
+    padding: 6px;
 }
 
-/* 當切換為電腦大螢幕或手機橫式（寬度大於 1024px 或橫向）時：自動變為左右雙欄，且雙欄內各自完美適應 */
+/* 當切換為電腦大螢幕或手機橫式（寬度大於 1024px 或橫向）時：自動向右延展並分配雙欄 */
 @media (min-width: 1024px) or (orientation: landscape) {
     .game-main-layout {
         display: grid;
-        grid-template-columns: 1.25fr 1fr; /* 左側牌面市場、右側交易所與玩家區 */
-        gap: 6px;
-        padding: 6px;
+        grid-template-columns: 1fr 420px; /* 左側市場自動向右填滿剩餘空間，右側固定 420px 舒適寬度 */
+        gap: 8px;
+        padding: 8px;
         overflow: hidden; /* 電腦與橫式畫面固定不捲動 */
     }
 }
@@ -268,7 +269,7 @@ html, body {
     </div>
 
     <!-- ==================== 2. 主遊戲桌面 ==================== -->
-    <div id="game-screen" class="hidden max-w-[1680px] mx-auto p-2 sm:p-3 space-y-2">
+    <div id="game-screen" class="hidden max-w-full mx-auto p-2 sm:p-3 space-y-2">
   <!-- 頂部狀態列（強制單行、隨螢幕寬度自適應） -->
 <header class="glass-panel rounded-xl px-3 py-1.5 flex items-center justify-between gap-2 w-full flex-nowrap overflow-hidden">
     <!-- 左側：標題與房號、身分 -->
