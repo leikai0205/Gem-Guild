@@ -1056,24 +1056,35 @@ html, body {
         };
 
         // 右側玩家欄位渲染（保留區統一簡化為 🔒 Lv.X 卡，不佔版面且保有盲區）
-        function renderPlayers() {
+function renderPlayers() {
             const container = document.getElementById('players-container');
 
             container.innerHTML = gameState.players.map((p, idx) => {
                 const isCurrent = idx === gameState.currentPlayerIdx;
                 const isMe = idx === myPlayerIndex;
                 const totalGems = ALL_GEMS.reduce((s, g) => s + p.gems[g], 0);
+
+                // 產生保留區的簡短標示（例如 🔒 Lv.3卡 🔒 Lv.2卡）
+                let reservedHtml = '';
+                if (p.reserved && p.reserved.length > 0) {
+                    const cardsText = p.reserved.map(rc => `🔒 Lv.${rc.level}卡`).join(' ');
+                    reservedHtml = `<span class="text-[9px] text-purple-300 font-bold ml-1">${isMe ? '你的' : `${p.name}的`}保留區 (${p.reserved.length}/3)：${cardsText}</span>`;
+                }
+
                 return `
                     <div class="glass-panel rounded-xl p-2.5 ${isCurrent ? 'active-turn-glow' : 'opacity-85'} space-y-1.5">
+                        <!-- 第一行：全部擠在同一行（名字、道具、稀有、保留區），右側是分數 -->
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <span class="font-bold text-xs text-white">${p.name} ${isMe ? '(你)' : ''}</span>
                                 <span class="text-[9px] px-1 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">道具 ${totalGems}/10</span>
                                 <span class="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">稀有 ${p.nobles.length}</span>
+                                ${reservedHtml}
                             </div>
-                            <span class="font-title font-black text-base text-amber-400">${p.points}分</span>
+                            <span class="font-title font-black text-base text-amber-400 shrink-0">${p.points}分</span>
                         </div>
 
+                        <!-- 第二行：五色進化石與大師球持有數 -->
                         <div class="grid grid-cols-6 gap-1">
                             ${CARD_GEM_ORDER.map(g => {
                                 const attr = ROW_1X6_ATTRS[g];
@@ -1094,6 +1105,10 @@ html, body {
                                 <span class="text-[8px] text-slate-200">萬用</span>
                             </div>
                         </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
                         ${p.reserved && p.reserved.length > 0 ? `
                             <div class="pt-1 border-t border-slate-800/80">
