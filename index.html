@@ -46,15 +46,15 @@
         .gem-diamond { background: radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 40%, #ca8a04 80%, #422006 100%); box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 6px rgba(234,179,8,0.4); border: 1px solid #fde047; }
         .gem-onyx { background: radial-gradient(circle at 35% 30%, #f3e8ff 0%, #c084fc 40%, #7e22ce 80%, #3b0764 100%); box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 6px rgba(192,132,252,0.4); border: 1px solid #e879f9; }
 
-        /* 放大所有寶可夢卡片與稀有夥伴內的寶可夢圖案 */
+       /* 調整卡片內部寶可夢圖案的大小與間距，避免遮擋底部需求 */
         .poke-color-card img,
         .noble-mini-card img {
-            width: 90% !important;     /* 調整圖片在卡片中佔用的寬度比例 */
-            max-width: 110px !important;/* 限制最大寬度，避免超出外框 */
-            height: auto !important;
-            transform: scale(1);    /* 將寶可夢圖案整體放大 1 倍 */
+            width: auto !important;
+            height: 48px !important;   /* 直接把圖片高度固定在 48px（你可以依喜好改 42px 或 52px） */
+            max-width: 100% !important;
             object-fit: contain;
-            image-rendering: -webkit-optimize-contrast; /* 讓放大後的邊緣保持銳利、不模糊 */
+            margin: 2px auto !important; /* 上下留出一點安全距離 */
+            image-rendering: -webkit-optimize-contrast; 
         }
     </style>
 </head>
