@@ -304,10 +304,10 @@ html, body {
     </div>
 </header>
 
-        <!-- 主遊戲雙欄排版 -->
+<!-- 主遊戲雙欄排版 -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-start">
             
-            <!-- ==================== 左邊欄位 ==================== -->
+            <!-- ==================== 左邊欄位（市場與稀有夥伴） ==================== -->
             <div class="lg:col-span-8 space-y-2.5">
                 
                 <!-- 1. ⭐ 稀有寶可夢夥伴 -->
@@ -362,20 +362,24 @@ html, body {
                         <div id="market-row-1" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
                     </div>
                 </main>
+            </div>
 
-                <!-- 3. 💎 進化石與大師球銀行 -->
+            <!-- ==================== 右邊欄位（銀行在上 ➔ 玩家資訊 ➔ 可內滑戰報） ==================== -->
+            <aside class="lg:col-span-4 space-y-2.5">
+                
+                <!-- 1. 💎 進化石與大師球銀行 -->
                 <section class="glass-panel rounded-xl p-2.5 space-y-2">
-                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700/60 pb-2">
-                        <div class="flex items-center gap-2">
+                    <div class="flex flex-wrap items-center justify-between gap-1.5 border-b border-slate-700/60 pb-2">
+                        <div class="flex items-center gap-1.5">
                             <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
                                 <span>💎</span> 進化石與大師球銀行
                             </h2>
                             <span id="bank-limit-hint" class="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">4人局配置</span>
                         </div>
                         
-                        <div class="flex items-center gap-2 text-[11px]">
+                        <div class="flex items-center gap-1.5 text-[11px]">
                             <span class="text-slate-300">已選：<span id="selected-count-badge" class="text-amber-400 font-bold">0顆</span></span>
-                            <div id="selected-gems-preview" class="min-h-[28px] min-w-[50px] flex items-center justify-center gap-1 bg-slate-950/80 rounded-lg px-2 py-0.5 border border-slate-800">
+                            <div id="selected-gems-preview" class="min-h-[26px] min-w-[46px] flex items-center justify-center gap-1 bg-slate-950/80 rounded-lg px-1.5 py-0.5 border border-slate-800">
                                 <span class="text-[10px] text-slate-500">未選</span>
                             </div>
                             <button id="btn-clear-gems" onclick="clearSelectedGems()" disabled class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-[10px] font-medium text-slate-300 transition cursor-pointer">清空</button>
@@ -387,56 +391,25 @@ html, body {
                         ⚠️ 道具總數將超過 10 個上限！
                     </div>
 
+                    <!-- 5 種進化石 + 大師球圓鈕容器 -->
                     <div id="bank-gems-container" class="grid grid-cols-6 gap-1.5"></div>
                 </section>
-            </div>
 
-  <!-- ==================== 右邊欄位（電腦版優化：銀行移上方、戰報可內部滑動） ==================== -->
-    <aside class="lg:col-span-4 space-y-2.5">
-        
-        <!-- 1. 💎 進化石與大師球銀行（移至右側最上方） -->
-        <section class="glass-panel rounded-xl p-2.5 space-y-2">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700/60 pb-2">
-                <div class="flex items-center gap-2">
+                <!-- 2. 玩家資訊 -->
+                <div id="players-container" class="space-y-2"></div>
+
+                <!-- 3. 📜 對戰即時戰報紀錄（固定高度、可內部上下滑動） -->
+                <section class="glass-panel rounded-xl p-2.5 space-y-1.5">
                     <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
-                        <span>💎</span> 進化石與大師球銀行
+                        <span>📜</span> 對戰即時戰報紀錄
                     </h2>
-                    <span id="bank-limit-hint" class="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">4人局配置</span>
-                </div>
-                
-                <div class="flex items-center gap-2 text-[11px]">
-                    <span class="text-slate-300">已選：<span id="selected-count-badge" class="text-amber-400 font-bold">0顆</span></span>
-                    <div id="selected-gems-preview" class="min-h-[28px] min-w-[50px] flex items-center justify-center gap-1 bg-slate-950/80 rounded-lg px-2 py-0.5 border border-slate-800">
-                        <span class="text-[10px] text-slate-500">未選</span>
+                    <div id="battle-log-container" class="bg-slate-950/80 rounded-lg p-2 h-24 overflow-y-auto space-y-1 border border-slate-800 text-[11px] text-slate-300">
+                        <div class="text-slate-500">等待訓練家進行第一手操作...</div>
                     </div>
-                    <button id="btn-clear-gems" onclick="clearSelectedGems()" disabled class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-[10px] font-medium text-slate-300 transition cursor-pointer">清空</button>
-                    <button id="btn-confirm-gems" onclick="confirmTakeGems()" disabled class="px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 disabled:opacity-40 text-slate-950 font-bold text-[10px] shadow transition cursor-pointer">確認選取</button>
-                </div>
-            </div>
-
-            <div id="over-limit-warning" class="hidden text-center text-[10px] text-rose-400 font-bold bg-rose-950/40 p-1 rounded border border-rose-500/30 animate-pulse">
-                ⚠️ 道具總數將超過 10 個上限！
-            </div>
-
-            <div id="bank-gems-container" class="grid grid-cols-6 gap-1.5"></div>
-        </section>
-
-        <!-- 2. 玩家資訊 -->
-        <div id="players-container" class="space-y-2"></div>
-
-        <!-- 3. 📜 對戰即時戰報紀錄（改為限制高度、可內部上下滑動） -->
-        <section class="glass-panel rounded-xl p-2.5 space-y-1.5">
-            <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
-                <span>📜</span> 對戰即時戰報紀錄
-            </h2>
-            <div id="battle-log-container" class="bg-slate-950/80 rounded-lg p-2 h-24 overflow-y-auto space-y-1 border border-slate-800 text-[11px] text-slate-300">
-                <div class="text-slate-500">等待訓練家進行第一手操作...</div>
-            </div>
-        </section>
-    </aside>
+                </section>
+            </aside>
 
         </div>
-    </div>
 
     <!-- ==================== 3. 彈窗區塊 ==================== -->
     <div id="card-action-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
