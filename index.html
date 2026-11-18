@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
 <style>
 /* =====================================================================
-   一、基本設定（電腦版與手機版共用之基礎視覺、顏色、特效、動畫）
+   一、基本設定（共用視覺、顏色、特效、動畫）
    ===================================================================== */
 html, body { 
     font-family: 'Noto Sans TC', sans-serif; 
@@ -34,7 +34,7 @@ html, body {
     overflow-x: hidden;
 }
 
-/* 大廳登入畫面置中 */
+/* 大廳登入畫面絕對置中 */
 #lobby-screen:not(.hidden) {
     display: flex !important;
     align-items: center !important;
@@ -46,6 +46,7 @@ html, body {
     margin: 0 !important;
     box-sizing: border-box;
     padding: 16px;
+    z-index: 50;
 }
 
 #game-screen {
@@ -110,7 +111,7 @@ html, body {
     transition: transform 0.2s ease;
 }
 
-/* 卡片底部費用列微調（確保 4 個費用完美塞進卡片內） */
+/* 卡片底部費用列微調 */
 .poke-color-card .flex.flex-nowrap.items-center.justify-center {
     gap: 1px !important;       
     padding: 0.5px 1px !important; 
@@ -170,7 +171,7 @@ html, body {
     margin: auto auto !important;
 }
 
-/* 寶石顏色與發光特效 */
+/* 寶石特效與動畫 */
 .gem-ruby { background: radial-gradient(circle at 35% 30%, #fca5a5 0%, #dc2626 40%, #7f1d1d 80%, #450a0a 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(220,38,38,0.4); border: 1px solid #f87171; }
 .gem-sapphire { background: radial-gradient(circle at 35% 30%, #7dd3fc 0%, #0284c7 40%, #0369a1 80%, #082f49 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(2,132,199,0.4); border: 1px solid #38bdf8; }
 .gem-emerald { background: radial-gradient(circle at 35% 30%, #6ee7b7 0%, #059669 40%, #047857 80%, #022c22 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(5,150,105,0.4); border: 1px solid #34d399; }
@@ -207,7 +208,6 @@ html, body {
     letter-spacing: -1px;
 }
 
-/* 玩家面板文字基礎設定 */
 #players-container .text-[11px] { font-size: 13px !important; }
 #players-container .font-title { font-size: 22px !important; }
 
@@ -222,35 +222,35 @@ html, body {
         overflow: hidden;
     }
 
-    /* 1. 收緊電腦版整體最大寬度 (1140px)，消除頂部與各區塊多餘的左右大空白 */
+    /* 1. 電腦版最大寬度收緊到 1020px，大幅減少周遭空白 */
     #game-screen {
         width: 100% !important;
-        max-width: 1140px !important; 
+        max-width: 1020px !important; 
         height: 100vh !important;
         margin: 0 auto !important;
-        padding: 10px 16px !important;
+        padding: 6px 12px !important;
         display: flex !important;
         flex-direction: column !important;
         overflow: hidden !important;
     }
 
-    /* 2. 主版面網格：左側遊戲區與右側玩家區緊密對齊 */
+    /* 2. 主版面網格：左側遊戲區與右側玩家區緊密排列 */
     .game-main-layout {
         width: 100% !important;
         flex: 1 !important;
         display: grid !important;
-        grid-template-columns: auto 380px !important; /* 左側依內容自動收緊，右側玩家欄固定 380px */
+        grid-template-columns: auto 360px !important; 
         justify-content: center !important;
-        gap: 12px !important;
-        padding: 8px 0 !important;
+        gap: 10px !important;
+        padding: 4px 0 !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
     }
 
-    /* 3. 市場與預留卡容器：消除中間紅框大空白，讓預留卡緊靠 4 張卡片右側 */
+    /* 3. 市場與預留卡容器：消除中間空白，讓預留卡緊靠右側 */
     .game-main-layout .flex.flex-nowrap.items-start.justify-between {
         justify-content: flex-start !important;
-        gap: 16px !important; 
+        gap: 12px !important; 
         width: fit-content !important;
     }
 
@@ -258,54 +258,54 @@ html, body {
         flex: 0 0 auto !important;
     }
 
-    /* 4. 電腦版 12 宮格卡片尺寸（維持精緻大小，不硬撐） */
+    /* 4. 電腦版 12 宮格卡片尺寸 */
     .poke-color-card {
-        width: 106px !important;
-        min-width: 106px !important;
-        max-width: 106px !important;
-        padding: 4px !important;
+        width: 100px !important;
+        min-width: 100px !important;
+        max-width: 100px !important;
+        padding: 3px !important;
     }
 
     .poke-color-card img {
-        height: 76px !important;
+        height: 72px !important;
         max-width: 88% !important;
     }
 
     .poke-color-card .font-title {
-        font-size: 13px !important;
+        font-size: 12.5px !important;
     }
 
     .poke-color-card span.border {
-        font-size: 9.5px !important;
-        padding: 1px 4px !important;
+        font-size: 9px !important;
+        padding: 1px 3px !important;
     }
 
-    /* 5. 電腦版稀有寶可夢夥伴：收緊卡片間距，消除紅框空隙 */
+    /* 5. 電腦版稀有寶可夢夥伴：改回置中對齊，並收緊卡片間距 */
     .nobles-flex-container {
         flex-wrap: nowrap !important;
         gap: 6px !important;
-        justify-content: flex-start !important;
+        justify-content: center !important; /* 👈 修正：改回置中對齊 */
     }
     
     .noble-mini-card { 
-        width: 102px !important;
-        min-width: 102px !important;
-        max-width: 102px !important;
+        width: 100px !important;
+        min-width: 100px !important;
+        max-width: 100px !important;
         flex: 0 0 auto !important;
         flex-direction: row !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 5px 4px !important;
+        padding: 4px 3px !important;
     }
 
     .noble-mini-card img {
-        height: 40px !important;
-        width: 40px !important;
+        height: 38px !important;
+        width: 38px !important;
         margin: auto auto !important;
     }
 
     .noble-mini-card span { 
-        font-size: 9px !important; 
+        font-size: 8.5px !important; 
     }
 }
 
