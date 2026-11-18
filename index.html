@@ -1787,6 +1787,178 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
 }
 </style>
 
+
+
+/* =====================================================================
+   本次微調：桌面整體置中、預留卡分隔、手機卡牌資訊完整顯示
+   僅追加版面 CSS，不更動遊戲規則、資料或連線程式
+   ===================================================================== */
+@media (min-width: 1024px) {
+  /* 整個遊戲畫面置中；不改變市場內部三排卡片的排列 */
+  #game-screen {
+    max-width: 1500px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  #game-screen > header,
+  #game-screen > .grid {
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  #game-screen #status-banner {
+    text-align: center !important;
+  }
+  /* 區塊標題置中，區塊內的操作按鈕與卡片排列不改動 */
+  #game-screen > .grid > div > section > h2,
+  #game-screen > .grid > div > section > div > h2,
+  #game-screen > .grid > aside > section > h2,
+  #game-screen main.glass-panel > .flex.items-center.justify-between > h2 {
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  #game-screen .nobles-flex-container {
+    justify-content: center !important;
+  }
+  /* 預留卡改成固定卡片高度與明確間距，三張不再互相壓住 */
+  #game-screen #reserved-cards-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    height: auto !important;
+    flex: 0 0 auto !important;
+  }
+  #game-screen #reserved-cards-container > .reserved-mini-card {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 1 / 1.18 !important;
+    overflow: hidden !important;
+  }
+  #game-screen #reserved-cards-container > div:not(.reserved-mini-card) {
+    flex: 0 0 auto !important;
+    height: 64px !important;
+    min-height: 64px !important;
+  }
+  #game-screen .reserved-mini-card img {
+    height: clamp(28px, 4.4vh, 42px) !important;
+    max-height: 42px !important;
+  }
+  #game-screen .reserved-cost-row {
+    min-height: 18px !important;
+    background: rgba(2, 6, 23, .96) !important;
+    flex-wrap: wrap !important;
+    row-gap: 2px !important;
+  }
+}
+
+/* 手機和平板：讓預留卡費用黑條及市場卡牌底部數字完整留在卡片內 */
+@media (max-width: 1023px) {
+  #game-screen .reserved-mini-card {
+    min-height: 0 !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1.25 !important;
+    overflow: hidden !important;
+    padding: 3px !important;
+  }
+  #game-screen .reserved-mini-card .reserved-cost-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    width: 100% !important;
+    min-height: 18px !important;
+    padding: 3px 2px !important;
+    box-sizing: border-box !important;
+    background: rgba(2, 6, 23, .97) !important;
+    border: 1px solid rgba(71, 85, 105, .8) !important;
+    border-radius: 4px !important;
+    position: relative !important;
+    z-index: 12 !important;
+  }
+  #game-screen .reserved-cost-row .gem-cost-item,
+  #game-screen .poke-color-card .gem-cost-item {
+    flex: 0 0 auto !important;
+    min-width: 13px !important;
+    min-height: 13px !important;
+    padding: 1px 2px !important;
+    font-size: 8px !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
+  }
+  /* 市場卡片費用列允許換行，避免最後一排數字被裁切 */
+  #game-screen .poke-color-card {
+    min-height: 0 !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1.48 !important;
+    overflow: hidden !important;
+    padding: 3px !important;
+  }
+  #game-screen .poke-color-card > .flex.flex-nowrap.items-center.justify-center {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-content: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    min-height: 19px !important;
+    max-height: none !important;
+    width: 100% !important;
+    padding: 3px 2px !important;
+    box-sizing: border-box !important;
+    background: rgba(2, 6, 23, .97) !important;
+    border: 1px solid rgba(71, 85, 105, .75) !important;
+    border-radius: 4px !important;
+    position: relative !important;
+    z-index: 12 !important;
+  }
+  #game-screen .poke-color-card .gem-cost-number,
+  #game-screen .reserved-mini-card .gem-cost-number {
+    color: #f8fafc !important;
+    font-size: 9px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    text-shadow: 0 1px 2px #000 !important;
+  }
+  /* 寶可夢 +3/+4/+5 分數加大、加亮，和預留卡分數一樣清楚 */
+  #game-screen .poke-color-card > div:first-of-type > .font-title,
+  #game-screen .reserved-mini-card > div:first-child > span:first-child {
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    line-height: 1.15 !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,.95), 0 0 3px rgba(0,0,0,.8) !important;
+    position: relative !important;
+    z-index: 15 !important;
+  }
+  /* 玩家角色欄恢復各色背景、文字與卡片標籤，手機跟桌面一致 */
+  #players-container .grid > div {
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-radius: 5px !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+  #players-container .grid > div:nth-child(1) { background: rgba(120, 53, 15, .48) !important; border-color: rgba(251, 191, 36, .55) !important; }
+  #players-container .grid > div:nth-child(2) { background: rgba(30, 58, 138, .48) !important; border-color: rgba(96, 165, 250, .55) !important; }
+  #players-container .grid > div:nth-child(3) { background: rgba(6, 78, 59, .48) !important; border-color: rgba(52, 211, 153, .55) !important; }
+  #players-container .grid > div:nth-child(4) { background: rgba(127, 29, 29, .48) !important; border-color: rgba(248, 113, 113, .55) !important; }
+  #players-container .grid > div:nth-child(5) { background: rgba(88, 28, 135, .48) !important; border-color: rgba(192, 132, 252, .55) !important; }
+  #players-container .grid > div:nth-child(6) { background: rgba(30, 41, 59, .62) !important; border-color: rgba(148, 163, 184, .5) !important; }
+  #players-container .grid > div:nth-child(1) > span:first-child { color: #fde68a !important; }
+  #players-container .grid > div:nth-child(2) > span:first-child { color: #93c5fd !important; }
+  #players-container .grid > div:nth-child(3) > span:first-child { color: #6ee7b7 !important; }
+  #players-container .grid > div:nth-child(4) > span:first-child { color: #fca5a5 !important; }
+  #players-container .grid > div:nth-child(5) > span:first-child { color: #d8b4fe !important; }
+  #players-container .grid > div:nth-child(6) > span:first-child { color: #e2e8f0 !important; }
+  #players-container .grid > div > span:last-child {
+    font-weight: 900 !important;
+    border-width: 1px !important;
+  }
+}
+
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
