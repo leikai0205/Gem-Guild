@@ -130,19 +130,19 @@ html, body {
 .nobles-flex-container { 
     display: flex; 
     flex-wrap: wrap;
-    gap: 4px; 
+    gap: 8px; 
     width: 100%; 
     justify-content: center; 
 }
 .noble-mini-card { 
-    width: calc(33.33% - 4px); 
-    min-width: 105px; 
-    max-width: 140px;
+    width: 155px !important;        /* 微幅調大卡片寬度 */
+    min-width: 155px !important; 
+    max-width: 165px !important;
     display: flex; 
     flex-direction: column; 
     align-items: center; 
     text-align: center; 
-    padding: 2px 4px; 
+    padding: 3px 6px; 
     border-radius: 6px; 
 }
 
@@ -171,7 +171,7 @@ html, body {
 .poke-color-card img,
 .noble-mini-card img {
     width: auto !important;
-    height: 34px !important; 
+    height: 38px !important; 
     max-width: 80% !important;
     object-fit: contain;
     margin: auto auto !important; 
@@ -181,7 +181,7 @@ html, body {
 
 .poke-color-card span.border { font-size: 7px !important; padding: 0px 2px !important; z-index: 10; position: relative; }
 .poke-color-card .font-title { font-size: 10px !important; z-index: 10; position: relative; }
-.noble-mini-card span { font-size: 8px !important; }
+.noble-mini-card span { font-size: 9px !important; }
 
 /* 放大右側玩家面板的各項文字與數字 */
 #players-container .text-[11px] { font-size: 13px !important; }
