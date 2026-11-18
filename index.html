@@ -220,7 +220,7 @@ html, body {
 
 
 /* =====================================================================
-   二、電腦版專屬設定 (螢幕寬度 >= 1024px) - 安全收緊空白版
+   二、電腦版專屬設定 (螢幕寬度 >= 1024px) - 位置絕對不變、只消滅空白
    ===================================================================== */
 @media (min-width: 1024px) {
     #app {
@@ -229,7 +229,7 @@ html, body {
         overflow: hidden;
     }
 
-    /* 1. 遊戲主畫面外框：適度限制最大寬度，讓畫面往中間集中，消除外圍大空白 */
+    /* 1. 遊戲主畫面外框：把整體向內收緊，消除外圍大空白 */
     #game-screen {
         width: 100% !important;
         max-width: 1120px !important; 
@@ -241,22 +241,7 @@ html, body {
         overflow: hidden !important;
     }
 
-    /* 2. 關鍵：把原本預設的 12 格網格，改成「左側自動填滿、右側固定 300px」 */
-    .grid.grid-cols-1.lg\:grid-cols-12 {
-        grid-template-columns: minmax(0, 1fr) 300px !important;
-        gap: 12px !important;
-        align-items: flex-start !important;
-    }
-
-    /* 3. 確保左右兩欄的容器不會被強制拉到全高（消滅下方大黑洞） */
-    .lg\:col-span-8, 
-    .lg\:col-span-4 {
-        height: auto !important;
-        max-height: calc(100vh - 70px) !important;
-        overflow-y: auto !important;
-    }
-
-    /* 4. 關鍵：拔掉預留卡容器原本被賦予的 h-full 延伸，讓它跟著內容收緊 */
+    /* 2. 徹底消滅右側預留卡容器下方的黑洞空白 */
     #reserved-cards-container {
         height: auto !important;
         flex: 0 0 auto !important;
@@ -267,7 +252,7 @@ html, body {
         min-height: 56px !important;
     }
 
-    /* 5. 稀有寶可夢夥伴區塊置中 */
+    /* 3. 稀有寶可夢夥伴區塊置中與間距收緊 */
     .nobles-flex-container {
         flex-wrap: nowrap !important;
         gap: 4px !important;
@@ -295,7 +280,7 @@ html, body {
         font-size: 7px !important; 
     }
 
-    /* 6. 電腦版 12 宮格市場卡片尺寸微調 */
+    /* 4. 電腦版 12 宮格市場卡片尺寸微調 */
     .poke-color-card {
         width: 90px !important;
         min-width: 90px !important;
