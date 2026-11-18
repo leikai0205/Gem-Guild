@@ -9,6 +9,9 @@
     <script src="cards-data.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
 <style>
+/* =====================================================================
+   一、基本設定（電腦版與手機版共用之基礎視覺、顏色、特效、動畫）
+   ===================================================================== */
 html, body { 
     font-family: 'Noto Sans TC', sans-serif; 
     background: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #0f172a 45%, #090d16 100%); 
@@ -31,7 +34,7 @@ html, body {
     overflow-x: hidden;
 }
 
-/* 讓大廳登入畫面無論螢幕大小，都使用 Flex 完美垂直與水平置中 */
+/* 大廳登入畫面置中 */
 #lobby-screen:not(.hidden) {
     display: flex !important;
     align-items: center !important;
@@ -47,33 +50,9 @@ html, body {
 
 #game-screen {
     width: 100% !important;
-    max-width: 100% !important;
     height: 100% !important;
     margin: 0 !important;
     box-sizing: border-box;
-}
-
-.game-main-layout {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    overflow-y: auto; 
-    overflow-x: hidden;
-    padding: 8px;
-    width: 100% !important;
-    height: 100% !important;
-    margin: 0 !important;
-    box-sizing: border-box;
-}
-
-@media (min-width: 1024px) or (orientation: landscape) {
-    .game-main-layout {
-        display: grid;
-        grid-template-columns: 1fr 440px;
-        gap: 10px;
-        padding: 10px;
-        overflow: hidden; 
-    }
 }
 
 .font-title { font-family: 'Cinzel', 'Noto Sans TC', serif; }
@@ -98,18 +77,14 @@ html, body {
     border-color: rgba(251, 191, 36, 0.85); 
 }
 
-/* 📦 手機版 12 宮格市場卡片尺寸統一與防壓縮設定 */
+/* 12 宮格市場卡片基礎外觀 */
 .poke-color-card { 
     position: relative;
     transform-style: preserve-3d; 
-    width: 62px !important;       
-    min-width: 62px !important;
-    max-width: 62px !important;
-    flex-shrink: 0 !important;    /* 嚴格禁止任何壓縮 */
+    flex-shrink: 0 !important;
     aspect-ratio: 1 / 1.42 !important; 
     min-height: auto !important; 
     max-height: none !important; 
-    padding: 2px !important;     
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -127,11 +102,32 @@ html, body {
     z-index: 20; 
 }
 
-/* ⭐ 稀有寶可夢夥伴容器與卡片通用設定 */
+.poke-color-card img {
+    width: auto !important;
+    object-fit: contain;
+    margin: auto auto !important; 
+    image-rendering: -webkit-optimize-contrast; 
+    transition: transform 0.2s ease;
+}
+
+/* 卡片底部費用列微調（確保 4 個費用完美塞進卡片內） */
+.poke-color-card .flex.flex-nowrap.items-center.justify-center {
+    gap: 1px !important;       
+    padding: 0.5px 1px !important; 
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+.poke-color-card .flex.flex-col.items-center.justify-center {
+    padding: 0px 0.5px !important;
+    transform: scale(0.92);    
+    transform-origin: center;
+}
+
+/* 稀有寶可夢夥伴基礎外觀 */
 .nobles-flex-container { 
     display: flex !important; 
     width: 100% !important; 
-    justify-content: center !important; 
     box-sizing: border-box;
 }
 
@@ -142,6 +138,44 @@ html, body {
     box-sizing: border-box;
     overflow: hidden !important;
 }
+
+/* 預留區微型卡片基礎外觀 */
+.reserved-mini-card {
+    position: relative;
+    width: 100% !important;
+    min-width: 0 !important;
+    aspect-ratio: 1 / 1.35 !important; 
+    padding: 2px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 4px;
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease, border-color 0.2s;
+}
+
+.reserved-mini-card:hover {
+    transform: scale(1.03);
+    border-color: rgba(251, 191, 36, 0.85);
+    z-index: 20;
+}
+
+.reserved-mini-card img {
+    width: auto !important;
+    height: 38px !important; 
+    max-width: 85% !important;
+    object-fit: contain;
+    margin: auto auto !important;
+}
+
+/* 寶石顏色與發光特效 */
+.gem-ruby { background: radial-gradient(circle at 35% 30%, #fca5a5 0%, #dc2626 40%, #7f1d1d 80%, #450a0a 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(220,38,38,0.4); border: 1px solid #f87171; }
+.gem-sapphire { background: radial-gradient(circle at 35% 30%, #7dd3fc 0%, #0284c7 40%, #0369a1 80%, #082f49 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(2,132,199,0.4); border: 1px solid #38bdf8; }
+.gem-emerald { background: radial-gradient(circle at 35% 30%, #6ee7b7 0%, #059669 40%, #047857 80%, #022c22 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(5,150,105,0.4); border: 1px solid #34d399; }
+.gem-diamond { background: radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 40%, #ca8a04 80%, #422006 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(234,179,8,0.4); border: 1px solid #fde047; }
+.gem-onyx { background: radial-gradient(circle at 35% 30%, #f3e8ff 0%, #c084fc 40%, #7e22ce 80%, #3b0764 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(192,132,252,0.4); border: 1px solid #e879f9; }
 
 @keyframes affordableGlow {
     0%, 100% { border-color: #34d399; box-shadow: 0 0 6px rgba(52, 211, 153, 0.5); }
@@ -159,52 +193,141 @@ html, body {
 }
 .btn-gold-glow { animation: pulseGold 2.2s infinite; }
 
-.gem-ruby { background: radial-gradient(circle at 35% 30%, #fca5a5 0%, #dc2626 40%, #7f1d1d 80%, #450a0a 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(220,38,38,0.4); border: 1px solid #f87171; }
-.gem-sapphire { background: radial-gradient(circle at 35% 30%, #7dd3fc 0%, #0284c7 40%, #0369a1 80%, #082f49 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(2,132,199,0.4); border: 1px solid #38bdf8; }
-.gem-emerald { background: radial-gradient(circle at 35% 30%, #6ee7b7 0%, #059669 40%, #047857 80%, #022c22 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(5,150,105,0.4); border: 1px solid #34d399; }
-.gem-diamond { background: radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 40%, #ca8a04 80%, #422006 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(234,179,8,0.4); border: 1px solid #fde047; }
-.gem-onyx { background: radial-gradient(circle at 35% 30%, #f3e8ff 0%, #c084fc 40%, #7e22ce 80%, #3b0764 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(192,132,252,0.4); border: 1px solid #e879f9; }
-
-.poke-color-card img {
-    width: auto !important;
-    height: 38px !important; 
-    max-width: 85% !important;
-    object-fit: contain;
-    margin: auto auto !important; 
-    image-rendering: -webkit-optimize-contrast; 
-    transition: transform 0.2s ease;
-}
-
-.poke-color-card span.border { font-size: 7.5px !important; padding: 0px 2px !important; z-index: 10; position: relative; }
-.poke-color-card .font-title { font-size: 10.5px !important; z-index: 10; position: relative; }
-
-/* 放大右側玩家面板的各項文字與數字 */
-#players-container .text-[11px] { font-size: 13px !important; }
-#players-container .font-title { font-size: 22px !important; }
-
-/* 換人浮動提示動畫 */
 @keyframes fadeInOut {
     0% { opacity: 0; transform: scale(0.9); }
     15% { opacity: 1; transform: scale(1); }
     85% { opacity: 1; transform: scale(1); }
     100% { opacity: 0; transform: scale(1.05); }
 }
-.toast-popup {
-    animation: fadeInOut 0.5s ease-in-out forwards;
-}
+.toast-popup { animation: fadeInOut 0.5s ease-in-out forwards; }
 
-/* 直式文字樣式 */
 .vertical-text {
     writing-mode: vertical-lr;
     text-orientation: upright;
     letter-spacing: -1px;
 }
 
-/* =========================================================
-   📱 手機版專屬優化 (螢幕寬度 < 1024px)
-   ========================================================= */
+/* 玩家面板文字基礎設定 */
+#players-container .text-[11px] { font-size: 13px !important; }
+#players-container .font-title { font-size: 22px !important; }
+
+
+/* =====================================================================
+   二、電腦版專屬設定 (螢幕寬度 >= 1024px)
+   ===================================================================== */
+@media (min-width: 1024px) {
+    #app {
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    /* 1. 收緊電腦版整體最大寬度 (1140px)，消除頂部與各區塊多餘的左右大空白 */
+    #game-screen {
+        width: 100% !important;
+        max-width: 1140px !important; 
+        height: 100vh !important;
+        margin: 0 auto !important;
+        padding: 10px 16px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+    }
+
+    /* 2. 主版面網格：左側遊戲區與右側玩家區緊密對齊 */
+    .game-main-layout {
+        width: 100% !important;
+        flex: 1 !important;
+        display: grid !important;
+        grid-template-columns: auto 380px !important; /* 左側依內容自動收緊，右側玩家欄固定 380px */
+        justify-content: center !important;
+        gap: 12px !important;
+        padding: 8px 0 !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+    }
+
+    /* 3. 市場與預留卡容器：消除中間紅框大空白，讓預留卡緊靠 4 張卡片右側 */
+    .game-main-layout .flex.flex-nowrap.items-start.justify-between {
+        justify-content: flex-start !important;
+        gap: 16px !important; 
+        width: fit-content !important;
+    }
+
+    .game-main-layout .space-y-3.flex-1 {
+        flex: 0 0 auto !important;
+    }
+
+    /* 4. 電腦版 12 宮格卡片尺寸（維持精緻大小，不硬撐） */
+    .poke-color-card {
+        width: 106px !important;
+        min-width: 106px !important;
+        max-width: 106px !important;
+        padding: 4px !important;
+    }
+
+    .poke-color-card img {
+        height: 76px !important;
+        max-width: 88% !important;
+    }
+
+    .poke-color-card .font-title {
+        font-size: 13px !important;
+    }
+
+    .poke-color-card span.border {
+        font-size: 9.5px !important;
+        padding: 1px 4px !important;
+    }
+
+    /* 5. 電腦版稀有寶可夢夥伴：收緊卡片間距，消除紅框空隙 */
+    .nobles-flex-container {
+        flex-wrap: nowrap !important;
+        gap: 6px !important;
+        justify-content: flex-start !important;
+    }
+    
+    .noble-mini-card { 
+        width: 102px !important;
+        min-width: 102px !important;
+        max-width: 102px !important;
+        flex: 0 0 auto !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 5px 4px !important;
+    }
+
+    .noble-mini-card img {
+        height: 40px !important;
+        width: 40px !important;
+        margin: auto auto !important;
+    }
+
+    .noble-mini-card span { 
+        font-size: 9px !important; 
+    }
+}
+
+
+/* =====================================================================
+   三、手機版專屬設定 (螢幕寬度 < 1024px)
+   ===================================================================== */
 @media (max-width: 1023px) {
-    /* 1. 頂部導覽列極致壓縮，確保「離開」按鈕完整露出 */
+    .game-main-layout {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        overflow-y: auto; 
+        overflow-x: hidden;
+        padding: 8px;
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        box-sizing: border-box;
+    }
+
+    /* 1. 手機版頂部導覽列極致壓縮，確保「離開」按鈕完整露出 */
     header.glass-panel {
         display: flex !important;
         align-items: center !important;
@@ -255,10 +378,27 @@ html, body {
         border-radius: 6px !important;
     }
 
-    /* 2. 稀有寶可夢夥伴：強制單排不換行、無滑動條、自動等比縮小 */
+    /* 2. 手機版 12 宮格市場卡片尺寸統一 */
+    .poke-color-card { 
+        width: 62px !important;       
+        min-width: 62px !important;
+        max-width: 62px !important;
+        padding: 2px !important;     
+    }
+
+    .poke-color-card img {
+        height: 38px !important; 
+        max-width: 85% !important;
+    }
+
+    .poke-color-card span.border { font-size: 7.5px !important; padding: 0px 2px !important; z-index: 10; position: relative; }
+    .poke-color-card .font-title { font-size: 10.5px !important; z-index: 10; position: relative; }
+
+    /* 3. 手機版稀有寶可夢夥伴：強制單排不換行、無滑動條、自動等比縮小 */
     .nobles-flex-container { 
         flex-wrap: nowrap !important; 
         gap: 2px !important;           
+        justify-content: center !important;
         overflow: hidden !important;   
     }
 
@@ -283,117 +423,6 @@ html, body {
     .noble-mini-card span {
         font-size: 7px !important;
     }
-}
-
-/* =========================================================
-   🖥️ 電腦版專屬優化 (螢幕寬度 >= 1024px)
-   ========================================================= */
-@media (min-width: 1024px) {
-    #app {
-        width: 100vw !important;
-        height: 100vh !important;
-        transform: none !important;
-        display: flex;
-        justify-content: center;
-    }
-
-    #game-screen,
-    .game-main-layout {
-        width: 100% !important;
-        max-width: 1380px !important; 
-        height: 100vh !important;
-        margin: 0 auto !important;
-        padding: 12px 24px !important;
-        position: relative !important;
-    }
-
-    .poke-color-card {
-        width: 112px !important;
-        min-width: 112px !important;
-        max-width: 112px !important;
-        padding: 4px !important;
-    }
-
-    .poke-color-card img {
-        height: 82px !important;
-        max-width: 88% !important;
-    }
-
-    .poke-color-card .font-title {
-        font-size: 14px !important;
-    }
-    .poke-color-card span.border {
-        font-size: 10px !important;
-        padding: 1px 4px !important;
-    }
-
-    .nobles-flex-container {
-        flex-wrap: nowrap !important;
-        gap: 8px !important;
-        justify-content: center !important;
-    }
-    
-    .noble-mini-card { 
-        width: 165px !important;
-        min-width: 165px !important;
-        max-width: 165px !important;
-        flex: 0 0 auto !important;
-        flex-direction: column !important;
-        padding: 6px 8px !important;
-    }
-
-    .noble-mini-card img {
-        height: 44px !important;
-        width: 44px !important;
-        margin: auto auto !important;
-    }
-
-    .noble-mini-card span { 
-        font-size: 9px !important; 
-    }
-}
-
-/* 📦 專屬預留區的微型卡片樣式 */
-.reserved-mini-card {
-    position: relative;
-    width: 100% !important;
-    min-width: 0 !important;
-    aspect-ratio: 1 / 1.35 !important; 
-    padding: 2px !important;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    border-radius: 4px;
-    background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
-    border: 1px solid rgba(251, 191, 36, 0.4);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-    transition: transform 0.2s ease, border-color 0.2s;
-}
-.reserved-mini-card:hover {
-    transform: scale(1.03);
-    border-color: rgba(251, 191, 36, 0.85);
-    z-index: 20;
-}
-.reserved-mini-card img {
-    width: auto !important;
-    height: 38px !important; 
-    max-width: 85% !important;
-    object-fit: contain;
-    margin: auto auto !important;
-}
-
-/* 📦 調整卡片底部的費用列，讓 4 個費用完美塞進卡片內 */
-.poke-color-card .flex.flex-nowrap.items-center.justify-center {
-    gap: 1px !important;       
-    padding: 0.5px 1px !important; 
-    width: 100% !important;
-    box-sizing: border-box;
-}
-
-.poke-color-card .flex.flex-col.items-center.justify-center {
-    padding: 0px 0.5px !important;
-    transform: scale(0.92);    
-    transform-origin: center;
 }
 </style>
 </head>
