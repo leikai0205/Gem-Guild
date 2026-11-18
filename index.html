@@ -220,7 +220,7 @@ html, body {
 
 
 /* =====================================================================
-   二、電腦版專屬設定 (螢幕寬度 >= 1024px) - 完美固定兩欄網格
+   二、電腦版專屬設定 (螢幕寬度 >= 1024px) - 5 點精簡版
    ===================================================================== */
 @media (min-width: 1024px) {
     #app {
@@ -229,10 +229,10 @@ html, body {
         overflow: hidden;
     }
 
-    /* 1. 遊戲主畫面外框 */
+    /* 1. 遊戲主畫面外框：限制最大寬度和上下留白 */
     #game-screen {
         width: 100% !important;
-        max-width: 1240px !important; /* 給予足夠寬度讓左右兩欄順暢並排 */
+        max-width: 1140px !important; 
         height: 100vh !important;
         margin: 0 auto !important;
         padding: 4px 12px !important; 
@@ -241,44 +241,14 @@ html, body {
         overflow: hidden !important;
     }
 
-    /* 2. 關鍵修正：改回精準的 Grid 兩欄網格，左側自動、右側固定 320px */
-    .game-main-layout > div.flex.flex-row.items-start.justify-center {
-        display: grid !important;
-        grid-template-columns: minmax(0, 1fr) 320px !important; /* 左側自適應緊縮，右側固定寬度 */
-        justify-content: center !important;
-        align-items: flex-start !important;
+    /* 2. 左右兩欄網格：左側自適應緊縮，右側玩家欄固定 320px 消除空白 */
+    .grid.grid-cols-1.lg\:grid-cols-12 {
+        grid-template-columns: minmax(0, 1fr) 320px !important;
         gap: 12px !important;
-        width: 100% !important;
-        flex: 1 !important;
-        overflow-y: auto !important;
+        align-items: flex-start !important;
     }
 
-    /* 3. 左側欄位容器 */
-    .game-main-layout > div.flex.flex-row.items-start.justify-center > div:first-child {
-        width: 100% !important;
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 6px !important;
-    }
-
-    /* 4. 右側玩家狀態欄（包含銀行與玩家面板），固定在右側絕不亂跑 */
-    #players-container {
-        width: 320px !important;
-        min-width: 320px !important;
-        max-width: 320px !important;
-        flex-shrink: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 6px !important;
-    }
-
-    /* 5. 頂部導覽列 */
-    header.glass-panel {
-        margin-bottom: 4px !important;
-        padding: 3px 8px !important;
-    }
-
-    /* 6. 稀有寶可夢夥伴區塊：置中對齊 */
+    /* 3. 稀有寶可夢夥伴區塊：置中對齊與緊密間距 */
     .nobles-flex-container {
         flex-wrap: nowrap !important;
         gap: 4px !important;
@@ -308,14 +278,7 @@ html, body {
         font-size: 7.5px !important; 
     }
 
-    /* 7. 市場與右側預留卡容器 */
-    .game-main-layout .flex.flex-nowrap.items-start.justify-between {
-        justify-content: flex-start !important;
-        gap: 8px !important; 
-        width: 100% !important;
-    }
-
-    /* 8. 預留卡容器與空位高度鎖定 */
+    /* 4. 右側預留卡容器與空位高度鎖定（消滅下方大黑洞） */
     #reserved-cards-container {
         height: auto !important;
         flex: 0 0 auto !important;
@@ -326,7 +289,7 @@ html, body {
         min-height: 60px !important;
     }
 
-    /* 9. 電腦版 12 宮格卡片尺寸 */
+    /* 5. 電腦版 12 宮格卡片尺寸微調 */
     .poke-color-card {
         width: 92px !important;
         min-width: 92px !important;
