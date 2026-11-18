@@ -1660,6 +1660,133 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
 }
 </style>
 
+
+<style id="guild-reserved-spacing-centering-mobile-original-colors">
+/* 電腦版：預留卡欄加寬，三張卡片之間留出明確間距 */
+@media (min-width: 1024px) {
+  #game-screen main.glass-panel {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > div:last-child {
+    flex: 0 0 clamp(104px, 9vw, 124px) !important;
+    width: clamp(104px, 9vw, 124px) !important;
+    min-width: clamp(104px, 9vw, 124px) !important;
+  }
+  #game-screen #reserved-cards-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 9px !important;
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+  }
+  #game-screen #reserved-cards-container .reserved-mini-card {
+    height: 66px !important;
+    min-height: 66px !important;
+    max-height: 66px !important;
+    aspect-ratio: auto !important;
+    flex: 0 0 66px !important;
+    padding: 4px !important;
+  }
+  #game-screen #reserved-cards-container > div:not(.reserved-mini-card) {
+    min-height: 66px !important;
+  }
+}
+
+/* 市場卡：底部費用黑色底條固定顯示 */
+#game-screen .poke-color-card > div:last-child {
+  background: rgba(2, 6, 23, .94) !important;
+  border: 1px solid rgba(148, 163, 184, .28) !important;
+  border-radius: 4px !important;
+  opacity: 1 !important;
+}
+
+/* 五種市場卡底色使用明確的實際 Tailwind 類別，不依賴動態樣式 */
+#game-screen .poke-color-card[class*="from-blue-700"] {
+  background: linear-gradient(145deg,#1d4ed8 0%,#075985 52%,#172554 100%) !important;
+  border-color: #60a5fa !important;
+}
+#game-screen .poke-color-card[class*="from-emerald-700"] {
+  background: linear-gradient(145deg,#047857 0%,#166534 52%,#022c22 100%) !important;
+  border-color: #34d399 !important;
+}
+#game-screen .poke-color-card[class*="from-red-700"] {
+  background: linear-gradient(145deg,#b91c1c 0%,#9f1239 52%,#4c0519 100%) !important;
+  border-color: #fb7185 !important;
+}
+#game-screen .poke-color-card[class*="from-purple-800"] {
+  background: linear-gradient(145deg,#6b21a8 0%,#581c87 52%,#170b2e 100%) !important;
+  border-color: #c084fc !important;
+}
+#game-screen .poke-color-card[class*="from-amber-100"] {
+  background: linear-gradient(145deg,#fef3c7 0%,#fde68a 55%,#d97706 100%) !important;
+  border-color: #fbbf24 !important;
+}
+
+/* 黃卡分數改成深琥珀色，確保淺色卡面上清楚可讀 */
+#game-screen .poke-color-card[class*="from-amber-100"] > div:first-child > span:first-child,
+#game-screen .reserved-mini-card[class*="from-amber-100"] > div:first-child > span:first-child {
+  color: #78350f !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.45) !important;
+  font-weight: 900 !important;
+}
+
+/* 稀有寶可夢：藍三、綠三、紅三恢復與電腦版一致的色塊 */
+#game-screen .nobles-flex-container .noble-cost-sapphire,
+#game-screen .noble-cost-sapphire {
+  background: rgba(30, 64, 175, .92) !important;
+  color: #dbeafe !important;
+  border: 1px solid #60a5fa !important;
+}
+#game-screen .nobles-flex-container .noble-cost-emerald,
+#game-screen .noble-cost-emerald {
+  background: rgba(6, 95, 70, .94) !important;
+  color: #d1fae5 !important;
+  border: 1px solid #34d399 !important;
+}
+#game-screen .nobles-flex-container .noble-cost-ruby,
+#game-screen .noble-cost-ruby {
+  background: rgba(159, 18, 57, .94) !important;
+  color: #ffe4e6 !important;
+  border: 1px solid #fb7185 !important;
+}
+#game-screen .nobles-flex-container .noble-cost-diamond,
+#game-screen .noble-cost-diamond {
+  background: rgba(120, 53, 15, .92) !important;
+  color: #fef3c7 !important;
+  border: 1px solid #fbbf24 !important;
+}
+#game-screen .nobles-flex-container .noble-cost-onyx,
+#game-screen .noble-cost-onyx {
+  background: rgba(88, 28, 135, .94) !important;
+  color: #f3e8ff !important;
+  border: 1px solid #c084fc !important;
+}
+
+/* 玩家資訊區：恢復深色半透明面板，不覆蓋原本各玩家卡片的排版 */
+#game-screen #players-container > div {
+  background: linear-gradient(145deg, rgba(30,41,59,.94), rgba(15,23,42,.97)) !important;
+  border: 1px solid rgba(148,163,184,.32) !important;
+  border-radius: 9px !important;
+}
+
+/* 手機端同樣套用以上卡色、稀有需求色塊與市場費用黑底條 */
+@media (max-width: 767px) {
+  #game-screen .poke-color-card > div:last-child {
+    background: rgba(2, 6, 23, .96) !important;
+    border-color: rgba(148,163,184,.35) !important;
+  }
+  #game-screen .nobles-flex-container .noble-cost-sapphire,
+  #game-screen .noble-cost-sapphire { background:rgba(30,64,175,.92) !important; color:#dbeafe !important; border-color:#60a5fa !important; }
+  #game-screen .nobles-flex-container .noble-cost-emerald,
+  #game-screen .noble-cost-emerald { background:rgba(6,95,70,.94) !important; color:#d1fae5 !important; border-color:#34d399 !important; }
+  #game-screen .nobles-flex-container .noble-cost-ruby,
+  #game-screen .noble-cost-ruby { background:rgba(159,18,57,.94) !important; color:#ffe4e6 !important; border-color:#fb7185 !important; }
+  #game-screen .noble-cost-diamond { background:rgba(120,53,15,.92) !important; color:#fef3c7 !important; border-color:#fbbf24 !important; }
+  #game-screen .noble-cost-onyx { background:rgba(88,28,135,.94) !important; color:#f3e8ff !important; border-color:#c084fc !important; }
+}
+</style>
+
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
