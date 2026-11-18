@@ -228,33 +228,45 @@ html, body {
    ========================================================= */
 
 
-/* =====================================
-   大廳完整畫面自動縮放
-   不影響遊戲桌及多人連線
-===================================== */
+
+<style id="lobby-final-fit-fix">
+/* 最終修正：避免電腦版其他 CSS 覆蓋大廳縮放 */
 
 #lobby-screen:not(.hidden) {
     position: fixed !important;
     inset: 0 !important;
     width: 100vw !important;
+    height: 100vh !important;
     height: 100dvh !important;
-    padding: 0 !important;
+    min-height: 0 !important;
+
     display: flex !important;
+    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
+
+    padding: 0 !important;
     overflow: hidden !important;
     box-sizing: border-box !important;
 }
 
 #lobby-screen:not(.hidden) > .glass-panel {
     width: 448px !important;
+    min-width: 448px !important;
     max-width: none !important;
-    flex: none !important;
+
+    flex: 0 0 auto !important;
     margin: 0 !important;
+
     transform: scale(var(--lobby-fit-scale, 1)) !important;
     transform-origin: center center !important;
+
+    max-height: none !important;
+    overflow: hidden !important;
     box-sizing: border-box !important;
 }
+</style>
+
 
 /* 大廳縮放比例由 JavaScript 計算 */
 
