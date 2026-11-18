@@ -283,11 +283,11 @@ html, body {
                             <span class="text-[10px] text-slate-400">先達 15 分觸發終局</span>
                         </div>
                         
-<!-- 調整為固定寬度或使用 max-w，避免中間產生巨大空白 -->
-                        <div class="flex flex-wrap lg:flex-nowrap gap-4 items-start justify-between">
+<!-- 修正：使用 flex-nowrap 與固定的左右區塊配置，防止預留卡亂跑 -->
+                        <div class="flex flex-nowrap items-start gap-3 w-full">
                             
-                            <!-- 左側市場 3 個等級區塊 -->
-                            <div class="space-y-3 w-full lg:w-auto flex-1">
+                            <!-- 左側市場 3 個等級區塊 (自動填滿剩餘空間) -->
+                            <div class="space-y-3 flex-1 min-w-0">
                                 <div class="space-y-1">
                                     <div class="flex items-center justify-between text-[11px]">
                                         <div class="flex items-center gap-2">
@@ -319,8 +319,8 @@ html, body {
                                 </div>
                             </div>
 
-                            <!-- 右側直立 3 格保留卡區（固定寬度，不被彈性拉伸） -->
-                            <aside class="w-[120px] bg-slate-950/60 rounded-xl p-2 border border-slate-800 flex flex-col justify-between shrink-0 space-y-2">
+                            <!-- 右側直立 3 格保留卡區 (固定寬度、不被壓縮、緊貼右側) -->
+                            <aside class="w-[115px] bg-slate-950/60 rounded-xl p-2 border border-slate-800 flex flex-col justify-between shrink-0 space-y-2">
                                 <div class="text-[10px] font-bold text-amber-300/90 text-center border-b border-slate-800 pb-1">
                                     📦 預留卡 (<span id="reserved-count-text">0</span>/3)
                                 </div>
