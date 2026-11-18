@@ -32,7 +32,8 @@ html, body {
 }
 
 /* 讓大廳登入畫面無論螢幕大小，都使用 Flex 完美垂直與水平置中 */
-#lobby-screen {
+/* 只有在大廳沒有 hidden 類別時，才強制置中顯示；一旦加上 hidden 就會自動失效 */
+#lobby-screen:not(.hidden) {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
