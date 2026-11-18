@@ -315,6 +315,47 @@ html, body {
     transform: scale(0.92);    /* 微微等比縮小 8%，剛剛好容納 4 個 */
     transform-origin: center;
 }
+
+    /* 📱 手機版頂部導覽列專屬優化：確保「離開」按鈕絕不超出畫面 */
+header.glass-panel {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    padding: 6px 8px !important;
+    width: 100% !important;
+    box-sizing: border-box;
+    overflow: hidden !important;
+}
+
+/* 左側房號與身分標籤：允許彈性收縮 */
+header .flex.items-center.gap-2 {
+    gap: 3px !important;
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+}
+
+/* 中間狀態文字：當空間不足時自動省略變成 ... 避免擠壓兩側 */
+#status-banner {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    font-size: 10px !important;
+    padding: 2px 4px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+/* 右側按鈕群組：縮小按鈕間距與內距，確保「邀請、規則、離開」完整露出 */
+header .flex.items-center.gap-1\.5 {
+    gap: 3px !important;
+    flex-shrink: 0 !important;
+}
+
+header button {
+    padding: 2px 5px !important;
+    font-size: 10px !important;
+}
     </style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
