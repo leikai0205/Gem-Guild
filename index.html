@@ -220,7 +220,7 @@ html, body {
 
 
 /* =====================================================================
-   二、電腦版專屬設定 (螢幕寬度 >= 1024px) - 極限壓縮空白區塊
+   二、電腦版專屬設定 (螢幕寬度 >= 1024px) - 徹底消除右側與下方大片空白
    ===================================================================== */
 @media (min-width: 1024px) {
     #app {
@@ -229,10 +229,10 @@ html, body {
         overflow: hidden;
     }
 
-    /* 1. 遊戲主畫面外框：上下 padding 壓到極小，消滅頂部紅框空白 */
+    /* 1. 遊戲主畫面外框：極限壓縮上下左右留白 */
     #game-screen {
         width: 100% !important;
-        max-width: 920px !important; 
+        max-width: 900px !important; /* 讓整體畫面再集中一點 */
         height: 100vh !important;
         margin: 0 auto !important;
         padding: 1px 4px !important; 
@@ -241,17 +241,30 @@ html, body {
         overflow: hidden !important;
     }
 
-    /* 2. 主版面網格：上下行間距縮到 4px */
+    /* 2. 主版面網格：改用 fit-content，讓左側市場與右側玩家面板緊緊靠攏，消除右側大空白 */
     .game-main-layout {
         width: 100% !important;
         flex: 1 !important;
-        display: grid !important;
-        grid-template-columns: auto 320px !important; 
+        display: flex !important;
+        flex-wrap: nowrap !important;
         justify-content: center !important;
-        gap: 4px !important; 
+        align-items: flex-start !important;
+        gap: 8px !important; 
         padding: 1px 0 !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
+    }
+
+    /* 左側遊戲區域包裝 */
+    .game-main-layout > div:first-child {
+        flex: 0 0 auto !important;
+    }
+
+    /* 右側玩家欄位區塊：鎖定固定寬度，不再向右拉開大空白 */
+    #players-container {
+        width: 310px !important;
+        min-width: 310px !important;
+        flex-shrink: 0 !important;
     }
 
     /* 3. 頂部導覽列：拔掉所有上下 margin */
@@ -290,10 +303,10 @@ html, body {
         font-size: 7px !important; 
     }
 
-    /* 5. 市場與右側預留卡容器：消除中間與下方長條空白 */
+    /* 5. 市場與右側預留卡容器：讓預留卡緊貼在 12 宮格市場右側，消滅中間空白 */
     .game-main-layout .flex.flex-nowrap.items-start.justify-between {
         justify-content: flex-start !important;
-        gap: 4px !important; 
+        gap: 6px !important; 
         width: fit-content !important;
     }
 
@@ -302,15 +315,15 @@ html, body {
         width: auto !important;
     }
 
-    /* 6. 關鍵修正：拔掉預留卡容器的 h-full，鎖死空位高度，消滅下方大黑洞 */
+    /* 6. 預留卡容器與空位高度鎖定 */
     #reserved-cards-container {
         height: auto !important;
         flex: 0 0 auto !important;
     }
 
     #reserved-cards-container > div {
-        height: 64px !important;
-        min-height: 64px !important;
+        height: 56px !important;
+        min-height: 56px !important;
     }
 
     .game-main-layout .space-y-3 {
@@ -321,14 +334,14 @@ html, body {
 
     /* 7. 電腦版 12 宮格卡片尺寸微調 */
     .poke-color-card {
-        width: 86px !important;
-        min-width: 86px !important;
-        max-width: 86px !important;
+        width: 84px !important;
+        min-width: 84px !important;
+        max-width: 84px !important;
         padding: 1px !important;
     }
 
     .poke-color-card img {
-        height: 58px !important;
+        height: 56px !important;
         max-width: 88% !important;
     }
 
