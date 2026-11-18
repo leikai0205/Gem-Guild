@@ -1492,6 +1492,86 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
 #game-screen #bank-gems-container .item-orb-btn > div.my-0\.5 { position: relative !important; z-index: 0 !important; }
 </style>
 
+
+<style id="guild-cost-and-mobile-colors-final-fix">
+/* 費用顯示：進化石圖案與數字上下排列，避免「3○ 3○ 6○」橫向佔位 */
+#game-screen .gem-cost-item {
+    display: inline-flex !important;
+    flex-direction: column-reverse !important; /* 原本 HTML 是數字在前、球在後；反向後球在上、數字在下 */
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1px !important;
+    min-width: 17px !important;
+    padding: 1px 2px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+}
+#game-screen .gem-cost-item > img,
+#game-screen .gem-cost-item > div {
+    width: 10px !important;
+    height: 10px !important;
+    flex: 0 0 10px !important;
+}
+#game-screen .gem-cost-item .gem-cost-number {
+    display: block !important;
+    font-size: 8px !important;
+    line-height: 1 !important;
+    font-weight: 900 !important;
+}
+/* 顏色固定寫在 CSS，不依賴手機瀏覽器掃描動態 Tailwind 類別 */
+#game-screen .gem-cost-diamond .gem-cost-number { color:#facc15 !important; }
+#game-screen .gem-cost-sapphire .gem-cost-number { color:#60a5fa !important; }
+#game-screen .gem-cost-emerald .gem-cost-number { color:#34d399 !important; }
+#game-screen .gem-cost-ruby .gem-cost-number { color:#fb7185 !important; }
+#game-screen .gem-cost-onyx .gem-cost-number { color:#c084fc !important; }
+#game-screen .gem-cost-gold .gem-cost-number { color:#fbbf24 !important; }
+
+/* 銀行的剩餘數量：恢復黃色小圓標，放在石頭／大師球左上角 */
+#game-screen #bank-gems-container .item-orb-btn { position:relative !important; }
+#game-screen #bank-gems-container .item-orb-btn .bank-count-badge {
+    top:2px !important;
+    left:2px !important;
+    right:auto !important;
+    bottom:auto !important;
+    transform:none !important;
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    border-radius:999px !important;
+    background:#fbbf24 !important;
+    color:#111827 !important;
+    border:1px solid #fde68a !important;
+    box-shadow:0 1px 3px rgba(0,0,0,.65) !important;
+    font-size:9px !important;
+    line-height:1 !important;
+    z-index:20 !important;
+    pointer-events:none !important;
+}
+
+/* 手機卡片：以卡片原本的種類 class 還原整張卡片底色與邊框 */
+#game-screen .poke-color-card[class*="bg-amber-950"] { background:linear-gradient(145deg,rgba(120,75,10,.96),rgba(55,35,8,.98)) !important; border-color:rgba(251,191,36,.9) !important; }
+#game-screen .poke-color-card[class*="bg-blue-950"] { background:linear-gradient(145deg,rgba(20,75,145,.96),rgba(8,30,75,.98)) !important; border-color:rgba(96,165,250,.9) !important; }
+#game-screen .poke-color-card[class*="bg-emerald-950"] { background:linear-gradient(145deg,rgba(10,105,75,.96),rgba(5,45,35,.98)) !important; border-color:rgba(52,211,153,.9) !important; }
+#game-screen .poke-color-card[class*="bg-red-950"],
+#game-screen .poke-color-card[class*="bg-rose-950"] { background:linear-gradient(145deg,rgba(145,30,50,.96),rgba(65,10,25,.98)) !important; border-color:rgba(251,113,133,.9) !important; }
+#game-screen .poke-color-card[class*="bg-purple-950"] { background:linear-gradient(145deg,rgba(95,45,145,.96),rgba(40,15,75,.98)) !important; border-color:rgba(192,132,252,.9) !important; }
+
+/* 卡片左上角等文字標籤依卡片種類保留可讀對比 */
+#game-screen .poke-color-card[class*="bg-amber-950"] .font-title { color:#fde68a !important; }
+#game-screen .poke-color-card[class*="bg-blue-950"] .font-title { color:#bfdbfe !important; }
+#game-screen .poke-color-card[class*="bg-emerald-950"] .font-title { color:#a7f3d0 !important; }
+#game-screen .poke-color-card[class*="bg-red-950"] .font-title,
+#game-screen .poke-color-card[class*="bg-rose-950"] .font-title { color:#fecdd3 !important; }
+#game-screen .poke-color-card[class*="bg-purple-950"] .font-title { color:#e9d5ff !important; }
+
+/* 稀有寶可夢需求標籤的背景色與字色固定，防止手機端只剩白字 */
+#game-screen .noble-cost-diamond { background:rgba(245,158,11,.30) !important; color:#fde68a !important; border-color:#fbbf24 !important; }
+#game-screen .noble-cost-sapphire { background:rgba(37,99,235,.34) !important; color:#bfdbfe !important; border-color:#60a5fa !important; }
+#game-screen .noble-cost-emerald { background:rgba(5,150,105,.34) !important; color:#a7f3d0 !important; border-color:#34d399 !important; }
+#game-screen .noble-cost-ruby { background:rgba(225,29,72,.32) !important; color:#fecdd3 !important; border-color:#fb7185 !important; }
+#game-screen .noble-cost-onyx { background:rgba(126,34,206,.34) !important; color:#e9d5ff !important; border-color:#c084fc !important; }
+</style>
+
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
