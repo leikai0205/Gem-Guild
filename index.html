@@ -2230,6 +2230,67 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
 }
 </style>
 
+
+<style id="guild-final-lobby-centering-and-mobile-cost-border-fix">
+/* 電腦版大廳：視窗夠高時置中；內容較高時允許整個大廳上下捲動，規則區不會被截掉 */
+@media (min-width: 1024px) {
+  #lobby-screen:not(.hidden) {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding: 24px 16px !important;
+    box-sizing: border-box !important;
+  }
+  #lobby-screen:not(.hidden) > .glass-panel {
+    flex: 0 0 auto !important;
+    width: min(100%, 448px) !important;
+    margin: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* 手機版：費用區只保留黑色底條，移除外框、白線、外陰影；費用固定單排 */
+@media (max-width: 1023px) {
+  #game-screen .reserved-mini-card .reserved-cost-row,
+  #game-screen .poke-color-card > .flex.flex-nowrap.items-center.justify-center,
+  #game-screen .poke-color-card > div:last-child {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    background-color: #020617 !important;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+  }
+  #game-screen .reserved-mini-card .reserved-cost-row *,
+  #game-screen .poke-color-card > .flex.flex-nowrap.items-center.justify-center *,
+  #game-screen .poke-color-card > div:last-child * {
+    outline: 0 !important;
+    box-shadow: none !important;
+  }
+  #game-screen .reserved-mini-card .reserved-cost-row .gem-cost-item,
+  #game-screen .poke-color-card > .flex.flex-nowrap.items-center.justify-center .gem-cost-item,
+  #game-screen .poke-color-card > div:last-child .gem-cost-item {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+  }
+}
+</style>
+
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
