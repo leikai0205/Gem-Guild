@@ -183,6 +183,64 @@ html, body {
     text-orientation: upright;
     letter-spacing: -1px;
 }
+
+        /* =========================================================
+   🖥️ 電腦版專屬優化 (螢幕寬度 >= 1024px 才生效，手機版完全不動)
+   ========================================================= */
+@media (min-width: 1024px) {
+    /* 1. 解除電腦版的 0.8 縮小封印，恢復 100% 正常大小並集中置中 */
+    #app {
+        width: 100vw !important;
+        height: 100vh !important;
+        transform: none !important;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* 2. 限制最大寬度並左右留白集中（等同左右各內縮集中，不再散開） */
+    #game-screen,
+    .game-main-layout {
+        width: 100% !important;
+        max-width: 1380px !important; /* 控制整體集中寬度，覺得還不夠集中可改 1280px */
+        height: 100vh !important;
+        margin: 0 auto !important;
+        padding: 12px 24px !important;
+        position: relative !important;
+    }
+
+    /* 3. 放大電腦版的寶可夢資源卡片，讓視覺更飽滿 */
+    .poke-color-card {
+        width: 112px !important;
+        min-width: 112px !important;
+        padding: 4px !important;
+    }
+
+    /* 4. 放大卡片中間的寶可夢圖片 */
+    .poke-color-card img {
+        height: 82px !important;
+        max-width: 88% !important;
+    }
+
+    /* 5. 放大卡片上的分數、屬性標籤與底下進化石圖示文字 */
+    .poke-color-card .font-title {
+        font-size: 14px !important;
+    }
+    .poke-color-card span.border {
+        font-size: 10px !important;
+        padding: 1px 4px !important;
+    }
+
+    /* 6. 稀有寶可夢夥伴卡片在電腦版也同步微幅放大 */
+    .noble-mini-card {
+        width: 165px !important;
+        min-width: 165px !important;
+        padding: 6px 8px !important;
+    }
+    .noble-mini-card img {
+        height: 44px !important;
+        width: 44px !important;
+    }
+}
     </style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
