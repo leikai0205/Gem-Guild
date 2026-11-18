@@ -459,6 +459,518 @@ html, body {
         font-size: 7px !important;
     }
 }
+
+
+/* =====================================================================
+   四、第二版自適應版面
+   僅覆蓋排版樣式，不更動遊戲 HTML 結構與 JavaScript 邏輯
+   ===================================================================== */
+
+/* 全螢幕基準：避免舊版 1120px 最大寬度造成左右留白 */
+html, body {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    min-height: 100dvh;
+}
+
+#game-screen {
+    inset: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* 電腦版：左側市場、右側玩家資訊並排 */
+@media (min-width: 1024px) {
+    #game-screen {
+        padding: clamp(6px, .7vw, 12px) !important;
+        gap: 8px !important;
+    }
+
+    #game-screen > header {
+        flex: 0 0 auto;
+        min-height: 38px;
+    }
+
+    #game-screen #status-banner {
+        flex: 1 1 auto !important;
+        width: auto !important;
+        max-width: none !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+    }
+
+    #game-screen > .grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.72fr) minmax(300px, .92fr) !important;
+        grid-template-rows: minmax(0, 1fr);
+        gap: clamp(8px, .8vw, 14px) !important;
+        align-items: stretch !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    #game-screen > .grid > div,
+    #game-screen > .grid > aside {
+        grid-column: auto !important;
+        grid-row: 1;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        height: 100% !important;
+        padding-right: 3px !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(251,191,36,.35) transparent;
+    }
+
+    #game-screen > .grid > div {
+        display: flex;
+        flex-direction: column;
+        gap: 8px !important;
+    }
+
+    #game-screen > .grid > aside {
+        display: flex;
+        flex-direction: column;
+        gap: 8px !important;
+    }
+
+    #game-screen .nobles-flex-container {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        gap: clamp(4px, .5vw, 8px) !important;
+        overflow: hidden !important;
+    }
+
+    #game-screen .noble-mini-card {
+        flex: 1 1 0 !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        padding: 3px !important;
+    }
+
+    #game-screen .noble-mini-card img {
+        width: clamp(26px, 2.5vw, 38px) !important;
+        height: clamp(26px, 2.5vw, 38px) !important;
+    }
+
+    #game-screen .noble-mini-card span {
+        font-size: clamp(7px, .58vw, 9px) !important;
+    }
+
+    #game-screen main.glass-panel {
+        flex: 1 0 auto;
+        min-height: 0;
+    }
+
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between {
+        width: 100% !important;
+        gap: clamp(6px, .7vw, 12px) !important;
+        justify-content: flex-start !important;
+    }
+
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > .space-y-3.flex-1.min-w-0 {
+        flex: 1 1 0% !important;
+        width: auto !important;
+        min-width: 0 !important;
+    }
+
+    #game-screen #market-row-1,
+    #game-screen #market-row-2,
+    #game-screen #market-row-3 {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        width: 100% !important;
+        gap: clamp(3px, .35vw, 6px) !important;
+    }
+
+    #game-screen .poke-color-card {
+        flex: 1 1 0% !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        padding: clamp(2px, .25vw, 4px) !important;
+    }
+
+    #game-screen .poke-color-card img {
+        height: clamp(34px, 6.2vh, 70px) !important;
+        max-width: 88% !important;
+    }
+
+    #game-screen .poke-color-card .font-title {
+        font-size: clamp(9px, .8vw, 12px) !important;
+    }
+
+    #game-screen .poke-color-card span.border {
+        font-size: clamp(7px, .58vw, 9px) !important;
+    }
+
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > div:last-child {
+        flex: 0 0 clamp(72px, 7.5vw, 100px) !important;
+        width: clamp(72px, 7.5vw, 100px) !important;
+        min-width: 0 !important;
+    }
+
+    #game-screen #reserved-cards-container {
+        height: auto !important;
+        min-height: 0 !important;
+        flex: 1 1 auto !important;
+    }
+
+    #game-screen #reserved-cards-container > div {
+        min-height: 52px !important;
+    }
+
+    #game-screen .reserved-mini-card img {
+        height: clamp(24px, 4vh, 38px) !important;
+    }
+
+    #game-screen #battle-log-container {
+        height: clamp(64px, 10vh, 104px) !important;
+    }
+
+    #players-container .font-title {
+        font-size: clamp(16px, 1.5vw, 22px) !important;
+    }
+}
+
+/* 平板橫向與手機橫向：兩欄顯示，縮小卡片但保留操作區 */
+@media (min-width: 600px) and (max-width: 1023px) and (orientation: landscape) {
+    #game-screen {
+        padding: 6px !important;
+        gap: 6px !important;
+    }
+
+    #game-screen > .grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.55fr) minmax(220px, .9fr) !important;
+        grid-template-rows: minmax(0, 1fr);
+        gap: 6px !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    #game-screen > .grid > div,
+    #game-screen > .grid > aside {
+        grid-column: auto !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        height: 100% !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        padding-right: 2px !important;
+    }
+
+    #game-screen > .grid > div {
+        display: flex;
+        flex-direction: column;
+        gap: 5px !important;
+    }
+
+    #game-screen > .grid > aside {
+        display: flex;
+        flex-direction: column;
+        gap: 5px !important;
+    }
+
+    #game-screen .glass-panel {
+        padding: 6px !important;
+    }
+
+    #game-screen .nobles-flex-container {
+        flex-wrap: nowrap !important;
+        gap: 3px !important;
+        overflow: hidden !important;
+    }
+
+    #game-screen .noble-mini-card {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        padding: 2px !important;
+    }
+
+    #game-screen .noble-mini-card img {
+        width: 24px !important;
+        height: 24px !important;
+    }
+
+    #game-screen .noble-mini-card span {
+        font-size: 6.5px !important;
+    }
+
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between {
+        gap: 5px !important;
+    }
+
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > .space-y-3.flex-1.min-w-0 {
+        flex: 1 1 0% !important;
+        min-width: 0 !important;
+    }
+
+    #game-screen #market-row-1,
+    #game-screen #market-row-2,
+    #game-screen #market-row-3 {
+        gap: 3px !important;
+    }
+
+    #game-screen .poke-color-card {
+        flex: 1 1 0% !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        padding: 2px !important;
+    }
+
+    #game-screen .poke-color-card img {
+        height: clamp(25px, 5vh, 42px) !important;
+    }
+
+    #game-screen .poke-color-card .font-title {
+        font-size: 8px !important;
+    }
+
+    #game-screen .poke-color-card span.border {
+        font-size: 6px !important;
+    }
+
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > div:last-child {
+        flex: 0 0 58px !important;
+        width: 58px !important;
+        min-width: 58px !important;
+    }
+
+    #game-screen #reserved-cards-container > div {
+        min-height: 44px !important;
+    }
+
+    #game-screen .reserved-mini-card img {
+        height: 24px !important;
+    }
+
+    #game-screen #bank-gems-container {
+        gap: 3px !important;
+    }
+
+    #game-screen #bank-gems-container > div {
+        padding: 4px 1px !important;
+    }
+
+    #game-screen #bank-gems-container img,
+    #game-screen #bank-gems-container .rounded-full {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    #game-screen #battle-log-container {
+        height: 58px !important;
+    }
+
+    #players-container .font-title {
+        font-size: 16px !important;
+    }
+}
+
+/* 手機直向與平板直向：改為上下排列，允許整頁垂直捲動 */
+@media (max-width: 1023px) and (orientation: portrait) {
+    html, body {
+        height: 100%;
+        overflow: hidden;
+    }
+
+    #game-screen {
+        position: absolute !important;
+        inset: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-width: none !important;
+        padding: 6px !important;
+        gap: 6px !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain;
+    }
+
+    #game-screen > header {
+        flex: 0 0 auto;
+    }
+
+    #game-screen > .grid {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        gap: 7px !important;
+    }
+
+    #game-screen > .grid > div,
+    #game-screen > .grid > aside {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        padding: 0 !important;
+    }
+
+    #game-screen > .grid > div {
+        display: flex;
+        flex-direction: column;
+        gap: 6px !important;
+    }
+
+    #game-screen > .grid > aside {
+        display: flex;
+        flex-direction: column;
+        gap: 6px !important;
+    }
+
+    #game-screen .glass-panel {
+        padding: 7px !important;
+    }
+
+    #game-screen .nobles-flex-container {
+        flex-wrap: nowrap !important;
+        gap: 3px !important;
+        overflow: hidden !important;
+    }
+
+    #game-screen .noble-mini-card {
+        flex: 1 1 0% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        padding: 2px !important;
+    }
+
+    #game-screen .noble-mini-card img {
+        width: clamp(20px, 7vw, 30px) !important;
+        height: clamp(20px, 7vw, 30px) !important;
+    }
+
+    #game-screen .noble-mini-card span {
+        font-size: clamp(6px, 1.8vw, 8px) !important;
+    }
+
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between {
+        gap: 5px !important;
+    }
+
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > .space-y-3.flex-1.min-w-0 {
+        flex: 1 1 0% !important;
+        min-width: 0 !important;
+    }
+
+    #game-screen #market-row-1,
+    #game-screen #market-row-2,
+    #game-screen #market-row-3 {
+        gap: 3px !important;
+    }
+
+    #game-screen .poke-color-card {
+        flex: 1 1 0% !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        padding: 2px !important;
+    }
+
+    #game-screen .poke-color-card img {
+        height: clamp(25px, 8vw, 42px) !important;
+    }
+
+    #game-screen .poke-color-card .font-title {
+        font-size: clamp(7px, 2.5vw, 10px) !important;
+    }
+
+    #game-screen .poke-color-card span.border {
+        font-size: clamp(6px, 1.8vw, 8px) !important;
+    }
+
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > div:last-child {
+        flex: 0 0 clamp(54px, 18vw, 72px) !important;
+        width: clamp(54px, 18vw, 72px) !important;
+        min-width: 0 !important;
+    }
+
+    #game-screen #reserved-cards-container {
+        height: auto !important;
+        min-height: 0 !important;
+    }
+
+    #game-screen #reserved-cards-container > div {
+        min-height: 44px !important;
+    }
+
+    #game-screen .reserved-mini-card img {
+        height: 25px !important;
+    }
+
+    #game-screen #bank-gems-container {
+        grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+        gap: 4px !important;
+    }
+
+    #game-screen #bank-gems-container > div {
+        padding: 5px 1px !important;
+    }
+
+    #game-screen #bank-gems-container img,
+    #game-screen #bank-gems-container .rounded-full {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    #game-screen #players-container .glass-panel {
+        padding: 7px !important;
+    }
+
+    #game-screen #battle-log-container {
+        height: 72px !important;
+        max-height: 72px !important;
+    }
+}
+
+/* 矮螢幕：再壓縮間距，優先保留可操作區 */
+@media (max-height: 650px) and (orientation: landscape) {
+    #game-screen {
+        padding: 4px !important;
+        gap: 4px !important;
+    }
+
+    #game-screen > header {
+        min-height: 30px;
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+    }
+
+    #game-screen > .grid {
+        gap: 4px !important;
+    }
+
+    #game-screen .glass-panel {
+        padding: 5px !important;
+    }
+
+    #game-screen #battle-log-container {
+        height: 42px !important;
+    }
+}
+
 </style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
