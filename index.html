@@ -873,24 +873,24 @@ html, body {
             }
         }
 
-        function renderNobles() {
+function renderNobles() {
             const container = document.getElementById('nobles-container');
             container.innerHTML = `
                 <div class="nobles-flex-container">
                     ${gameState.nobles.map(n => `
-                        <div class="glass-card noble-mini-card border-amber-500/40 !flex-row !items-center !justify-between !px-1.5 !py-1">
+                        <div class="glass-card noble-mini-card border-amber-500/40 !flex-row !items-center !justify-center !px-1 !py-1 gap-1">
                             
-                            <!-- 1. 左側：直式寶可夢名字 -->
-                            <div class="flex items-center justify-center shrink-0">
+                            <!-- 1. 左側：直式寶可夢名字 (緊貼圖片左側) -->
+                            <div class="flex items-center justify-end shrink-0">
                                 <span class="text-[9px] font-bold text-amber-200 vertical-text leading-none py-0.5" title="${n.name}">${n.name}</span>
                             </div>
 
                             <!-- 2. 中間：寶可夢圖片 -->
-                            <div class="flex items-center justify-center mx-1 flex-1">
-                                <img src="${n.img}" alt="${n.name}" class="w-9 h-9 object-contain drop-shadow bg-slate-900/60 rounded-md p-0.5 border border-slate-700" />
+                            <div class="flex items-center justify-center shrink-0">
+                                <img src="${n.img}" alt="${n.name}" class="w-8 h-8 object-contain drop-shadow bg-slate-900/60 rounded-md p-0.5 border border-slate-700" />
                             </div>
 
-                            <!-- 3. 右側：直排的條件需求（例如 藍4、綠4） -->
+                            <!-- 3. 右側：直排的條件需求 (緊貼圖片右側) -->
                             <div class="flex flex-col justify-center gap-0.5 shrink-0 text-[8px]">
                                 ${CARD_GEM_ORDER.map(gem => n.req[gem] ? `
                                     <span class="px-1 py-0.2 rounded border font-bold text-center ${CARD_COLORS[gem].badgeClass}">
