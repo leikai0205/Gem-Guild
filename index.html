@@ -300,6 +300,21 @@ html, body {
     object-fit: contain;
     margin: auto auto !important;
 }
+
+    /* 📦 調整卡片底部的費用列，縮小間距與內距，讓 4 個費用能完美塞進卡片內 */
+.poke-color-card .flex.flex-nowrap.items-center.justify-center {
+    gap: 1px !important;       /* 將費用方塊之間的間隔縮到最小 (1px) */
+    padding: 0.5px 1px !important; /* 縮小上下左右的留白 */
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* 稍微縮小單個費用方塊的大小與邊距，確保 4 個並排時絕對不超線 */
+.poke-color-card .flex.flex-col.items-center.justify-center {
+    padding: 0px 0.5px !important;
+    transform: scale(0.92);    /* 微微等比縮小 8%，剛剛好容納 4 個 */
+    transform-origin: center;
+}
     </style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
