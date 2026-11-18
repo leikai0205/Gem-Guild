@@ -219,8 +219,10 @@ html, body {
 #players-container .font-title { font-size: 22px !important; }
 
 
+
 /* =========================================================
-   電腦版大廳：依照螢幕尺寸自動縮放，不使用捲動
+   電腦版大廳：依照螢幕高度自動縮放，完整置中
+   不使用上下捲動
    ========================================================= */
 
 @media (min-width: 1024px) {
@@ -230,23 +232,45 @@ html, body {
         inset: 0 !important;
         width: 100% !important;
         height: 100% !important;
-        overflow: hidden !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: clamp(8px, 1.5vh, 20px) !important;
+        overflow: hidden !important;
+        padding: 12px !important;
         box-sizing: border-box !important;
     }
 
-    /* 大廳主要內容自動依照螢幕高度縮放 */
-    #lobby-screen:not(.hidden) > * {
-        transform: scale(
-            min(1, calc((100vh - 32px) / 760))
-        );
-        transform-origin: center center;
-        flex-shrink: 0 !important;
+    /* 真正縮放大廳面板 */
+    #lobby-screen:not(.hidden) > .glass-panel {
+        flex: 0 1 auto !important;
+        width: 100% !important;
+        max-width: 448px !important;
+        min-width: 0 !important;
+        transform: none !important;
+        zoom: 1 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 螢幕高度較低 */
+    @media (max-height: 760px) {
+        #lobby-screen:not(.hidden) > .glass-panel {
+            zoom: 0.90 !important;
+        }
+    }
+
+    @media (max-height: 680px) {
+        #lobby-screen:not(.hidden) > .glass-panel {
+            zoom: 0.82 !important;
+        }
+    }
+
+    @media (max-height: 600px) {
+        #lobby-screen:not(.hidden) > .glass-panel {
+            zoom: 0.72 !important;
+        }
     }
 }
+
 
 
 /* =====================================================================
