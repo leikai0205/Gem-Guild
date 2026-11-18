@@ -31,7 +31,6 @@ html, body {
     overflow-x: hidden;
 }
 
-.game-main-layout, 
 /* 讓大廳登入畫面無論螢幕大小，都使用 Flex 完美垂直與水平置中 */
 #lobby-screen {
     display: flex !important;
@@ -45,10 +44,11 @@ html, body {
     box-sizing: border-box;
     padding: 16px;
 }
+
 #game-screen {
-    width: 125vw !important;
+    width: 100% !important;
     max-width: 100% !important;
-    height: 125vh !important;
+    height: 100% !important;
     margin: 0 !important;
     box-sizing: border-box;
 }
@@ -60,6 +60,10 @@ html, body {
     overflow-y: auto; 
     overflow-x: hidden;
     padding: 8px;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box;
 }
 
 @media (min-width: 1024px) or (orientation: landscape) {
