@@ -283,11 +283,10 @@ html, body {
                             <span class="text-[10px] text-slate-400">先達 15 分觸發終局</span>
                         </div>
                         
-<!-- 修正：拿掉 flex-1 與 w-full，讓預留卡緊貼在 4 張卡片右側；並將 aside 改為 div 避免標籤錯亂 -->
-                        <div class="flex flex-nowrap items-start gap-4">
+                        <div class="flex gap-2.5 items-start">
                             
-                            <!-- 左側市場 3 個等級區塊 (寬度隨卡片自適應，不撐開空白) -->
-                            <div class="space-y-3 shrink-0">
+                            <!-- 左側市場 3 個等級區塊 -->
+                            <div class="flex-1 space-y-3">
                                 <div class="space-y-1">
                                     <div class="flex items-center justify-between text-[11px]">
                                         <div class="flex items-center gap-2">
@@ -319,22 +318,22 @@ html, body {
                                 </div>
                             </div>
 
-                            <!-- 右側直立 3 格保留卡區 (改用 div，緊貼市場卡片右側) -->
-                            <div class="w-[115px] bg-slate-950/60 rounded-xl p-2 border border-slate-800 flex flex-col justify-between shrink-0 space-y-2">
+                            <!-- 右側直立 3 格保留卡區 -->
+                            <aside class="w-[110px] bg-slate-950/60 rounded-xl p-2 border border-slate-800 flex flex-col justify-between shrink-0 space-y-2">
                                 <div class="text-[10px] font-bold text-amber-300/90 text-center border-b border-slate-800 pb-1">
                                     📦 預留卡 (<span id="reserved-count-text">0</span>/3)
                                 </div>
                                 <div id="reserved-cards-container" class="flex flex-col gap-2 h-full">
                                     <div class="text-center text-[10px] text-slate-500 py-6">尚未保留卡片</div>
                                 </div>
-                            </div>
+                            </aside>
 
                         </div>
+                    </main>
+                </div>
 
- <!-- 右側欄位 (確保進化石銀行在最上方，接著是玩家面板與戰報) -->
+                <!-- 右側欄位 -->
                 <aside class="lg:col-span-4 space-y-2.5 overflow-y-auto h-full pr-1">
-                    
-                    <!-- 1. 進化石與大師球銀行（放在右側最上方） -->
                     <section class="glass-panel rounded-xl p-2.5 space-y-2">
                         <div class="flex flex-wrap items-center justify-between gap-1.5 border-b border-slate-700/60 pb-2">
                             <div class="flex items-center gap-1.5">
@@ -346,7 +345,7 @@ html, body {
                             
                             <div class="flex items-center gap-1.5 text-[11px]">
                                 <span class="text-slate-300">已選：<span id="selected-count-badge" class="text-amber-400 font-bold">0顆</span></span>
-                                <div id="selected-gems-preview" class="min-h-[26px] min-w-[46px] flex items-center justify-center gap-1 bg-slate-950/80 rounded-lg px-1.5 py-0.2 border border-slate-800">
+                                <div id="selected-gems-preview" class="min-h-[26px] min-w-[46px] flex items-center justify-center gap-1 bg-slate-950/80 rounded-lg px-1.5 py-0.5 border border-slate-800">
                                     <span class="text-[10px] text-slate-500">未選</span>
                                 </div>
                                 <button id="btn-clear-gems" onclick="clearSelectedGems()" disabled class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-[10px] font-medium text-slate-300 transition cursor-pointer">清空</button>
@@ -361,10 +360,8 @@ html, body {
                         <div id="bank-gems-container" class="grid grid-cols-6 gap-1.5"></div>
                     </section>
 
-                    <!-- 2. 玩家列表區塊 -->
                     <div id="players-container" class="space-y-2"></div>
 
-                    <!-- 3. 對戰即時戰報紀錄 -->
                     <section class="glass-panel rounded-xl p-2.5 space-y-1.5">
                         <h2 class="text-[11px] font-bold tracking-wider text-amber-300 uppercase flex items-center gap-1">
                             <span>📜</span> 對戰即時戰報紀錄
@@ -374,6 +371,10 @@ html, body {
                         </div>
                     </section>
                 </aside>
+            </div>
+        </div>
+
+    </div>
 
     <!-- 換人自動消失彈窗（Toast 提示容器） -->
     <div id="turn-toast-container" class="fixed inset-0 z-50 pointer-events-none flex items-center justify-center"></div>
