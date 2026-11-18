@@ -219,51 +219,56 @@ html, body {
 #players-container .font-title { font-size: 22px !important; }
 
 
+
 /* =====================================================================
-   二、電腦版專屬設定 (螢幕寬度 >= 1024px) - 位置絕對不變、只消滅空白
+   二、電腦版專屬設定 (螢幕寬度 >= 1024px)
+   目標：消除多餘空白、保留原本卡片尺寸與遊戲功能
    ===================================================================== */
+
 @media (min-width: 1024px) {
+
+    /* 1. 遊戲主畫面 */
     #app {
         display: flex;
         justify-content: center;
         overflow: hidden;
     }
 
-    /* 1. 遊戲主畫面外框：把整體向內收緊，消除外圍大空白 */
     #game-screen {
         width: 100% !important;
-        max-width: 1120px !important; 
+        max-width: 1120px !important;
         height: 100vh !important;
         margin: 0 auto !important;
-        padding: 6px 12px !important; 
+        padding: 6px 12px !important;
         display: flex !important;
         flex-direction: column !important;
         overflow: hidden !important;
     }
 
-    /* 2. 徹底消滅右側預留卡容器下方的黑洞空白 */
-    #reserved-cards-container {
-        height: auto !important;
-        flex: 0 0 auto !important;
+    /* 2. 上方狀態列：限制過大的空白 */
+    #game-screen #status-banner {
+        flex: 0 1 520px !important;
+        width: 520px !important;
+        max-width: 520px !important;
+        min-width: 180px !important;
+        margin: 0 auto !important;
     }
 
-    #reserved-cards-container > div {
-        height: 56px !important;
-        min-height: 56px !important;
-    }
-
-    /* 3. 稀有寶可夢夥伴區塊置中與間距收緊 */
-    .nobles-flex-container {
+    /* 3. 稀有寶可夢：改成靠左排列 */
+    #game-screen .nobles-flex-container {
+        display: flex !important;
         flex-wrap: nowrap !important;
-        gap: 4px !important;
-        justify-content: center !important;
+        gap: 6px !important;
+        justify-content: flex-start !important;
+        width: 100% !important;
+        overflow: hidden !important;
     }
-    
-    .noble-mini-card { 
+
+    .noble-mini-card {
         width: 92px !important;
         min-width: 92px !important;
         max-width: 92px !important;
-        flex: 0 0 auto !important;
+        flex: 0 0 92px !important;
         flex-direction: row !important;
         align-items: center !important;
         justify-content: center !important;
@@ -273,14 +278,30 @@ html, body {
     .noble-mini-card img {
         height: 32px !important;
         width: 32px !important;
-        margin: auto auto !important;
+        margin: auto !important;
     }
 
-    .noble-mini-card span { 
-        font-size: 7px !important; 
+    .noble-mini-card span {
+        font-size: 7px !important;
     }
 
-    /* 4. 電腦版 12 宮格市場卡片尺寸微調 */
+    /* 4. 市場卡片主容器：取消左右分散 */
+    #game-screen main.glass-panel >
+    .flex.flex-nowrap.items-start.justify-between {
+        justify-content: flex-start !important;
+        gap: 8px !important;
+    }
+
+    /* 5. 市場卡片區：不再強制撐滿剩餘寬度 */
+    #game-screen main.glass-panel >
+    .flex.flex-nowrap.items-start.justify-between >
+    .space-y-3.flex-1.min-w-0 {
+        flex: 0 0 auto !important;
+        width: max-content !important;
+        min-width: 0 !important;
+    }
+
+    /* 6. 保留原本市場卡片尺寸 */
     .poke-color-card {
         width: 90px !important;
         min-width: 90px !important;
@@ -301,7 +322,27 @@ html, body {
         font-size: 7.5px !important;
         padding: 0.5px 1.5px !important;
     }
+
+    /* 7. 預留卡區：固定寬度，緊貼市場卡片 */
+    #game-screen main.glass-panel >
+    .flex.flex-nowrap.items-start.justify-between >
+    div:last-child {
+        flex: 0 0 84px !important;
+        width: 84px !important;
+        min-width: 84px !important;
+    }
+
+    #reserved-cards-container {
+        height: auto !important;
+        flex: 0 0 auto !important;
+    }
+
+    #reserved-cards-container > div {
+        height: 56px !important;
+        min-height: 56px !important;
+    }
 }
+
 
 
 /* =====================================================================
