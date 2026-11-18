@@ -2124,6 +2124,112 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
 }
 </style>
 
+
+<style id="guild-last-small-adjustments-20261119">
+/* 電腦版：預留卡加高，讓圖片與底部費用列都有完整空間 */
+@media (min-width: 1024px) {
+  #game-screen #reserved-cards-container > .reserved-mini-card {
+    flex: 0 0 104px !important;
+    height: 104px !important;
+    min-height: 104px !important;
+    max-height: 104px !important;
+    aspect-ratio: auto !important;
+    padding: 5px 4px 3px !important;
+    box-sizing: border-box !important;
+  }
+  #game-screen #reserved-cards-container > div:not(.reserved-mini-card) {
+    flex: 0 0 104px !important;
+    height: 104px !important;
+    min-height: 104px !important;
+  }
+  #game-screen #reserved-cards-container .reserved-mini-card img {
+    height: 58px !important;
+    max-height: 58px !important;
+    object-fit: contain !important;
+  }
+  #game-screen #reserved-cards-container .reserved-mini-card .reserved-cost-row {
+    min-height: 22px !important;
+    max-height: 24px !important;
+    flex-wrap: nowrap !important;
+    overflow: visible !important;
+  }
+  /* 稀有寶可夢名稱稍微放大 */
+  #game-screen .noble-mini-card > div:first-child span {
+    font-size: 11px !important;
+  }
+}
+
+/* 手機版：預留卡加高；費用保持單排黑底，不要額外白框 */
+@media (max-width: 1023px) {
+  #game-screen.guild-fit-active .reserved-mini-card {
+    height: 92px !important;
+    min-height: 92px !important;
+    max-height: 92px !important;
+    aspect-ratio: auto !important;
+    padding: 3px 2px 2px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+  }
+  #game-screen.guild-fit-active #reserved-cards-container > div:not(.reserved-mini-card) {
+    height: 92px !important;
+    min-height: 92px !important;
+  }
+  #game-screen.guild-fit-active .reserved-mini-card img {
+    height: 52px !important;
+    max-height: 52px !important;
+    width: auto !important;
+    max-width: 88% !important;
+    object-fit: contain !important;
+  }
+  #game-screen .reserved-mini-card .reserved-cost-row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1px !important;
+    width: 100% !important;
+    min-height: 17px !important;
+    max-height: 18px !important;
+    padding: 1px 1px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    background: #020617 !important;
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 0 3px 3px !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+  }
+  #game-screen .reserved-mini-card .reserved-cost-row,
+  #game-screen .reserved-mini-card .reserved-cost-row * {
+    outline: 0 !important;
+    box-shadow: none !important;
+  }
+  #game-screen .reserved-mini-card .reserved-cost-row .gem-cost-item {
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    white-space: nowrap !important;
+  }
+  #game-screen .reserved-mini-card .reserved-cost-row .gem-cost-number {
+    font-size: 8px !important;
+    line-height: 1 !important;
+    font-weight: 900 !important;
+    white-space: nowrap !important;
+  }
+}
+</style>
+
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
