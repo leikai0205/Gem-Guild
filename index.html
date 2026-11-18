@@ -220,9 +220,9 @@ html, body {
 
 
 
+
 /* =========================================================
-   電腦版大廳：依照螢幕高度自動縮放，完整置中
-   不使用上下捲動
+   電腦版大廳：完整自動適應視窗大小
    ========================================================= */
 
 @media (min-width: 1024px) {
@@ -236,40 +236,28 @@ html, body {
         align-items: center !important;
         justify-content: center !important;
         overflow: hidden !important;
-        padding: 12px !important;
+        padding: 8px !important;
         box-sizing: border-box !important;
     }
 
-    /* 真正縮放大廳面板 */
     #lobby-screen:not(.hidden) > .glass-panel {
-        flex: 0 1 auto !important;
-        width: 100% !important;
-        max-width: 448px !important;
-        min-width: 0 !important;
-        transform: none !important;
-        zoom: 1 !important;
+        width: 448px !important;
+        max-width: 100% !important;
+        flex: 0 0 auto !important;
         box-sizing: border-box !important;
-    }
 
-    /* 螢幕高度較低 */
-    @media (max-height: 760px) {
-        #lobby-screen:not(.hidden) > .glass-panel {
-            zoom: 0.90 !important;
-        }
-    }
+        /* 依照視窗寬度與高度自動縮放 */
+        zoom: min(
+            1,
+            calc(100vw / 1100),
+            calc(100vh / 760)
+        );
 
-    @media (max-height: 680px) {
-        #lobby-screen:not(.hidden) > .glass-panel {
-            zoom: 0.82 !important;
-        }
-    }
-
-    @media (max-height: 600px) {
-        #lobby-screen:not(.hidden) > .glass-panel {
-            zoom: 0.72 !important;
-        }
+        transform: none !important;
+        transform-origin: center center !important;
     }
 }
+
 
 
 
