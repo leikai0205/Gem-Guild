@@ -356,6 +356,45 @@ header button {
     padding: 2px 5px !important;
     font-size: 10px !important;
 }
+
+    /* 📱 手機版頂部列專屬極致壓縮：強制縮小字體與內距，確保「離開」按鈕完美露出 */
+@media (max-width: 1023px) {
+    header.glass-panel {
+        padding: 4px 6px !important;
+        gap: 2px !important;
+    }
+
+    /* 縮小房號與訓練家身分標籤的字體與外框 */
+    header .flex.items-center.gap-2 > span {
+        font-size: 9.5px !important;
+        padding: 1px 4px !important;
+    }
+
+    /* 讓訓練家名字在手機上稍微簡短或自適應，避免過長 */
+    #my-role-badge {
+        max-width: 110px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
+    /* 中間狀態 banner 縮小字體 */
+    #status-banner {
+        font-size: 9px !important;
+        padding: 1px 3px !important;
+    }
+
+    /* 右側按鈕縮小字體與內距 */
+    header .flex.items-center.gap-1\.5 {
+        gap: 2px !important;
+    }
+
+    header button {
+        padding: 2px 4px !important;
+        font-size: 9.5px !important;
+        border-radius: 6px !important;
+    }
+}
     </style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
