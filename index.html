@@ -227,60 +227,37 @@ html, body {
    完整顯示、不捲動、保持中央
    ========================================================= */
 
-@media screen and (min-width: 1024px) {
 
-    #lobby-screen {
-        position: absolute !important;
-        inset: 0 !important;
-        width: 100% !important;
-        height: 100vh !important;
-        height: 100dvh !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        overflow: hidden !important;
-        padding: 8px !important;
-        box-sizing: border-box !important;
-    }
+/* =====================================
+   大廳完整畫面自動縮放
+   不影響遊戲桌及多人連線
+===================================== */
 
-    #lobby-screen:not(.hidden) > .glass-panel {
-        width: 448px !important;
-        max-width: 448px !important;
-        flex: 0 0 auto !important;
-        margin: 0 auto !important;
-        box-sizing: border-box !important;
-        transform: none !important;
-        zoom: 1 !important;
-    }
+#lobby-screen:not(.hidden) {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
 }
 
-/* 螢幕高度低於 900px */
-@media screen and (min-width: 1024px) and (max-height: 900px) {
-    #lobby-screen:not(.hidden) > .glass-panel {
-        zoom: 0.90 !important;
-    }
+#lobby-screen:not(.hidden) > .glass-panel {
+    width: 448px !important;
+    max-width: none !important;
+    flex: none !important;
+    margin: 0 !important;
+    transform: scale(var(--lobby-fit-scale, 1)) !important;
+    transform-origin: center center !important;
+    box-sizing: border-box !important;
 }
 
-/* 螢幕高度低於 800px */
-@media screen and (min-width: 1024px) and (max-height: 800px) {
-    #lobby-screen:not(.hidden) > .glass-panel {
-        zoom: 0.82 !important;
-    }
-}
+/* 大廳縮放比例由 JavaScript 計算 */
 
-/* 螢幕高度低於 700px */
-@media screen and (min-width: 1024px) and (max-height: 700px) {
-    #lobby-screen:not(.hidden) > .glass-panel {
-        zoom: 0.72 !important;
-    }
-}
-
-/* 螢幕高度低於 600px */
-@media screen and (min-width: 1024px) and (max-height: 600px) {
-    #lobby-screen:not(.hidden) > .glass-panel {
-        zoom: 0.62 !important;
-    }
-}
 
 
 
@@ -3725,6 +3702,48 @@ function renderNobles() {
     fitGameBoard();
 })();
 </script>
+    
+<script id="lobby-viewport-fit">
+(function () {
+    const lobby = document.getElementById('lobby-screen');
+    if (!lobby) return;
+
+    const panel = lobby.querySelector('.glass-panel');
+    if (!panel) return;
+
+    function fitLobby() {
+        if (lobby.classList.contains('hidden')) return;
+
+        const vw = document.documentElement.clientWidth || window.innerWidth;
+        const vh = document.documentElement.clientHeight || window.innerHeight;
+
+        // 大廳原始設計尺寸
+        const baseW = 448;
+        const baseH = panel.scrollHeight;
+
+        // 依照螢幕大小等比例放大或縮小
+        const scale = Math.min(
+            vw / baseW,
+            vh / baseH
+        );
+
+        lobby.style.setProperty('--lobby-fit-scale', String(scale));
+    }
+
+    const observer = new MutationObserver(fitLobby);
+
+    observer.observe(lobby, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+
+    window.addEventListener('resize', fitLobby, { passive: true });
+    window.addEventListener('orientationchange', fitLobby, { passive: true });
+
+    fitLobby();
+})();
+</script>
+
 
 </body>
 </html>
