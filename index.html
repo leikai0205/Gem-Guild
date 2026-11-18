@@ -24,7 +24,7 @@ html, body {
 #app {
     width: 100vw !important;
     height: 100vh !important;
-    transform: none !important; /* 移除原本會導致跑版的 scale 縮放 */
+    transform: none !important;
     position: relative;
     top: 0;
     left: 0;
@@ -32,7 +32,6 @@ html, body {
 }
 
 /* 讓大廳登入畫面無論螢幕大小，都使用 Flex 完美垂直與水平置中 */
-/* 只有在大廳沒有 hidden 類別時，才強制置中顯示；一旦加上 hidden 就會自動失效 */
 #lobby-screen:not(.hidden) {
     display: flex !important;
     align-items: center !important;
@@ -99,13 +98,13 @@ html, body {
     border-color: rgba(251, 191, 36, 0.85); 
 }
 
-/* 修正手機版市場卡片寬度，避免擠壓右側預留卡 */
+/* 📦 手機版 12 宮格市場卡片尺寸統一與防壓縮設定 */
 .poke-color-card { 
     position: relative;
     transform-style: preserve-3d; 
-    width: 64px !important;       /* 統一固定寬度 */
-    min-width: 64px !important;
-    max-width: 64px !important;
+    width: 62px !important;       
+    min-width: 62px !important;
+    max-width: 62px !important;
     flex-shrink: 0 !important;    /* 嚴格禁止任何壓縮 */
     aspect-ratio: 1 / 1.42 !important; 
     min-height: auto !important; 
@@ -128,24 +127,20 @@ html, body {
     z-index: 20; 
 }
 
-/* 修正稀有寶可夢夥伴：手機版自適應與自動換行，防止超出畫面 */
+/* ⭐ 稀有寶可夢夥伴容器與卡片通用設定 */
 .nobles-flex-container { 
-    display: flex; 
-    flex-wrap: wrap;
-    gap: 8px; 
-    width: 100%; 
-    justify-content: center; 
+    display: flex !important; 
+    width: 100% !important; 
+    justify-content: center !important; 
+    box-sizing: border-box;
 }
+
 .noble-mini-card { 
-    width: 155px !important;        /* 微幅調大卡片寬度 */
-    min-width: 155px !important; 
-    max-width: 165px !important;
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    text-align: center; 
-    padding: 3px 6px; 
-    border-radius: 6px; 
+    display: flex !important; 
+    text-align: center !important; 
+    border-radius: 6px !important; 
+    box-sizing: border-box;
+    overflow: hidden !important;
 }
 
 @keyframes affordableGlow {
@@ -170,8 +165,7 @@ html, body {
 .gem-diamond { background: radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 40%, #ca8a04 80%, #422006 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(234,179,8,0.4); border: 1px solid #fde047; }
 .gem-onyx { background: radial-gradient(circle at 35% 30%, #f3e8ff 0%, #c084fc 40%, #7e22ce 80%, #3b0764 100%); box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(192,132,252,0.4); border: 1px solid #e879f9; }
 
-.poke-color-card img,
-.noble-mini-card img {
+.poke-color-card img {
     width: auto !important;
     height: 38px !important; 
     max-width: 85% !important;
@@ -183,13 +177,12 @@ html, body {
 
 .poke-color-card span.border { font-size: 7.5px !important; padding: 0px 2px !important; z-index: 10; position: relative; }
 .poke-color-card .font-title { font-size: 10.5px !important; z-index: 10; position: relative; }
-.noble-mini-card span { font-size: 9px !important; }
 
 /* 放大右側玩家面板的各項文字與數字 */
 #players-container .text-[11px] { font-size: 13px !important; }
 #players-container .font-title { font-size: 22px !important; }
 
-/* 換人浮動提示動畫 (0.5秒自動消失) */
+/* 換人浮動提示動畫 */
 @keyframes fadeInOut {
     0% { opacity: 0; transform: scale(0.9); }
     15% { opacity: 1; transform: scale(1); }
@@ -200,7 +193,7 @@ html, body {
     animation: fadeInOut 0.5s ease-in-out forwards;
 }
 
-/* 直式文字樣式（讓寶可夢名字直著顯示） */
+/* 直式文字樣式 */
 .vertical-text {
     writing-mode: vertical-lr;
     text-orientation: upright;
@@ -208,10 +201,94 @@ html, body {
 }
 
 /* =========================================================
-   🖥️ 電腦版專屬優化 (螢幕寬度 >= 1024px 才生效，手機版完全不動)
+   📱 手機版專屬優化 (螢幕寬度 < 1024px)
+   ========================================================= */
+@media (max-width: 1023px) {
+    /* 1. 頂部導覽列極致壓縮，確保「離開」按鈕完整露出 */
+    header.glass-panel {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 4px 6px !important;
+        gap: 2px !important;
+        width: 100% !important;
+        box-sizing: border-box;
+        overflow: hidden !important;
+    }
+
+    header .flex.items-center.gap-2 {
+        gap: 3px !important;
+        flex-shrink: 1 !important;
+        min-width: 0 !important;
+    }
+
+    header .flex.items-center.gap-2 > span {
+        font-size: 9.5px !important;
+        padding: 1px 4px !important;
+    }
+
+    #my-role-badge {
+        max-width: 110px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
+    #status-banner {
+        flex: 1 1 0% !important;
+        min-width: 0 !important;
+        font-size: 9px !important;
+        padding: 1px 3px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
+    header .flex.items-center.gap-1\.5 {
+        gap: 2px !important;
+        flex-shrink: 0 !important;
+    }
+
+    header button {
+        padding: 2px 4px !important;
+        font-size: 9.5px !important;
+        border-radius: 6px !important;
+    }
+
+    /* 2. 稀有寶可夢夥伴：強制單排不換行、無滑動條、自動等比縮小 */
+    .nobles-flex-container { 
+        flex-wrap: nowrap !important; 
+        gap: 2px !important;           
+        overflow: hidden !important;   
+    }
+
+    .noble-mini-card { 
+        flex: 1 1 0% !important;       
+        min-width: 0 !important;       
+        max-width: none !important; 
+        flex-direction: row !important; 
+        align-items: center !important; 
+        justify-content: center !important;
+        padding: 2px 1px !important; 
+    }
+
+    .noble-mini-card img {
+        height: 28px !important;
+        width: 28px !important;
+        object-fit: contain !important;
+        margin: auto auto !important;
+    }
+
+    .noble-mini-card span.vertical-text,
+    .noble-mini-card span {
+        font-size: 7px !important;
+    }
+}
+
+/* =========================================================
+   🖥️ 電腦版專屬優化 (螢幕寬度 >= 1024px)
    ========================================================= */
 @media (min-width: 1024px) {
-    /* 1. 解除電腦版的 0.8 縮小封印，恢復 100% 正常大小並集中置中 */
     #app {
         width: 100vw !important;
         height: 100vh !important;
@@ -220,7 +297,6 @@ html, body {
         justify-content: center;
     }
 
-    /* 2. 限制最大寬度並左右留白集中（等同左右各內縮集中，不再散開） */
     #game-screen,
     .game-main-layout {
         width: 100% !important;
@@ -231,20 +307,18 @@ html, body {
         position: relative !important;
     }
 
-    /* 3. 放大電腦版的寶可夢資源卡片，讓視覺更飽滿 */
     .poke-color-card {
         width: 112px !important;
         min-width: 112px !important;
+        max-width: 112px !important;
         padding: 4px !important;
     }
 
-    /* 4. 放大卡片中間的寶可夢圖片 */
     .poke-color-card img {
         height: 82px !important;
         max-width: 88% !important;
     }
 
-    /* 5. 放大卡片上的分數、屬性標籤與底下進化石圖示文字 */
     .poke-color-card .font-title {
         font-size: 14px !important;
     }
@@ -253,26 +327,33 @@ html, body {
         padding: 1px 4px !important;
     }
 
-    /* 6. 稀有寶可夢夥伴卡片在電腦版恢復固定大尺寸與不換行 */
     .nobles-flex-container {
-        flex-wrap: nowrap;
-        justify-content: center;
+        flex-wrap: nowrap !important;
+        gap: 8px !important;
+        justify-content: center !important;
     }
+    
     .noble-mini-card { 
         width: 165px !important;
         min-width: 165px !important;
+        max-width: 165px !important;
+        flex: 0 0 auto !important;
+        flex-direction: column !important;
         padding: 6px 8px !important;
     }
+
     .noble-mini-card img {
         height: 44px !important;
         width: 44px !important;
+        margin: auto auto !important;
     }
+
     .noble-mini-card span { 
         font-size: 9px !important; 
     }
 }
 
-/* 📦 專屬預留區的微型卡片樣式（完美塞入細長黑色外框） */
+/* 📦 專屬預留區的微型卡片樣式 */
 .reserved-mini-card {
     position: relative;
     width: 100% !important;
@@ -301,101 +382,20 @@ html, body {
     margin: auto auto !important;
 }
 
-    /* 📦 調整卡片底部的費用列，縮小間距與內距，讓 4 個費用能完美塞進卡片內 */
+/* 📦 調整卡片底部的費用列，讓 4 個費用完美塞進卡片內 */
 .poke-color-card .flex.flex-nowrap.items-center.justify-center {
-    gap: 1px !important;       /* 將費用方塊之間的間隔縮到最小 (1px) */
-    padding: 0.5px 1px !important; /* 縮小上下左右的留白 */
+    gap: 1px !important;       
+    padding: 0.5px 1px !important; 
     width: 100% !important;
     box-sizing: border-box;
 }
 
-/* 稍微縮小單個費用方塊的大小與邊距，確保 4 個並排時絕對不超線 */
 .poke-color-card .flex.flex-col.items-center.justify-center {
     padding: 0px 0.5px !important;
-    transform: scale(0.92);    /* 微微等比縮小 8%，剛剛好容納 4 個 */
+    transform: scale(0.92);    
     transform-origin: center;
 }
-
-    /* 📱 手機版頂部導覽列專屬優化：確保「離開」按鈕絕不超出畫面 */
-header.glass-panel {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 4px !important;
-    padding: 6px 8px !important;
-    width: 100% !important;
-    box-sizing: border-box;
-    overflow: hidden !important;
-}
-
-/* 左側房號與身分標籤：允許彈性收縮 */
-header .flex.items-center.gap-2 {
-    gap: 3px !important;
-    flex-shrink: 1 !important;
-    min-width: 0 !important;
-}
-
-/* 中間狀態文字：當空間不足時自動省略變成 ... 避免擠壓兩側 */
-#status-banner {
-    flex: 1 1 0% !important;
-    min-width: 0 !important;
-    font-size: 10px !important;
-    padding: 2px 4px !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-}
-
-/* 右側按鈕群組：縮小按鈕間距與內距，確保「邀請、規則、離開」完整露出 */
-header .flex.items-center.gap-1\.5 {
-    gap: 3px !important;
-    flex-shrink: 0 !important;
-}
-
-header button {
-    padding: 2px 5px !important;
-    font-size: 10px !important;
-}
-
-    /* 📱 手機版頂部列專屬極致壓縮：強制縮小字體與內距，確保「離開」按鈕完美露出 */
-@media (max-width: 1023px) {
-    header.glass-panel {
-        padding: 4px 6px !important;
-        gap: 2px !important;
-    }
-
-    /* 縮小房號與訓練家身分標籤的字體與外框 */
-    header .flex.items-center.gap-2 > span {
-        font-size: 9.5px !important;
-        padding: 1px 4px !important;
-    }
-
-    /* 讓訓練家名字在手機上稍微簡短或自適應，避免過長 */
-    #my-role-badge {
-        max-width: 110px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        white-space: nowrap !important;
-    }
-
-    /* 中間狀態 banner 縮小字體 */
-    #status-banner {
-        font-size: 9px !important;
-        padding: 1px 3px !important;
-    }
-
-    /* 右側按鈕縮小字體與內距 */
-    header .flex.items-center.gap-1\.5 {
-        gap: 2px !important;
-    }
-
-    header button {
-        padding: 2px 4px !important;
-        font-size: 9.5px !important;
-        border-radius: 6px !important;
-    }
-}
-    </style>
+</style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
