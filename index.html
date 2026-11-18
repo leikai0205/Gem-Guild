@@ -1204,6 +1204,187 @@ html, body {
 }
 
 </style>
+
+<style id="layout-and-gem-overflow-fix">
+/* 第四版：1920×1080 桌面版盡量完整呈現，不靠瀏覽器縮放 */
+@media (min-width: 1024px) and (min-height: 700px) {
+    html, body, #app {
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+    #game-screen {
+        height: 100dvh !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+        padding: 5px 8px !important;
+        gap: 6px !important;
+    }
+    #game-screen > .grid {
+        flex: 1 1 0 !important;
+        min-height: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
+    #game-screen > .grid > div,
+    #game-screen > .grid > aside {
+        min-height: 0 !important;
+        height: 100% !important;
+        overflow: hidden !important;
+    }
+    #game-screen > .grid > div {
+        gap: 5px !important;
+    }
+    #game-screen > .grid > aside {
+        gap: 6px !important;
+    }
+    #game-screen main.glass-panel {
+        flex: 1 1 0 !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+        padding: 8px !important;
+    }
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between {
+        height: 100% !important;
+        min-height: 0 !important;
+        align-items: stretch !important;
+    }
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > .space-y-3.flex-1.min-w-0 {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        min-height: 0 !important;
+        gap: 4px !important;
+    }
+    #game-screen main.glass-panel .space-y-3 > div {
+        margin-top: 0 !important;
+    }
+    #game-screen #market-row-1,
+    #game-screen #market-row-2,
+    #game-screen #market-row-3 {
+        flex: 0 0 auto !important;
+        gap: 5px !important;
+    }
+    #game-screen .poke-color-card {
+        height: clamp(94px, 11.2vh, 122px) !important;
+        min-height: 0 !important;
+        max-height: 122px !important;
+    }
+    #game-screen .poke-color-card img {
+        height: clamp(58px, 7.2vh, 78px) !important;
+        max-height: 78px !important;
+        width: auto !important;
+        max-width: 96% !important;
+        object-fit: contain !important;
+    }
+    #game-screen #reserved-cards-container > div {
+        height: 62px !important;
+        min-height: 62px !important;
+    }
+    #game-screen .reserved-mini-card {
+        height: 66px !important;
+        min-height: 66px !important;
+    }
+    #game-screen .reserved-mini-card img {
+        height: 42px !important;
+        max-height: 42px !important;
+    }
+    #game-screen #battle-log-container {
+        height: 66px !important;
+        max-height: 66px !important;
+    }
+}
+
+/* 手機直式：銀行標題、局數、選取狀態與按鈕維持同一行 */
+@media (max-width: 599px) and (orientation: portrait) {
+    #game-screen aside section:first-child > .flex.flex-wrap.items-center.justify-between {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 3px !important;
+        white-space: nowrap !important;
+        padding-bottom: 4px !important;
+    }
+    #game-screen aside section:first-child > .flex.flex-wrap.items-center.justify-between > div:first-child {
+        flex: 0 1 auto !important;
+        min-width: 0 !important;
+        gap: 3px !important;
+        white-space: nowrap !important;
+    }
+    #game-screen aside section:first-child h2 {
+        font-size: 9px !important;
+        white-space: nowrap !important;
+    }
+    #game-screen #bank-limit-hint {
+        font-size: 8px !important;
+        white-space: nowrap !important;
+        padding: 0 3px !important;
+    }
+    #game-screen aside section:first-child > .flex.flex-wrap.items-center.justify-between > div:last-child {
+        flex: 0 0 auto !important;
+        flex-wrap: nowrap !important;
+        gap: 2px !important;
+        white-space: nowrap !important;
+    }
+    #game-screen #selected-gems-preview {
+        min-width: 28px !important;
+        min-height: 22px !important;
+        padding: 1px 3px !important;
+    }
+    #game-screen #btn-clear-gems,
+    #game-screen #btn-confirm-gems {
+        padding: 3px 4px !important;
+        font-size: 8px !important;
+        white-space: nowrap !important;
+    }
+
+    /* 玩家名稱、道具數、稀有數、保留卡資訊壓成單行 */
+    #players-container .glass-panel > div:first-child {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 3px !important;
+        min-width: 0 !important;
+    }
+    #players-container .glass-panel > div:first-child > div:first-child {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 3px !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        overflow: hidden !important;
+        white-space: nowrap !important;
+    }
+    #players-container .glass-panel > div:first-child > div:first-child > span {
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+    }
+    #players-container .glass-panel > div:first-child > div:first-child > span:last-child {
+        min-width: 0 !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+    #players-container .font-title {
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+        font-size: 14px !important;
+    }
+}
+
+/* 窄螢幕直式：保留單行但略縮文字，避免控制鈕被擠出畫面 */
+@media (max-width: 380px) and (orientation: portrait) {
+    #game-screen aside section:first-child h2 { font-size: 8px !important; }
+    #game-screen #bank-limit-hint { font-size: 7px !important; }
+    #game-screen #btn-clear-gems,
+    #game-screen #btn-confirm-gems { font-size: 7px !important; padding: 3px 3px !important; }
+    #players-container .glass-panel > div:first-child > div:first-child { gap: 2px !important; }
+    #players-container .glass-panel > div:first-child > div:first-child > span { font-size: 8px !important; }
+}
+</style>
+
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
@@ -1496,7 +1677,7 @@ html, body {
                         </div>
 
                         <div id="over-limit-warning" class="hidden text-center text-[10px] text-rose-400 font-bold bg-rose-950/40 p-1 rounded border border-rose-500/30 animate-pulse">
-                            ⚠️ 道具總數將超過 10 個上限！
+                            ⚠️ 確認拿取後會請你退回多餘道具，直到剩餘 10 個！
                         </div>
 
                         <div id="bank-gems-container" class="grid grid-cols-6 gap-1.5"></div>
@@ -2142,9 +2323,10 @@ function renderNobles() {
                 ruleHint = '⚠️ 需選 3 顆不同或 2 顆同色';
             }
 
-            if (isValid && !willExceed) {
+            // 允許先完成正常拿取動作；若超過 10 個，確認後再進入退回道具視窗
+            if (isValid) {
                 btnConfirm.disabled = false;
-                btnConfirm.title = '';
+                btnConfirm.title = willExceed ? '確認後請退回多餘的道具，直到剩餘 10 個' : '';
             } else {
                 btnConfirm.disabled = true;
                 btnConfirm.title = ruleHint;
