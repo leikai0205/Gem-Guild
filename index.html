@@ -1205,6 +1205,187 @@ html, body {
 
 </style>
 
+<style id="layout-and-gem-overflow-fix">
+/* 第四版：1920×1080 桌面版盡量完整呈現，不靠瀏覽器縮放 */
+@media (min-width: 1024px) and (min-height: 700px) {
+    html, body, #app {
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+    #game-screen {
+        height: 100dvh !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+        padding: 5px 8px !important;
+        gap: 6px !important;
+    }
+    #game-screen > .grid {
+        flex: 1 1 0 !important;
+        min-height: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
+    #game-screen > .grid > div,
+    #game-screen > .grid > aside {
+        min-height: 0 !important;
+        height: 100% !important;
+        overflow: hidden !important;
+    }
+    #game-screen > .grid > div {
+        gap: 5px !important;
+    }
+    #game-screen > .grid > aside {
+        gap: 6px !important;
+    }
+    #game-screen main.glass-panel {
+        flex: 1 1 0 !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+        padding: 8px !important;
+    }
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between {
+        height: 100% !important;
+        min-height: 0 !important;
+        align-items: stretch !important;
+    }
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > .space-y-3.flex-1.min-w-0 {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        min-height: 0 !important;
+        gap: 4px !important;
+    }
+    #game-screen main.glass-panel .space-y-3 > div {
+        margin-top: 0 !important;
+    }
+    #game-screen #market-row-1,
+    #game-screen #market-row-2,
+    #game-screen #market-row-3 {
+        flex: 0 0 auto !important;
+        gap: 5px !important;
+    }
+    #game-screen .poke-color-card {
+        height: clamp(94px, 11.2vh, 122px) !important;
+        min-height: 0 !important;
+        max-height: 122px !important;
+    }
+    #game-screen .poke-color-card img {
+        height: clamp(58px, 7.2vh, 78px) !important;
+        max-height: 78px !important;
+        width: auto !important;
+        max-width: 96% !important;
+        object-fit: contain !important;
+    }
+    #game-screen #reserved-cards-container > div {
+        height: 62px !important;
+        min-height: 62px !important;
+    }
+    #game-screen .reserved-mini-card {
+        height: 66px !important;
+        min-height: 66px !important;
+    }
+    #game-screen .reserved-mini-card img {
+        height: 42px !important;
+        max-height: 42px !important;
+    }
+    #game-screen #battle-log-container {
+        height: 66px !important;
+        max-height: 66px !important;
+    }
+}
+
+/* 手機直式：銀行標題、局數、選取狀態與按鈕維持同一行 */
+@media (max-width: 599px) and (orientation: portrait) {
+    #game-screen aside section:first-child > .flex.flex-wrap.items-center.justify-between {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 3px !important;
+        white-space: nowrap !important;
+        padding-bottom: 4px !important;
+    }
+    #game-screen aside section:first-child > .flex.flex-wrap.items-center.justify-between > div:first-child {
+        flex: 0 1 auto !important;
+        min-width: 0 !important;
+        gap: 3px !important;
+        white-space: nowrap !important;
+    }
+    #game-screen aside section:first-child h2 {
+        font-size: 9px !important;
+        white-space: nowrap !important;
+    }
+    #game-screen #bank-limit-hint {
+        font-size: 8px !important;
+        white-space: nowrap !important;
+        padding: 0 3px !important;
+    }
+    #game-screen aside section:first-child > .flex.flex-wrap.items-center.justify-between > div:last-child {
+        flex: 0 0 auto !important;
+        flex-wrap: nowrap !important;
+        gap: 2px !important;
+        white-space: nowrap !important;
+    }
+    #game-screen #selected-gems-preview {
+        min-width: 28px !important;
+        min-height: 22px !important;
+        padding: 1px 3px !important;
+    }
+    #game-screen #btn-clear-gems,
+    #game-screen #btn-confirm-gems {
+        padding: 3px 4px !important;
+        font-size: 8px !important;
+        white-space: nowrap !important;
+    }
+
+    /* 玩家名稱、道具數、稀有數、保留卡資訊壓成單行 */
+    #players-container .glass-panel > div:first-child {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 3px !important;
+        min-width: 0 !important;
+    }
+    #players-container .glass-panel > div:first-child > div:first-child {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 3px !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        overflow: hidden !important;
+        white-space: nowrap !important;
+    }
+    #players-container .glass-panel > div:first-child > div:first-child > span {
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+    }
+    #players-container .glass-panel > div:first-child > div:first-child > span:last-child {
+        min-width: 0 !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+    #players-container .font-title {
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+        font-size: 14px !important;
+    }
+}
+
+/* 窄螢幕直式：保留單行但略縮文字，避免控制鈕被擠出畫面 */
+@media (max-width: 380px) and (orientation: portrait) {
+    #game-screen aside section:first-child h2 { font-size: 8px !important; }
+    #game-screen #bank-limit-hint { font-size: 7px !important; }
+    #game-screen #btn-clear-gems,
+    #game-screen #btn-confirm-gems { font-size: 7px !important; padding: 3px 3px !important; }
+    #players-container .glass-panel > div:first-child > div:first-child { gap: 2px !important; }
+    #players-container .glass-panel > div:first-child > div:first-child > span { font-size: 8px !important; }
+}
+</style>
+
+
 <style id="noble-pokemon-image-size">
 /* 稀有寶可夢夥伴：圖片高度接近右側三枚需求標籤的總高度 */
 .noble-mini-card {
@@ -1248,183 +1429,6 @@ html, body {
         width: 40px !important;
         height: 40px !important;
         max-height: 40px !important;
-    }
-}
-</style>
-
-
-<style id="unified-viewport-fit">
-/* 第六版：以整張遊戲桌為單位縮放，依視窗比例自動適應 */
-:root { --guild-fit-scale: 1; --guild-base-w: 1440px; --guild-base-h: 810px; }
-html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; }
-#app { width:100%; height:100%; overflow:hidden !important; }
-#game-screen.guild-fit-active {
-    position: fixed !important;
-    inset: auto !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: var(--guild-base-w) !important;
-    height: var(--guild-base-h) !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    margin: 0 !important;
-    padding: 10px !important;
-    overflow: hidden !important;
-    transform: scale(var(--guild-fit-scale)) !important;
-    transform-origin: top left !important;
-    box-sizing: border-box !important;
-}
-#game-screen.guild-fit-active > header { min-height: 42px; }
-#game-screen.guild-fit-active > .grid {
-    display: grid !important;
-    grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr) !important;
-    grid-template-rows: minmax(0, 1fr) !important;
-    gap: 10px !important;
-    height: calc(100% - 54px) !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-}
-#game-screen.guild-fit-active > .grid > div,
-#game-screen.guild-fit-active > .grid > aside {
-    min-height: 0 !important;
-    height: 100% !important;
-    overflow: hidden !important;
-}
-#game-screen.guild-fit-active > .grid > div {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-}
-#game-screen.guild-fit-active > .grid > div > section {
-    flex: 0 0 auto !important;
-}
-#game-screen.guild-fit-active > .grid > div > main {
-    flex: 1 1 0 !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-}
-#game-screen.guild-fit-active > .grid > aside {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-}
-#game-screen.guild-fit-active #players-container {
-    flex: 1 1 0 !important;
-    min-height: 0 !important;
-    overflow: auto !important;
-}
-#game-screen.guild-fit-active #battle-log-container {
-    height: 82px !important;
-    max-height: 82px !important;
-}
-#game-screen.guild-fit-active .poke-color-card {
-    height: 132px !important;
-    max-height: 132px !important;
-    min-height: 132px !important;
-    aspect-ratio: auto !important;
-}
-#game-screen.guild-fit-active .poke-color-card img {
-    height: 82px !important;
-    max-height: 82px !important;
-    width: auto !important;
-    object-fit: contain !important;
-}
-#game-screen.guild-fit-active .noble-mini-card img {
-    width: 52px !important;
-    height: 52px !important;
-    max-height: 52px !important;
-    object-fit: contain !important;
-}
-#game-screen.guild-fit-active #reserved-cards-container > div {
-    min-height: 70px !important;
-}
-#game-screen.guild-fit-active .reserved-mini-card {
-    height: 70px !important;
-    min-height: 70px !important;
-}
-
-/* 手機直式：獨立直式畫布，仍以整頁縮放，不讓網頁本身上下捲動 */
-@media (orientation: portrait) {
-    #game-screen.guild-fit-active {
-        --guild-base-w: 430px;
-        --guild-base-h: 900px;
-        padding: 7px !important;
-    }
-    #game-screen.guild-fit-active > header {
-        min-height: 38px;
-        gap: 4px !important;
-        padding: 4px 6px !important;
-    }
-    #game-screen.guild-fit-active > header button {
-        font-size: 10px !important;
-        padding: 4px 6px !important;
-    }
-    #game-screen.guild-fit-active > .grid {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 6px !important;
-        height: calc(100% - 48px) !important;
-    }
-    #game-screen.guild-fit-active > .grid > div {
-        flex: 0 0 auto !important;
-        height: auto !important;
-        overflow: visible !important;
-        gap: 5px !important;
-    }
-    #game-screen.guild-fit-active > .grid > div > section {
-        padding: 6px !important;
-    }
-    #game-screen.guild-fit-active > .grid > div > main {
-        flex: 0 0 auto !important;
-        padding: 6px !important;
-    }
-    #game-screen.guild-fit-active > .grid > aside {
-        flex: 1 1 0 !important;
-        min-height: 0 !important;
-        overflow: hidden !important;
-        gap: 5px !important;
-    }
-    #game-screen.guild-fit-active > .grid > aside > section:first-child {
-        flex: 0 0 auto !important;
-        padding: 6px !important;
-    }
-    #game-screen.guild-fit-active #players-container {
-        flex: 1 1 0 !important;
-        min-height: 0 !important;
-        overflow: auto !important;
-    }
-    #game-screen.guild-fit-active #battle-log-container {
-        height: 52px !important;
-        max-height: 52px !important;
-    }
-    #game-screen.guild-fit-active .poke-color-card {
-        height: 88px !important;
-        min-height: 88px !important;
-        max-height: 88px !important;
-    }
-    #game-screen.guild-fit-active .poke-color-card img {
-        height: 52px !important;
-        max-height: 52px !important;
-    }
-    #game-screen.guild-fit-active .noble-mini-card img {
-        width: 38px !important;
-        height: 38px !important;
-        max-height: 38px !important;
-    }
-    #game-screen.guild-fit-active .reserved-mini-card {
-        height: 50px !important;
-        min-height: 50px !important;
-    }
-    #game-screen.guild-fit-active #bank-gems-container {
-        gap: 3px !important;
-    }
-}
-
-/* 橫向手機和平板使用橫向桌面配置，但按實際比例等比縮放 */
-@media (orientation: landscape) {
-    #game-screen.guild-fit-active {
-        --guild-base-w: 1440px;
-        --guild-base-h: 810px;
     }
 }
 </style>
@@ -2761,40 +2765,5 @@ function renderNobles() {
             if (show) m.classList.remove('hidden'); else m.classList.add('hidden');
         }
     </script>
-
-<script id="guild-viewport-fit">
-(function () {
-    const game = document.getElementById('game-screen');
-    if (!game) return;
-
-    function fitGameBoard() {
-        if (!game.classList.contains('hidden')) {
-            const portrait = window.matchMedia('(orientation: portrait)').matches;
-            const baseW = portrait ? 430 : 1440;
-            const baseH = portrait ? 900 : 810;
-            const vw = document.documentElement.clientWidth || window.innerWidth;
-            const vh = document.documentElement.clientHeight || window.innerHeight;
-            const scale = Math.min(vw / baseW, vh / baseH);
-
-            game.style.setProperty('--guild-base-w', baseW + 'px');
-            game.style.setProperty('--guild-base-h', baseH + 'px');
-            game.style.setProperty('--guild-fit-scale', String(scale));
-            game.style.left = Math.max(0, (vw - baseW * scale) / 2) + 'px';
-            game.style.top = Math.max(0, (vh - baseH * scale) / 2) + 'px';
-            game.classList.add('guild-fit-active');
-        } else {
-            game.classList.remove('guild-fit-active');
-        }
-    }
-
-    const observer = new MutationObserver(fitGameBoard);
-    observer.observe(game, { attributes: true, attributeFilter: ['class'] });
-    window.addEventListener('resize', fitGameBoard, { passive: true });
-    window.addEventListener('orientationchange', fitGameBoard, { passive: true });
-    document.addEventListener('visibilitychange', fitGameBoard);
-    fitGameBoard();
-})();
-</script>
-
 </body>
 </html>
