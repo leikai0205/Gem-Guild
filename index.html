@@ -229,10 +229,10 @@ html, body {
         overflow: hidden;
     }
 
-    /* 1. 遊戲主畫面外框：上下 padding 壓到極小的 1px，徹底消滅頂部紅框空白 */
+    /* 1. 遊戲主畫面外框：上下 padding 壓到極小，消滅頂部紅框空白 */
     #game-screen {
         width: 100% !important;
-        max-width: 920px !important; /* 再微幅收緊最大寬度，讓左右更集中 */
+        max-width: 920px !important; 
         height: 100vh !important;
         margin: 0 auto !important;
         padding: 1px 4px !important; 
@@ -246,7 +246,7 @@ html, body {
         width: 100% !important;
         flex: 1 !important;
         display: grid !important;
-        grid-template-columns: auto 320px !important; /* 右側玩家欄稍微收窄，留給左側精實排版 */
+        grid-template-columns: auto 320px !important; 
         justify-content: center !important;
         gap: 4px !important; 
         padding: 1px 0 !important;
@@ -254,13 +254,13 @@ html, body {
         overflow-x: hidden !important;
     }
 
-    /* 3. 頂部導覽列：拔掉所有上下margin */
+    /* 3. 頂部導覽列：拔掉所有上下 margin */
     header.glass-panel {
         margin-bottom: 1px !important;
         padding: 2px 6px !important;
     }
 
-    /* 4. 稀有寶可夢夥伴區塊：完全拔掉左右兩側紅框空白，緊密置中 */
+    /* 4. 稀有寶可夢夥伴區塊：完全拔掉左右兩側空白，緊密置中 */
     .nobles-flex-container {
         flex-wrap: nowrap !important;
         gap: 2px !important;
@@ -290,7 +290,7 @@ html, body {
         font-size: 7px !important; 
     }
 
-    /* 5. 市場與右側預留卡容器：消除中間與下方長條紅框的大空白 */
+    /* 5. 市場與右側預留卡容器：消除中間與下方長條空白 */
     .game-main-layout .flex.flex-nowrap.items-start.justify-between {
         justify-content: flex-start !important;
         gap: 4px !important; 
@@ -302,14 +302,24 @@ html, body {
         width: auto !important;
     }
 
-    /* 讓預留卡的整體外框高度隨著內容完美收緊，絕不向下拖出黑洞 */
+    /* 6. 關鍵修正：拔掉預留卡容器的 h-full，鎖死空位高度，消滅下方大黑洞 */
+    #reserved-cards-container {
+        height: auto !important;
+        flex: 0 0 auto !important;
+    }
+
+    #reserved-cards-container > div {
+        height: 64px !important;
+        min-height: 64px !important;
+    }
+
     .game-main-layout .space-y-3 {
         display: flex !important;
         flex-direction: column !important;
         gap: 2px !important;
     }
 
-    /* 6. 電腦版 12 宮格卡片尺寸微調（配合緊湊排版） */
+    /* 7. 電腦版 12 宮格卡片尺寸微調 */
     .poke-color-card {
         width: 86px !important;
         min-width: 86px !important;
