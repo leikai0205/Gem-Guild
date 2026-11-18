@@ -1385,6 +1385,54 @@ html, body {
 }
 </style>
 
+
+<style id="noble-pokemon-image-size">
+/* 稀有寶可夢夥伴：圖片高度接近右側三枚需求標籤的總高度 */
+.noble-mini-card {
+    min-height: 60px !important;
+}
+.noble-mini-card > div:nth-child(2) {
+    align-self: center !important;
+    flex: 0 0 auto !important;
+}
+.noble-mini-card img {
+    width: 52px !important;
+    height: 52px !important;
+    max-width: none !important;
+    max-height: 52px !important;
+    object-fit: contain !important;
+    padding: 1px !important;
+}
+.noble-mini-card > div:last-child {
+    gap: 2px !important;
+    flex: 0 0 auto !important;
+}
+.noble-mini-card > div:last-child span {
+    line-height: 1.15 !important;
+    white-space: nowrap !important;
+}
+@media (max-width: 1023px) {
+    .noble-mini-card {
+        min-height: 52px !important;
+    }
+    .noble-mini-card img {
+        width: 44px !important;
+        height: 44px !important;
+        max-height: 44px !important;
+    }
+}
+@media (max-width: 599px) and (orientation: portrait) {
+    .noble-mini-card {
+        min-height: 48px !important;
+    }
+    .noble-mini-card img {
+        width: 40px !important;
+        height: 40px !important;
+        max-height: 40px !important;
+    }
+}
+</style>
+
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
