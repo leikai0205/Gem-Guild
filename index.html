@@ -103,8 +103,9 @@ html, body {
 .poke-color-card { 
     position: relative;
     transform-style: preserve-3d; 
-    width: 56px !important;       
-    min-width: 56px !important;
+    width: 64px !important;       /* 統一固定寬度 */
+    min-width: 64px !important;
+    max-width: 64px !important;
     aspect-ratio: 1 / 1.42 !important; 
     min-height: auto !important; 
     max-height: none !important; 
@@ -172,14 +173,14 @@ html, body {
 .noble-mini-card img {
     width: auto !important;
     height: 38px !important; 
-    max-width: 80% !important;
+    max-width: 85% !important;
     object-fit: contain;
     margin: auto auto !important; 
     image-rendering: -webkit-optimize-contrast; 
     transition: transform 0.2s ease;
 }
 
-.poke-color-card span.border { font-size: 7px !important; padding: 0px 2px !important; z-index: 10; position: relative; }
+.poke-color-card span.border { font-size: 7.5px !important; padding: 0px 2px !important; z-index: 10; position: relative; }
 .poke-color-card .font-title { font-size: 10px !important; z-index: 10; position: relative; }
 .noble-mini-card span { font-size: 9px !important; }
 
