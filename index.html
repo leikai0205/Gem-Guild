@@ -971,6 +971,238 @@ html, body {
     }
 }
 
+
+
+/* =====================================================================
+   第四版面微調：縮短市場卡、放大寶可夢圖、預留卡改直式
+   僅覆蓋 CSS，不變更任何遊戲程式與事件
+   ===================================================================== */
+
+/* 電腦版 */
+@media (min-width: 1024px) {
+    #game-screen {
+        max-width: none !important;
+        padding: 5px 8px !important;
+    }
+
+    #game-screen > .grid {
+        min-height: 0 !important;
+    }
+
+    #game-screen > .grid > div,
+    #game-screen > .grid > aside {
+        overflow-y: auto !important;
+    }
+
+    #game-screen .poke-color-card {
+        height: clamp(112px, 16.5vh, 145px) !important;
+        min-height: 0 !important;
+        max-height: 145px !important;
+        aspect-ratio: auto !important;
+        flex: 1 1 0% !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: 190px !important;
+        padding: 3px !important;
+    }
+
+    #game-screen .poke-color-card img {
+        height: clamp(66px, 9.5vh, 88px) !important;
+        max-height: 88px !important;
+        max-width: 94% !important;
+        object-fit: contain !important;
+    }
+
+    #game-screen .poke-color-card .font-title {
+        font-size: 11px !important;
+    }
+
+    #game-screen .poke-color-card span.border {
+        font-size: 8px !important;
+    }
+
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > div:last-child {
+        flex: 0 0 82px !important;
+        width: 82px !important;
+        min-width: 82px !important;
+    }
+
+    #game-screen #reserved-cards-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+        height: auto !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+    }
+
+    #game-screen #reserved-cards-container > div {
+        height: 76px !important;
+        min-height: 76px !important;
+        padding: 3px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    #game-screen .reserved-mini-card {
+        width: 100% !important;
+        height: 92px !important;
+        min-height: 92px !important;
+        aspect-ratio: auto !important;
+        padding: 3px !important;
+    }
+
+    #game-screen .reserved-mini-card img {
+        height: 52px !important;
+        max-height: 52px !important;
+        max-width: 92% !important;
+    }
+}
+
+/* 手機橫式／平板橫式 */
+@media (min-width: 600px) and (max-width: 1023px) and (orientation: landscape) {
+    #game-screen {
+        padding: 4px !important;
+        gap: 4px !important;
+    }
+
+    #game-screen .poke-color-card {
+        height: clamp(88px, 18vh, 116px) !important;
+        min-height: 0 !important;
+        max-height: 116px !important;
+        aspect-ratio: auto !important;
+        padding: 2px !important;
+    }
+
+    #game-screen .poke-color-card img {
+        height: clamp(52px, 11vh, 72px) !important;
+        max-height: 72px !important;
+        max-width: 96% !important;
+        object-fit: contain !important;
+    }
+
+    #game-screen .poke-color-card .font-title {
+        font-size: 8px !important;
+    }
+
+    #game-screen .poke-color-card span.border {
+        font-size: 6px !important;
+    }
+
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > div:last-child {
+        flex: 0 0 62px !important;
+        width: 62px !important;
+        min-width: 62px !important;
+    }
+
+    #game-screen #reserved-cards-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 3px !important;
+    }
+
+    #game-screen #reserved-cards-container > div {
+        height: 56px !important;
+        min-height: 56px !important;
+        padding: 2px !important;
+    }
+
+    #game-screen .reserved-mini-card {
+        height: 68px !important;
+        min-height: 68px !important;
+        aspect-ratio: auto !important;
+    }
+
+    #game-screen .reserved-mini-card img {
+        height: 38px !important;
+        max-height: 38px !important;
+    }
+}
+
+/* 手機直式：壓縮所有區塊，讓主要遊戲內容少滑動 */
+@media (max-width: 599px) and (orientation: portrait) {
+    #game-screen {
+        padding: 3px !important;
+        gap: 4px !important;
+    }
+
+    #game-screen > header {
+        padding: 3px 4px !important;
+        min-height: 34px !important;
+    }
+
+    #game-screen > .grid {
+        gap: 4px !important;
+    }
+
+    #game-screen > .grid > div,
+    #game-screen > .grid > aside {
+        gap: 4px !important;
+    }
+
+    #game-screen .glass-panel {
+        padding: 5px !important;
+    }
+
+    #game-screen .poke-color-card {
+        height: clamp(78px, 12vh, 100px) !important;
+        min-height: 0 !important;
+        max-height: 100px !important;
+        aspect-ratio: auto !important;
+        padding: 1px !important;
+    }
+
+    #game-screen .poke-color-card img {
+        height: clamp(42px, 7vh, 58px) !important;
+        max-height: 58px !important;
+        max-width: 96% !important;
+        object-fit: contain !important;
+    }
+
+    #game-screen .poke-color-card .font-title {
+        font-size: 7px !important;
+    }
+
+    #game-screen .poke-color-card span.border {
+        font-size: 5.5px !important;
+        padding: 0 !important;
+    }
+
+    #game-screen #bank-gems-container > div {
+        padding: 3px 1px !important;
+    }
+
+    #game-screen #bank-gems-container img,
+    #game-screen #bank-gems-container .rounded-full {
+        width: 17px !important;
+        height: 17px !important;
+    }
+
+    #game-screen #battle-log-container {
+        height: 48px !important;
+        max-height: 48px !important;
+    }
+}
+
+/* 小尺寸手機橫式：卡片高度依可用高度再縮小 */
+@media (max-width: 900px) and (max-height: 500px) and (orientation: landscape) {
+    #game-screen .poke-color-card {
+        height: clamp(72px, 16vh, 88px) !important;
+        max-height: 88px !important;
+    }
+
+    #game-screen .poke-color-card img {
+        height: clamp(42px, 9vh, 54px) !important;
+        max-height: 54px !important;
+    }
+
+    #game-screen #battle-log-container {
+        height: 40px !important;
+        max-height: 40px !important;
+    }
+}
+
 </style>
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
