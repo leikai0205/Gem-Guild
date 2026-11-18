@@ -1962,6 +1962,168 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
 
 </style>
 
+
+<style id="guild-final-centering-reserved-mobile-cost-fix">
+/* 最終覆寫：整張遊戲桌以視窗水平中心定位，桌面與手機一致 */
+#game-screen.guild-fit-active {
+    left: 50% !important;
+    transform: translateX(-50%) scale(var(--guild-fit-scale)) !important;
+    transform-origin: top center !important;
+}
+
+/* 電腦版：保留市場三排原本的排列，只加寬預留欄並拉開卡片距離 */
+@media (min-width: 1024px) {
+    #game-screen main.glass-panel {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > div:last-child {
+        flex: 0 0 132px !important;
+        width: 132px !important;
+        min-width: 132px !important;
+    }
+    #game-screen #reserved-cards-container {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        gap: 14px !important;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        flex: 1 1 auto !important;
+    }
+    #game-screen #reserved-cards-container > .reserved-mini-card {
+        flex: 0 0 78px !important;
+        width: 100% !important;
+        height: 78px !important;
+        min-height: 78px !important;
+        max-height: 78px !important;
+        aspect-ratio: auto !important;
+        overflow: hidden !important;
+        padding: 4px !important;
+    }
+    #game-screen #reserved-cards-container > div:not(.reserved-mini-card) {
+        flex: 0 0 78px !important;
+        height: 78px !important;
+        min-height: 78px !important;
+    }
+    #game-screen #reserved-cards-container .reserved-mini-card img {
+        height: 48px !important;
+        max-height: 48px !important;
+    }
+}
+
+/* 手機與平板：置中畫布不改市場卡片原有尺寸，預留卡改長 */
+@media (max-width: 1023px) {
+    #game-screen.guild-fit-active > .grid {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+    #game-screen main.glass-panel {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    #game-screen main.glass-panel > .flex.flex-nowrap.items-start.justify-between > div:last-child {
+        flex: 0 0 76px !important;
+        width: 76px !important;
+        min-width: 76px !important;
+    }
+    #game-screen.guild-fit-active .reserved-mini-card {
+        height: 76px !important;
+        min-height: 76px !important;
+        max-height: 76px !important;
+        aspect-ratio: auto !important;
+        padding: 3px !important;
+        overflow: hidden !important;
+    }
+    #game-screen.guild-fit-active #reserved-cards-container {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        align-items: stretch !important;
+        gap: 7px !important;
+        height: auto !important;
+        min-height: 0 !important;
+    }
+    #game-screen.guild-fit-active #reserved-cards-container > div:not(.reserved-mini-card) {
+        height: 76px !important;
+        min-height: 76px !important;
+    }
+    #game-screen.guild-fit-active .reserved-mini-card img {
+        height: 42px !important;
+        max-height: 42px !important;
+    }
+
+    /* 費用列：保留黑色底條，移除多出的白框，所有費用固定同一排 */
+    #game-screen .reserved-mini-card .reserved-cost-row,
+    #game-screen .poke-color-card > .flex.flex-nowrap.items-center.justify-center {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 1px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        min-height: 15px !important;
+        max-height: 18px !important;
+        padding: 1px 1px !important;
+        box-sizing: border-box !important;
+        background: rgba(2, 6, 23, .97) !important;
+        border: 0 !important;
+        outline: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 0 4px 4px !important;
+        overflow: hidden !important;
+        white-space: nowrap !important;
+    }
+    #game-screen .reserved-mini-card .reserved-cost-row .gem-cost-item,
+    #game-screen .poke-color-card .gem-cost-item {
+        display: inline-flex !important;
+        flex: 0 1 auto !important;
+        flex-direction: column-reverse !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        width: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+        white-space: nowrap !important;
+    }
+    #game-screen .reserved-mini-card .reserved-cost-row .gem-cost-item > img,
+    #game-screen .reserved-mini-card .reserved-cost-row .gem-cost-item > div,
+    #game-screen .poke-color-card .gem-cost-item > img,
+    #game-screen .poke-color-card .gem-cost-item > div {
+        width: 9px !important;
+        height: 9px !important;
+        flex: 0 0 9px !important;
+    }
+    #game-screen .reserved-mini-card .reserved-cost-row .gem-cost-number,
+    #game-screen .poke-color-card .gem-cost-number {
+        font-size: 8px !important;
+        line-height: 1 !important;
+        font-weight: 900 !important;
+        white-space: nowrap !important;
+    }
+    /* 黑條只套在費用列本身，不另外加白色外框 */
+    #game-screen .poke-color-card > div:last-child {
+        background: rgba(2, 6, 23, .97) !important;
+        border: 0 !important;
+        outline: 0 !important;
+        box-shadow: none !important;
+    }
+}
+</style>
+
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
@@ -3312,7 +3474,7 @@ function renderNobles() {
             game.style.setProperty('--guild-base-w', baseW + 'px');
             game.style.setProperty('--guild-base-h', baseH + 'px');
             game.style.setProperty('--guild-fit-scale', String(scale));
-            game.style.left = Math.max(0, (vw - baseW * scale) / 2) + 'px';
+            game.style.left = (vw / 2) + 'px';
             game.style.top = Math.max(0, (vh - baseH * scale) / 2) + 'px';
             if (!game.classList.contains('guild-fit-active')) {
                 game.classList.add('guild-fit-active');
