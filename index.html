@@ -221,17 +221,20 @@ html, body {
 
 
 
+
 /* =========================================================
-   電腦版大廳：完整自動適應視窗大小
+   電腦版大廳：依照螢幕高度自動縮放
+   完整顯示、不捲動、保持中央
    ========================================================= */
 
-@media (min-width: 1024px) {
+@media screen and (min-width: 1024px) {
 
     #lobby-screen {
         position: absolute !important;
         inset: 0 !important;
         width: 100% !important;
-        height: 100% !important;
+        height: 100vh !important;
+        height: 100dvh !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -242,22 +245,42 @@ html, body {
 
     #lobby-screen:not(.hidden) > .glass-panel {
         width: 448px !important;
-        max-width: 100% !important;
+        max-width: 448px !important;
         flex: 0 0 auto !important;
+        margin: 0 auto !important;
         box-sizing: border-box !important;
-
-        /* 依照視窗寬度與高度自動縮放 */
-        zoom: min(
-            1,
-            calc(100vw / 1100),
-            calc(100vh / 760)
-        );
-
         transform: none !important;
-        transform-origin: center center !important;
+        zoom: 1 !important;
     }
 }
 
+/* 螢幕高度低於 900px */
+@media screen and (min-width: 1024px) and (max-height: 900px) {
+    #lobby-screen:not(.hidden) > .glass-panel {
+        zoom: 0.90 !important;
+    }
+}
+
+/* 螢幕高度低於 800px */
+@media screen and (min-width: 1024px) and (max-height: 800px) {
+    #lobby-screen:not(.hidden) > .glass-panel {
+        zoom: 0.82 !important;
+    }
+}
+
+/* 螢幕高度低於 700px */
+@media screen and (min-width: 1024px) and (max-height: 700px) {
+    #lobby-screen:not(.hidden) > .glass-panel {
+        zoom: 0.72 !important;
+    }
+}
+
+/* 螢幕高度低於 600px */
+@media screen and (min-width: 1024px) and (max-height: 600px) {
+    #lobby-screen:not(.hidden) > .glass-panel {
+        zoom: 0.62 !important;
+    }
+}
 
 
 
