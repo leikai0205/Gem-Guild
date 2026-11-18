@@ -219,6 +219,35 @@ html, body {
 #players-container .font-title { font-size: 22px !important; }
 
 
+/* =========================================================
+   電腦版大廳：依照螢幕尺寸自動縮放，不使用捲動
+   ========================================================= */
+
+@media (min-width: 1024px) {
+
+    #lobby-screen {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: clamp(8px, 1.5vh, 20px) !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 大廳主要內容自動依照螢幕高度縮放 */
+    #lobby-screen:not(.hidden) > * {
+        transform: scale(
+            min(1, calc((100vh - 32px) / 760))
+        );
+        transform-origin: center center;
+        flex-shrink: 0 !important;
+    }
+}
+
 
 /* =====================================================================
    二、電腦版專屬設定 (螢幕寬度 >= 1024px)
