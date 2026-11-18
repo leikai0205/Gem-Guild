@@ -220,7 +220,7 @@ html, body {
 
 
 /* =====================================================================
-   二、電腦版專屬設定 (螢幕寬度 >= 1024px) - 徹底消除右側與下方大片空白
+   二、電腦版專屬設定 (螢幕寬度 >= 1024px) - 安全收緊空白版
    ===================================================================== */
 @media (min-width: 1024px) {
     #app {
@@ -229,93 +229,34 @@ html, body {
         overflow: hidden;
     }
 
-    /* 1. 遊戲主畫面外框：極限壓縮上下左右留白 */
+    /* 1. 遊戲主畫面外框：適度限制最大寬度，讓畫面往中間集中，消除外圍大空白 */
     #game-screen {
         width: 100% !important;
-        max-width: 900px !important; /* 讓整體畫面再集中一點 */
+        max-width: 1120px !important; 
         height: 100vh !important;
         margin: 0 auto !important;
-        padding: 1px 4px !important; 
+        padding: 6px 12px !important; 
         display: flex !important;
         flex-direction: column !important;
         overflow: hidden !important;
     }
 
-    /* 2. 主版面網格：改用 fit-content，讓左側市場與右側玩家面板緊緊靠攏，消除右側大空白 */
-    .game-main-layout {
-        width: 100% !important;
-        flex: 1 !important;
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        justify-content: center !important;
+    /* 2. 關鍵：把原本預設的 12 格網格，改成「左側自動填滿、右側固定 300px」 */
+    .grid.grid-cols-1.lg\:grid-cols-12 {
+        grid-template-columns: minmax(0, 1fr) 300px !important;
+        gap: 12px !important;
         align-items: flex-start !important;
-        gap: 8px !important; 
-        padding: 1px 0 !important;
+    }
+
+    /* 3. 確保左右兩欄的容器不會被強制拉到全高（消滅下方大黑洞） */
+    .lg\:col-span-8, 
+    .lg\:col-span-4 {
+        height: auto !important;
+        max-height: calc(100vh - 70px) !important;
         overflow-y: auto !important;
-        overflow-x: hidden !important;
     }
 
-    /* 左側遊戲區域包裝 */
-    .game-main-layout > div:first-child {
-        flex: 0 0 auto !important;
-    }
-
-    /* 右側玩家欄位區塊：鎖定固定寬度，不再向右拉開大空白 */
-    #players-container {
-        width: 310px !important;
-        min-width: 310px !important;
-        flex-shrink: 0 !important;
-    }
-
-    /* 3. 頂部導覽列：拔掉所有上下 margin */
-    header.glass-panel {
-        margin-bottom: 1px !important;
-        padding: 2px 6px !important;
-    }
-
-    /* 4. 稀有寶可夢夥伴區塊：完全拔掉左右兩側空白，緊密置中 */
-    .nobles-flex-container {
-        flex-wrap: nowrap !important;
-        gap: 2px !important;
-        justify-content: center !important;
-        width: fit-content !important; 
-        margin: 0 auto !important;
-    }
-    
-    .noble-mini-card { 
-        width: 86px !important;
-        min-width: 86px !important;
-        max-width: 86px !important;
-        flex: 0 0 auto !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 1px 1px !important;
-    }
-
-    .noble-mini-card img {
-        height: 30px !important;
-        width: 30px !important;
-        margin: auto auto !important;
-    }
-
-    .noble-mini-card span { 
-        font-size: 7px !important; 
-    }
-
-    /* 5. 市場與右側預留卡容器：讓預留卡緊貼在 12 宮格市場右側，消滅中間空白 */
-    .game-main-layout .flex.flex-nowrap.items-start.justify-between {
-        justify-content: flex-start !important;
-        gap: 6px !important; 
-        width: fit-content !important;
-    }
-
-    .game-main-layout .space-y-3.flex-1 {
-        flex: 0 0 auto !important;
-        width: auto !important;
-    }
-
-    /* 6. 預留卡容器與空位高度鎖定 */
+    /* 4. 關鍵：拔掉預留卡容器原本被賦予的 h-full 延伸，讓它跟著內容收緊 */
     #reserved-cards-container {
         height: auto !important;
         flex: 0 0 auto !important;
@@ -326,22 +267,44 @@ html, body {
         min-height: 56px !important;
     }
 
-    .game-main-layout .space-y-3 {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 2px !important;
+    /* 5. 稀有寶可夢夥伴區塊置中 */
+    .nobles-flex-container {
+        flex-wrap: nowrap !important;
+        gap: 4px !important;
+        justify-content: center !important;
+    }
+    
+    .noble-mini-card { 
+        width: 92px !important;
+        min-width: 92px !important;
+        max-width: 92px !important;
+        flex: 0 0 auto !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 2px !important;
     }
 
-    /* 7. 電腦版 12 宮格卡片尺寸微調 */
+    .noble-mini-card img {
+        height: 32px !important;
+        width: 32px !important;
+        margin: auto auto !important;
+    }
+
+    .noble-mini-card span { 
+        font-size: 7px !important; 
+    }
+
+    /* 6. 電腦版 12 宮格市場卡片尺寸微調 */
     .poke-color-card {
-        width: 84px !important;
-        min-width: 84px !important;
-        max-width: 84px !important;
+        width: 90px !important;
+        min-width: 90px !important;
+        max-width: 90px !important;
         padding: 1px !important;
     }
 
     .poke-color-card img {
-        height: 56px !important;
+        height: 60px !important;
         max-width: 88% !important;
     }
 
