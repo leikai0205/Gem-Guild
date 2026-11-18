@@ -3703,6 +3703,7 @@ function renderNobles() {
 })();
 </script>
     
+
 <script id="lobby-viewport-fit">
 (function () {
     const lobby = document.getElementById('lobby-screen');
@@ -3711,38 +3712,79 @@ function renderNobles() {
     const panel = lobby.querySelector('.glass-panel');
     if (!panel) return;
 
+    let frame = 0;
+
     function fitLobby() {
-        if (lobby.classList.contains('hidden')) return;
+        cancelAnimationFrame(frame);
 
-        const vw = document.documentElement.clientWidth || window.innerWidth;
-        const vh = document.documentElement.clientHeight || window.innerHeight;
+        frame = requestAnimationFrame(function () {
+            if (lobby.classList.contains('hidden')) return;
 
-        // 大廳原始設計尺寸
-        const baseW = 448;
-        const baseH = panel.scrollHeight;
+            const vw = document.documentElement.clientWidth || window.innerWidth;
+            const vh = document.documentElement.clientHeight || window.innerHeight;
 
-        // 依照螢幕大小等比例放大或縮小
-        const scale = Math.min(
-            vw / baseW,
-            vh / baseH
-        );
+            if (!vw || !vh) return;
 
-        lobby.style.setProperty('--lobby-fit-scale', String(scale));
+            // 大廳原始設計尺寸
+            const baseW = 448;
+
+            // 取得尚未縮放的內容高度
+            const oldTransform = panel.style.transform;
+            panel.style.transform = 'none';
+
+            const baseH = panel.scrollHeight;
+
+            panel.style.transform = oldTransform;
+
+            if (!baseH) return;
+
+            // 保留安全空間，讓整個大廳完整顯示
+            const availableW = vw * 0.96;
+            const availableH = vh * 0.94;
+
+            const scale = Math.min(
+                availableW / baseW,
+                availableH / baseH
+            );
+
+            lobby.style.setProperty(
+                '--lobby-fit-scale',
+                String(scale)
+            );
+        });
     }
 
-    const observer = new MutationObserver(fitLobby);
+    // 視窗大小變動時即時重新計算
+    window.addEventListener('resize', fitLobby, { passive: true });
+    window.addEventListener('orientationchange', fitLobby, { passive: true });
 
-    observer.observe(lobby, {
+    // 監測大廳內容尺寸變化
+    if (window.ResizeObserver) {
+        const observer = new ResizeObserver(fitLobby);
+        observer.observe(panel);
+    }
+
+    // 字型載入完成後重新計算
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(fitLobby);
+    }
+
+    // 頁面載入完成後計算
+    window.addEventListener('load', fitLobby);
+
+    // 初次計算
+    fitLobby();
+
+    // 大廳重新顯示時重新計算
+    const lobbyObserver = new MutationObserver(fitLobby);
+    lobbyObserver.observe(lobby, {
         attributes: true,
         attributeFilter: ['class']
     });
 
-    window.addEventListener('resize', fitLobby, { passive: true });
-    window.addEventListener('orientationchange', fitLobby, { passive: true });
-
-    fitLobby();
 })();
 </script>
+
 
 
 </body>
