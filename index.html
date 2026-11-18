@@ -106,6 +106,7 @@ html, body {
     width: 64px !important;       /* 統一固定寬度 */
     min-width: 64px !important;
     max-width: 64px !important;
+    flex-shrink: 0 !important;    /* 嚴格禁止任何壓縮 */
     aspect-ratio: 1 / 1.42 !important; 
     min-height: auto !important; 
     max-height: none !important; 
@@ -181,7 +182,7 @@ html, body {
 }
 
 .poke-color-card span.border { font-size: 7.5px !important; padding: 0px 2px !important; z-index: 10; position: relative; }
-.poke-color-card .font-title { font-size: 10px !important; z-index: 10; position: relative; }
+.poke-color-card .font-title { font-size: 10.5px !important; z-index: 10; position: relative; }
 .noble-mini-card span { font-size: 9px !important; }
 
 /* 放大右側玩家面板的各項文字與數字 */
@@ -420,53 +421,54 @@ html, body {
                             <span class="text-[10px] text-slate-400">先達 15 分觸發終局</span>
                         </div>
                         
-<!-- 修正：拿掉 flex-1 與 w-full，讓預留卡緊貼在 4 張卡片右側；並將 aside 改為 div 避免標籤錯亂 -->
-                        <div class="flex flex-nowrap items-start gap-2 w-full">
-                            
-                            <!-- 左側市場 3 個等級區塊 (寬度隨卡片自適應，不撐開空白) -->
-                            <div class="space-y-3 shrink-0">
-                                <div class="space-y-1">
-                                    <div class="flex items-center justify-between text-[11px]">
-                                        <div class="flex items-center gap-2">
-                                            <span class="px-1.5 py-0.2 rounded bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 font-bold">Lv.3 頂級 (剩 <b id="deck-count-3">0</b>)</span>
-                                            <button onclick="reserveBlindFromDeck(3)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition shadow">🎲 Lv.3 盲抽 (+大師球)</button>
-                                        </div>
-                                    </div>
-                                    <div id="market-row-3" class="flex flex-nowrap gap-1 justify-start"></div>
-                                </div>
+<!-- 市場卡片主容器：確保內部排版穩定 -->
+<div class="flex flex-nowrap items-start justify-between gap-2.5 w-full">
+    
+    <!-- 左側市場 3 個等級區塊 (固定佔滿左側，3排寬度絕對一致) -->
+    <div class="space-y-3 flex-1 min-w-0">
+        <div class="space-y-1">
+            <div class="flex items-center justify-between text-[11px]">
+                <div class="flex items-center gap-2">
+                    <span class="px-1.5 py-0.2 rounded bg-indigo-500/25 border border-indigo-400/40 text-indigo-300 font-bold">Lv.3 頂級 (剩 <b id="deck-count-3">0</b>)</span>
+                    <button onclick="reserveBlindFromDeck(3)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition shadow">🎲 盲抽</button>
+                </div>
+            </div>
+            <!-- 強制不換行，確保 4 張卡片緊密排列 -->
+            <div id="market-row-3" class="flex flex-nowrap gap-1.5 justify-start"></div>
+        </div>
 
-                                <div class="space-y-1">
-                                    <div class="flex items-center justify-between text-[11px]">
-                                        <div class="flex items-center gap-2">
-                                            <span class="px-1.5 py-0.2 rounded bg-amber-500/20 border border-amber-400/40 text-amber-300 font-bold">Lv.2 中階 (剩 <b id="deck-count-2">0</b>)</span>
-                                            <button onclick="reserveBlindFromDeck(2)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition shadow">🎲 Lv.2 盲抽 (+大師球)</button>
-                                        </div>
-                                    </div>
-                                    <div id="market-row-2" class="flex flex-nowrap gap-2 justify-start"></div>
-                                </div>
+        <div class="space-y-1">
+            <div class="flex items-center justify-between text-[11px]">
+                <div class="flex items-center gap-2">
+                    <span class="px-1.5 py-0.2 rounded bg-amber-500/25 border border-amber-400/40 text-amber-300 font-bold">Lv.2 中階 (剩 <b id="deck-count-2">0</b>)</span>
+                    <button onclick="reserveBlindFromDeck(2)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition shadow">🎲 盲抽</button>
+                </div>
+            </div>
+            <div id="market-row-2" class="flex flex-nowrap gap-1.5 justify-start"></div>
+        </div>
 
-                                <div class="space-y-1">
-                                    <div class="flex items-center justify-between text-[11px]">
-                                        <div class="flex items-center gap-2">
-                                            <span class="px-1.5 py-0.2 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-bold">Lv.1 初階 (剩 <b id="deck-count-1">0</b>)</span>
-                                            <button onclick="reserveBlindFromDeck(1)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition shadow">🎲 Lv.1 盲抽 (+大師球)</button>
-                                        </div>
-                                    </div>
-                                    <div id="market-row-1" class="flex flex-nowrap gap-2 justify-start"></div>
-                                </div>
-                            </div>
+        <div class="space-y-1">
+            <div class="flex items-center justify-between text-[11px]">
+                <div class="flex items-center gap-2">
+                    <span class="px-1.5 py-0.2 rounded bg-emerald-500/25 border border-emerald-400/40 text-emerald-300 font-bold">Lv.1 初階 (剩 <b id="deck-count-1">0</b>)</span>
+                    <button onclick="reserveBlindFromDeck(1)" class="px-2 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/35 border border-purple-400/50 text-purple-200 text-[10px] font-bold cursor-pointer transition shadow">🎲 盲抽</button>
+                </div>
+            </div>
+            <div id="market-row-1" class="flex flex-nowrap gap-1.5 justify-start"></div>
+        </div>
+    </div>
 
-                            <!-- 右側直立 3 格保留卡區 (改用 div，緊貼市場卡片右側) -->
-                            <div class="w-[66px] bg-slate-950/60 rounded-xl p-2 border border-slate-800 flex flex-col justify-between shrink-0 space-y-1.5">
-                                <div class="text-[9px] font-bold text-amber-300/90 text-center border-b border-slate-800 pb-1">
-                                    📦 預留卡 (<span id="reserved-count-text">0</span>/3)
-                                </div>
-                                <div id="reserved-cards-container" class="flex flex-col gap-1.5 h-full">
-                                    <div class="text-center text-[9px] text-slate-500 py-6">尚未保留卡片</div>
-                                </div>
-                            </div>
+    <!-- 右側預留卡區：微微向右獨立，寬度鎖定 68px，絕對不會擠壓到左側第一排 -->
+    <div class="w-[68px] lg:w-[84px] bg-slate-950/60 rounded-xl p-1.5 border border-slate-800 flex flex-col justify-between shrink-0 space-y-1.5 self-stretch">
+        <div class="text-[9px] font-bold text-amber-300/90 text-center border-b border-slate-800 pb-1">
+            📦 預留卡 (<span id="reserved-count-text">0</span>/3)
+        </div>
+        <div id="reserved-cards-container" class="flex flex-col gap-1.5 h-full">
+            <div class="text-center text-[9px] text-slate-500 py-6">尚未保留卡片</div>
+        </div>
+    </div>
 
-                        </div>
+</div>
                     </main>
                 </div>
 
