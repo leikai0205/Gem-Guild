@@ -34,19 +34,26 @@ html, body {
     overflow-x: hidden;
 }
 
-/* 大廳登入畫面絕對置中 */
-#lobby-screen:not(.hidden) {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+/* 修正 1：大廳登入畫面獨立覆蓋，未登入時絕對不讓遊戲畫面透出來干擾 */
+#lobby-screen {
     position: absolute !important;
     inset: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    margin: 0 !important;
-    box-sizing: border-box;
+    z-index: 100 !important;
+    background: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #0f172a 45%, #090d16 100%) !important;
+}
+
+#lobby-screen.hidden {
+    display: none !important;
+}
+
+#lobby-screen:not(.hidden) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     padding: 16px;
-    z-index: 50;
+    box-sizing: border-box;
 }
 
 #game-screen {
@@ -222,90 +229,91 @@ html, body {
         overflow: hidden;
     }
 
-    /* 1. 電腦版最大寬度收緊到 1020px，大幅減少周遭空白 */
+    /* 1. 深度壓縮電腦版外框，徹底消滅上下左右紅框空白 */
     #game-screen {
         width: 100% !important;
-        max-width: 1020px !important; 
+        max-width: 980px !important; /* 縮小最大寬度，讓左右更集中 */
         height: 100vh !important;
         margin: 0 auto !important;
-        padding: 6px 12px !important;
+        padding: 4px 8px !important;
         display: flex !important;
         flex-direction: column !important;
         overflow: hidden !important;
     }
 
-    /* 2. 主版面網格：左側遊戲區與右側玩家區緊密排列 */
+    /* 2. 主版面網格：收緊間距 */
     .game-main-layout {
         width: 100% !important;
         flex: 1 !important;
         display: grid !important;
-        grid-template-columns: auto 360px !important; 
+        grid-template-columns: auto 340px !important; 
         justify-content: center !important;
-        gap: 10px !important;
-        padding: 4px 0 !important;
+        gap: 8px !important;
+        padding: 2px 0 !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
     }
 
-    /* 3. 市場與預留卡容器：消除中間空白，讓預留卡緊靠右側 */
+    /* 3. 消除市場與預留卡之間的大空白，讓預留卡緊靠市場右側 */
     .game-main-layout .flex.flex-nowrap.items-start.justify-between {
         justify-content: flex-start !important;
-        gap: 12px !important; 
+        gap: 8px !important; 
         width: fit-content !important;
     }
 
     .game-main-layout .space-y-3.flex-1 {
         flex: 0 0 auto !important;
+        width: auto !important;
     }
 
     /* 4. 電腦版 12 宮格卡片尺寸 */
     .poke-color-card {
-        width: 100px !important;
-        min-width: 100px !important;
-        max-width: 100px !important;
-        padding: 3px !important;
+        width: 96px !important;
+        min-width: 96px !important;
+        max-width: 96px !important;
+        padding: 2px !important;
     }
 
     .poke-color-card img {
-        height: 72px !important;
+        height: 68px !important;
         max-width: 88% !important;
     }
 
     .poke-color-card .font-title {
-        font-size: 12.5px !important;
+        font-size: 12px !important;
     }
 
     .poke-color-card span.border {
-        font-size: 9px !important;
-        padding: 1px 3px !important;
+        font-size: 8.5px !important;
+        padding: 1px 2px !important;
     }
 
-    /* 5. 電腦版稀有寶可夢夥伴：改回置中對齊，並收緊卡片間距 */
+    /* 5. 稀有寶可夢夥伴：極致收緊左右紅框間距，置中對齊 */
     .nobles-flex-container {
         flex-wrap: nowrap !important;
-        gap: 6px !important;
-        justify-content: center !important; /* 👈 修正：改回置中對齊 */
+        gap: 4px !important;
+        justify-content: center !important; 
     }
     
     .noble-mini-card { 
-        width: 100px !important;
-        min-width: 100px !important;
-        max-width: 100px !important;
+        width: 96px !important;
+        min-width: 96px !important;
+        max-width: 96px !important;
         flex: 0 0 auto !important;
         flex-direction: row !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 4px 3px !important;
+        padding: 3px 2px !important;
     }
 
     .noble-mini-card img {
-        height: 38px !important;
-        width: 38px !important;
+        height: 36px !important;
+        width: 36px !important;
         margin: auto auto !important;
     }
 
     .noble-mini-card span { 
-        font-size: 8.5px !important; 
+        font-size: 8px !important; 
     }
 }
 
