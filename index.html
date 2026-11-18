@@ -1429,6 +1429,69 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
 }
 </style>
 
+
+<style id="guild-mobile-color-and-cost-fit-fix">
+/* 費用：數字顏色直接由進化石種類決定，避免手機端動態 Tailwind 顏色遺失 */
+.gem-cost-number { color: #f8fafc !important; }
+.gem-cost-diamond .gem-cost-number { color: #facc15 !important; }
+.gem-cost-sapphire .gem-cost-number { color: #60a5fa !important; }
+.gem-cost-emerald .gem-cost-number { color: #34d399 !important; }
+.gem-cost-ruby .gem-cost-number { color: #fb7185 !important; }
+.gem-cost-onyx .gem-cost-number { color: #c084fc !important; }
+.gem-cost-gold .gem-cost-number { color: #ffffff !important; }
+
+/* 稀有寶可夢需求標籤：使用明確 CSS，手機版也保留底色與文字顏色 */
+.noble-cost-diamond { background: rgba(245,158,11,.24) !important; color: #fde68a !important; border-color: rgba(251,191,36,.75) !important; }
+.noble-cost-sapphire { background: rgba(37,99,235,.28) !important; color: #bfdbfe !important; border-color: rgba(96,165,250,.75) !important; }
+.noble-cost-emerald { background: rgba(5,150,105,.28) !important; color: #a7f3d0 !important; border-color: rgba(52,211,153,.75) !important; }
+.noble-cost-ruby { background: rgba(225,29,72,.25) !important; color: #fecdd3 !important; border-color: rgba(251,113,133,.75) !important; }
+.noble-cost-onyx { background: rgba(126,34,206,.28) !important; color: #e9d5ff !important; border-color: rgba(192,132,252,.75) !important; }
+
+/* 預留卡費用改為緊湊橫排，三種或四種費用不再被換行或卡片底部裁切 */
+#game-screen .reserved-mini-card { overflow: visible !important; }
+#game-screen .reserved-mini-card .reserved-cost-row {
+    display: flex !important; flex-wrap: nowrap !important; gap: 2px !important;
+    width: 100% !important; min-width: 0 !important; overflow: visible !important;
+}
+#game-screen .reserved-mini-card .reserved-cost-row .gem-cost-item {
+    display: inline-flex !important; flex: 0 1 auto !important; min-width: 0 !important;
+    padding: 1px 2px !important; gap: 2px !important; white-space: nowrap !important;
+}
+#game-screen .reserved-mini-card .reserved-cost-row .gem-cost-item > div,
+#game-screen .reserved-mini-card .reserved-cost-row .gem-cost-item > img {
+    width: 9px !important; height: 9px !important; flex: 0 0 9px !important;
+}
+#game-screen .reserved-mini-card .reserved-cost-row .gem-cost-number { font-size: 7px !important; }
+
+/* 場上寶可夢卡費用橫排縮緊，保留每一種費用 */
+#game-screen .poke-color-card .flex.flex-nowrap.items-center.justify-center.gap-1 {
+    gap: 2px !important; padding-left: 2px !important; padding-right: 2px !important;
+    overflow: visible !important;
+}
+#game-screen .poke-color-card .gem-cost-item {
+    display: inline-flex !important; flex: 0 1 auto !important; min-width: 0 !important;
+    padding: 1px 2px !important; gap: 2px !important; white-space: nowrap !important;
+}
+#game-screen .poke-color-card .gem-cost-item > div,
+#game-screen .poke-color-card .gem-cost-item > img {
+    width: 9px !important; height: 9px !important; flex: 0 0 9px !important;
+}
+#game-screen .poke-color-card .gem-cost-number { font-size: 7px !important; }
+
+/* 銀行數量圓框固定置於石頭／大師球圖案正中央 */
+#game-screen #bank-gems-container .item-orb-btn { position: relative !important; }
+#game-screen #bank-gems-container .item-orb-btn .bank-count-badge {
+    top: 50% !important; left: 50% !important; right: auto !important;
+    transform: translate(-50%, -50%) !important;
+    width: 17px !important; height: 17px !important; font-size: 10px !important;
+    background: rgba(15,23,42,.88) !important; color: #fff !important;
+    border: 1px solid rgba(255,255,255,.9) !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,.65) !important;
+    pointer-events: none !important;
+}
+#game-screen #bank-gems-container .item-orb-btn > div.my-0\.5 { position: relative !important; z-index: 0 !important; }
+</style>
+
 </head>
 <body class="selection:bg-amber-500/30 selection:text-amber-200">
 
@@ -1841,9 +1904,9 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
                     let costHTML = CARD_GEM_ORDER.map(g => {
                         if (!card.cost[g]) return '';
                         return `
-                            <div class="flex flex-col items-center justify-center px-0.5 py-0.2 rounded bg-slate-900/95 border border-slate-700/80 text-[7px] shrink-0">
-                                <span class="font-bold text-amber-300 leading-none">${card.cost[g]}</span>
-                                ${getGemOrbHTML(g, 'w-2 h-2')}
+                            <div class="gem-cost-item gem-cost-${g} flex flex-row items-center justify-center gap-0.5 px-0.5 py-0.2 rounded bg-slate-900/95 border border-slate-700/80 text-[7px] shrink-0">
+                                <span class="gem-cost-number font-black leading-none">${card.cost[g]}</span>
+                                ${getGemOrbHTML(g, 'w-2.5 h-2.5')}
                             </div>
                         `;
                     }).join('');
@@ -1896,9 +1959,9 @@ function renderMyReservedCards(myReservedCards) {
                     for (const [g, costVal] of Object.entries(card.cost || {})) {
                         if (costVal > 0) {
                             costHtml += `
-                                <div class="flex flex-col items-center justify-center px-0.5 py-0.2 rounded bg-slate-900/95 border border-slate-700/80 text-[6px] shrink-0">
-                                    <span class="font-bold text-amber-300 leading-none">${costVal}</span>
-                                    ${getGemOrbHTML(g, 'w-1.5 h-1.5')}
+                                <div class="gem-cost-item gem-cost-${g} flex flex-row items-center justify-center gap-0.5 px-0.5 py-0.2 rounded bg-slate-900/95 border border-slate-700/80 text-[7px] shrink-0">
+                                    <span class="gem-cost-number font-black leading-none">${costVal}</span>
+                                    ${getGemOrbHTML(g, 'w-2.5 h-2.5')}
                                 </div>
                             `;
                         }
@@ -1913,7 +1976,7 @@ function renderMyReservedCards(myReservedCards) {
                             <div class="text-center my-auto z-10">
                                 <img src="${card.pokeImg}" class="object-contain drop-shadow" />
                             </div>
-                            <div class="flex flex-wrap items-center justify-center gap-0.5 z-10 bg-slate-950/90 px-0.5 py-0.5 rounded w-full">
+                            <div class="reserved-cost-row flex flex-nowrap items-center justify-center gap-0.5 z-10 bg-slate-950/90 px-0.5 py-0.5 rounded w-full">
                                 ${costHtml}
                             </div>
                         </div>
@@ -2254,7 +2317,7 @@ function renderNobles() {
                             <!-- 3. 右側：直排的條件需求 (緊貼圖片右側) -->
                             <div class="flex flex-col justify-center gap-0.5 shrink-0 text-[8px]">
                                 ${CARD_GEM_ORDER.map(gem => n.req[gem] ? `
-                                    <span class="px-1 py-0.2 rounded border font-bold text-center ${CARD_COLORS[gem].badgeClass}">
+                                    <span class="noble-cost-badge noble-cost-${gem} px-1 py-0.2 rounded border font-bold text-center ${CARD_COLORS[gem].badgeClass}">
                                         ${CARD_COLORS[gem].shortName || CARD_COLORS[gem].name[0]}${n.req[gem]}
                                     </span>
                                 ` : '').join('')}
@@ -2281,7 +2344,7 @@ function renderNobles() {
                 return `
                   <div class="item-orb-btn relative flex flex-col items-center justify-center py-1.5 px-0.5 rounded-lg bg-slate-900/80 border border-slate-800 ${isMyTurn && gem !== 'gold' ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-70'}"
                        onclick="${isMyTurn && gem !== 'gold' ? `handleSelectBankGem('${gem}')` : ''}">
-                    <span class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-amber-500 text-slate-950 font-black text-[9px] flex items-center justify-center shadow border border-amber-300 z-10">
+                    <span class="bank-count-badge absolute w-3.5 h-3.5 rounded-full bg-amber-500 text-slate-950 font-black text-[9px] flex items-center justify-center shadow border border-amber-300 z-10">
                       ${remaining}
                     </span>
                     <div class="my-0.5">${getGemOrbHTML(gem, 'w-6 h-6')}</div>
