@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="cards-data.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
-    <style>
+<style>
 html, body { 
     font-family: 'Noto Sans TC', sans-serif; 
     background: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #0f172a 45%, #090d16 100%); 
@@ -99,11 +99,12 @@ html, body {
     border-color: rgba(251, 191, 36, 0.85); 
 }
 
+/* 修正手機版市場卡片寬度，避免擠壓右側預留卡 */
 .poke-color-card { 
     position: relative;
     transform-style: preserve-3d; 
-    width: 66px !important;       /* 固定精準寬度，緊密靠攏 */
-    min-width: 82px !important;
+    width: 66px !important;       
+    min-width: 66px !important;
     aspect-ratio: 1 / 1.22 !important; 
     min-height: auto !important; 
     max-height: none !important; 
@@ -125,20 +126,23 @@ html, body {
     z-index: 20; 
 }
 
+/* 修正稀有寶可夢夥伴：手機版自適應與自動換行，防止超出畫面 */
 .nobles-flex-container { 
     display: flex; 
-    gap: 6px; 
+    flex-wrap: wrap;
+    gap: 4px; 
     width: 100%; 
-    justify-content: center; /* 讓所有稀有卡片置中對齊 */
+    justify-content: center; 
 }
 .noble-mini-card { 
-    width: 140px;           /* 固定卡片的固定寬度 */
-    min-width: 140px; 
+    width: calc(33.33% - 4px); 
+    min-width: 105px; 
+    max-width: 140px;
     display: flex; 
     flex-direction: column; 
     align-items: center; 
     text-align: center; 
-    padding: 3px 6px; 
+    padding: 2px 4px; 
     border-radius: 6px; 
 }
 
@@ -177,7 +181,7 @@ html, body {
 
 .poke-color-card span.border { font-size: 8px !important; padding: 0px 2px !important; z-index: 10; position: relative; }
 .poke-color-card .font-title { font-size: 11px !important; z-index: 10; position: relative; }
-.noble-mini-card span { font-size: 9px !important; }
+.noble-mini-card span { font-size: 8px !important; }
 
 /* 放大右側玩家面板的各項文字與數字 */
 #players-container .text-[11px] { font-size: 13px !important; }
@@ -194,14 +198,14 @@ html, body {
     animation: fadeInOut 0.5s ease-in-out forwards;
 }
 
-        /* 直式文字樣式（讓寶可夢名字直著顯示） */
+/* 直式文字樣式（讓寶可夢名字直著顯示） */
 .vertical-text {
     writing-mode: vertical-lr;
     text-orientation: upright;
     letter-spacing: -1px;
 }
 
-        /* =========================================================
+/* =========================================================
    🖥️ 電腦版專屬優化 (螢幕寬度 >= 1024px 才生效，手機版完全不動)
    ========================================================= */
 @media (min-width: 1024px) {
@@ -218,7 +222,7 @@ html, body {
     #game-screen,
     .game-main-layout {
         width: 100% !important;
-        max-width: 1380px !important; /* 控制整體集中寬度，覺得還不夠集中可改 1280px */
+        max-width: 1380px !important; 
         height: 100vh !important;
         margin: 0 auto !important;
         padding: 12px 24px !important;
@@ -247,8 +251,12 @@ html, body {
         padding: 1px 4px !important;
     }
 
-    /* 6. 稀有寶可夢夥伴卡片在電腦版也同步微幅放大 */
-    .noble-mini-card {
+    /* 6. 稀有寶可夢夥伴卡片在電腦版恢復固定大尺寸與不換行 */
+    .nobles-flex-container {
+        flex-wrap: nowrap;
+        justify-content: center;
+    }
+    .noble-mini-card { 
         width: 165px !important;
         min-width: 165px !important;
         padding: 6px 8px !important;
@@ -257,14 +265,17 @@ html, body {
         height: 44px !important;
         width: 44px !important;
     }
+    .noble-mini-card span { 
+        font-size: 9px !important; 
+    }
 }
 
-        /* 📦 專屬預留區的微型卡片樣式（完美塞入細長黑色外框） */
+/* 📦 專屬預留區的微型卡片樣式（完美塞入細長黑色外框） */
 .reserved-mini-card {
     position: relative;
     width: 100% !important;
     min-width: 0 !important;
-    aspect-ratio: 1 / 1.35 !important; /* 稍微拉長一點點，適應直立排版 */
+    aspect-ratio: 1 / 1.35 !important; 
     padding: 2px !important;
     display: flex;
     flex-direction: column;
@@ -282,7 +293,7 @@ html, body {
 }
 .reserved-mini-card img {
     width: auto !important;
-    height: 38px !important; /* 縮小圖片高度，完美收納進黑框 */
+    height: 38px !important; 
     max-width: 85% !important;
     object-fit: contain;
     margin: auto auto !important;
