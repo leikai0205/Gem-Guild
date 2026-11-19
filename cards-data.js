@@ -216,6 +216,26 @@ html, body {
     }
 }
 
+.active-turn-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: 5px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: rgba(251,191,36,.18);
+    border: 1px solid rgba(251,191,36,.85);
+    color: #fde68a;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .04em;
+    animation: activeLabelPulse 1.1s ease-in-out infinite;
+}
+@keyframes activeLabelPulse {
+    0%, 100% { opacity: .78; box-shadow: 0 0 3px rgba(251,191,36,.25); }
+    50% { opacity: 1; box-shadow: 0 0 12px rgba(251,191,36,.8); }
+}
+
 @keyframes pulseGold { 
     0%, 100% { box-shadow: 0 0 6px rgba(251, 191, 36, 0.4); } 
     50% { box-shadow: 0 0 14px rgba(251, 191, 36, 0.8); } 
@@ -228,7 +248,7 @@ html, body {
     85% { opacity: 1; transform: scale(1); }
     100% { opacity: 0; transform: scale(1.05); }
 }
-.toast-popup { animation: fadeInOut 1.3s ease-in-out forwards; }
+.toast-popup { animation: fadeInOut 2s ease-in-out forwards; }
 
 .vertical-text {
     writing-mode: vertical-lr;
@@ -2791,6 +2811,11 @@ function renderMyReservedCards(myReservedCards) {
                 const card = myReservedCards ? myReservedCards[i] : null;
                 if (card) {
                     const colorStyle = CARD_COLORS[card.bonus] || CARD_COLORS['diamond'];
+                    const currentPlayer = gameState && gameState.players ? gameState.players[myPlayerIndex] : null;
+                    const canAffordReserved = !!(currentPlayer &&
+                        gameState.currentPlayerIdx === myPlayerIndex &&
+                        !gameState.winner &&
+                        calculatePurchasePayment(currentPlayer, card).canAfford);
                     
                     let costHtml = '';
                     for (const [g, costVal] of Object.entries(card.cost || {})) {
@@ -2805,8 +2830,9 @@ function renderMyReservedCards(myReservedCards) {
                     }
 
                     html += `
-                        <div onclick="openCardModal('reserved', ${card.level}, ${i})" class="reserved-mini-card border ${colorStyle.bgClass} cursor-pointer relative overflow-hidden group">
+                        <div onclick="openCardModal('reserved', ${card.level}, ${i})" class="reserved-mini-card border ${colorStyle.bgClass} cursor-pointer relative overflow-hidden group ${canAffordReserved ? 'affordable-card' : ''}">
                             <div class="flex justify-between items-center z-10 text-[8px] font-bold">
+                                ${canAffordReserved ? '<span class="absolute top-0.5 left-0.5 px-1 py-0.2 rounded bg-emerald-400 text-slate-950 font-black text-[8px] shadow animate-pulse z-40">可收服</span>' : ''}
                                 <span class="${colorStyle.scoreClass}">${card.points > 0 ? '+' + card.points : ''}</span>
                                 <span class="px-0.5 rounded border text-[7px] font-bold leading-none ${colorStyle.badgeClass}">${colorStyle.name[0]}</span>
                             </div>
@@ -2935,6 +2961,7 @@ function renderMyReservedCards(myReservedCards) {
 
             if (data && data.game_state) {
                 gameState = data.game_state;
+                normalizeGameState();
                 let existingIdx = gameState.players.findIndex(p => p.name === playerName);
                 if (existingIdx !== -1) {
                     myPlayerIndex = existingIdx;
@@ -2992,6 +3019,16 @@ function renderMyReservedCards(myReservedCards) {
             subscribeRealtime();
         }
 
+        function normalizeGameState() {
+            if (!gameState) return;
+            // Supabase 舊資料可能把 boolean 存成字串；"false" 在 JS 會被當成 true。
+            gameState.finalRoundTriggered = gameState.finalRoundTriggered === true ||
+                gameState.finalRoundTriggered === 1 ||
+                gameState.finalRoundTriggered === 'true';
+            gameState.maxPlayers = Number(gameState.maxPlayers) || (gameState.players || []).length;
+            if (!Array.isArray(gameState.players)) gameState.players = [];
+        }
+
         function createPlayerObj(id, name) {
             return { id, name, points: 0, gems: { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, gold: 0 }, bonuses: { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0 }, cards: [], reserved: [], nobles: [] };
         }
@@ -3024,6 +3061,7 @@ function renderMyReservedCards(myReservedCards) {
                 .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `room_id=eq.${currentRoomId}` }, payload => {
                     if (payload.new && payload.new.game_state) {
                         gameState = payload.new.game_state;
+                        normalizeGameState();
                         renderAll();
                     }
                 })
@@ -3070,7 +3108,7 @@ function renderMyReservedCards(myReservedCards) {
 
             const finalRoundBadge = document.getElementById('final-round-badge');
             if (finalRoundBadge) {
-                finalRoundBadge.classList.toggle('hidden', !gameState.finalRoundTriggered);
+                finalRoundBadge.classList.toggle('hidden', gameState.finalRoundTriggered !== true);
             }
             if (gameState.winner) {
                 triggerVictoryModal(gameState.winner);
@@ -3102,7 +3140,7 @@ function renderMyReservedCards(myReservedCards) {
                     if (toastEl && toastEl.parentNode) {
                         toastEl.parentNode.removeChild(toastEl);
                     }
-                }, 1300); // 1.3秒自動消失，讓玩家有時間看清楚
+                }, 2000); // 2秒自動消失，讓玩家有時間看清楚
             }
         }
 
@@ -3347,7 +3385,7 @@ function renderNobles() {
                     <div class="glass-panel rounded-xl p-2.5 ${isCurrent ? 'active-turn-glow' : 'opacity-85'} space-y-1.5">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <span class="font-bold text-xs text-white">${p.name} ${isMe ? '(你)' : ''}</span>
+                                <span class="font-bold text-xs text-white">${p.name} ${isMe ? '(你)' : ''}${isCurrent ? '<span class="active-turn-label">⚡ 正在行動</span>' : ''}</span>
                                 <span class="text-[9px] px-1 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">道具 ${totalGems}/10</span>
                                 <span class="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">稀有 ${p.nobles.length}</span>
                                 ${reservedHtml}
@@ -3490,8 +3528,9 @@ function renderNobles() {
                     return;
                 }
             } else if (source === 'reserved' || source === 'reservedPlayer') {
-                const reservedOwnerIdx = source === 'reserved' ? myPlayerIndex : targetPlayerIdx;
-                reservedOwner = Number.isInteger(reservedOwnerIdx) ? gameState.players[reservedOwnerIdx] : null;
+                const reservedOwnerIdx = source === 'reserved' ? myPlayerIndex : Number(targetPlayerIdx);
+                reservedOwner = Number.isInteger(reservedOwnerIdx) && reservedOwnerIdx >= 0
+                    ? gameState.players[reservedOwnerIdx] : null;
 
                 if (!reservedOwner || !Array.isArray(reservedOwner.reserved) || !reservedOwner.reserved[idx]) {
                     alert('這張預留卡已不存在，請重新選擇。');
@@ -3647,7 +3686,7 @@ function renderNobles() {
         async function endPlayerTurn() {
             // 掃描是否有人達到 15 分，若有則觸發最終回合
             gameState.players.forEach(pl => {
-                if (pl.points >= 15 && !gameState.finalRoundTriggered) {
+                if (pl.points >= 15 && gameState.finalRoundTriggered !== true) {
                     gameState.finalRoundTriggered = true;
                     addGameLog(`⭐ 訓練家 ${pl.name} 率先達成 15 分，觸發最終回合！`);
                 }
