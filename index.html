@@ -2739,6 +2739,19 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
     </div>
 
     <!-- 遊戲核心邏輯 -->
+    <style>
+      .tabletop-flight {
+        position: fixed !important; z-index: 99999 !important; pointer-events: none !important;
+        margin: 0 !important; transform-origin: center center !important;
+        will-change: transform, opacity; filter: drop-shadow(0 8px 14px rgba(0,0,0,.55));
+      }
+      .tabletop-arrival-pulse { animation: tabletopArrivalPulse .65s ease-out; }
+      @keyframes tabletopArrivalPulse {
+        0% { filter: brightness(1); box-shadow: 0 0 0 rgba(251,191,36,0); }
+        45% { filter: brightness(1.65); box-shadow: 0 0 18px rgba(251,191,36,.9); }
+        100% { filter: brightness(1); box-shadow: 0 0 0 rgba(251,191,36,0); }
+      }
+    </style>
     <script>
         // 渲染市場（使用緊湊靠左排列，讓妙蛙花與拉普拉斯緊鄰）
         function renderMarket() {
@@ -2769,7 +2782,7 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
                     }).join('');
 
                     return `
-                      <div onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border ${colorStyle.bgClass} rounded-lg p-1 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
+                      <div data-market-card="${level}-${idx}" onclick="openCardModal('market', ${level}, ${idx})" class="poke-color-card border ${colorStyle.bgClass} rounded-lg p-1 flex flex-col justify-between cursor-pointer relative overflow-hidden group ${canAffordCard ? 'affordable-card' : ''}">
                         ${canAffordCard ? `<span class="absolute top-0.5 right-0.5 px-1 py-0.2 rounded bg-emerald-500 text-slate-950 font-black text-[9px] shadow animate-pulse z-40">可收服</span>` : ''}
                         
                         <div class="flex justify-between items-center z-10">
@@ -2830,7 +2843,7 @@ function renderMyReservedCards(myReservedCards) {
                     }
 
                     html += `
-                        <div onclick="openCardModal('reserved', ${card.level}, ${i})" class="reserved-mini-card border ${colorStyle.bgClass} cursor-pointer relative overflow-hidden group ${canAffordReserved ? 'affordable-card' : ''}">
+                        <div data-reserved-card="${i}" onclick="openCardModal('reserved', ${card.level}, ${i})" class="reserved-mini-card border ${colorStyle.bgClass} cursor-pointer relative overflow-hidden group ${canAffordReserved ? 'affordable-card' : ''}">
                             <div class="flex justify-between items-center z-10 text-[8px] font-bold">
                                 ${canAffordReserved ? '<span class="absolute top-0.5 left-0.5 px-1 py-0.2 rounded bg-emerald-400 text-slate-950 font-black text-[8px] shadow animate-pulse z-40">可收服</span>' : ''}
                                 <span class="${colorStyle.scoreClass}">${card.points > 0 ? '+' + card.points : ''}</span>
@@ -3259,12 +3272,12 @@ function renderNobles() {
                 const remaining = total - selected;
 
                 return `
-                  <div class="item-orb-btn relative flex flex-col items-center justify-center py-1.5 px-0.5 rounded-lg bg-slate-900/80 border border-slate-800 ${isMyTurn && gem !== 'gold' ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-70'}"
+                  <div data-bank-gem="${gem}" class="item-orb-btn relative flex flex-col items-center justify-center py-1.5 px-0.5 rounded-lg bg-slate-900/80 border border-slate-800 ${isMyTurn && gem !== 'gold' ? 'cursor-pointer hover:border-amber-400/50' : 'opacity-70'}"
                        onclick="${isMyTurn && gem !== 'gold' ? `handleSelectBankGem('${gem}')` : ''}">
                     <span class="bank-count-badge absolute w-3.5 h-3.5 rounded-full bg-amber-500 text-slate-950 font-black text-[9px] flex items-center justify-center shadow border border-amber-300 z-10">
                       ${remaining}
                     </span>
-                    <div class="my-0.5">${getGemOrbHTML(gem, 'w-6 h-6')}</div>
+                    <div class="my-0.5 bank-gem-visual">${getGemOrbHTML(gem, 'w-6 h-6')}</div>
                     <span class="text-[9px] font-bold ${info.text} leading-tight whitespace-nowrap">${info.name}</span>
                   </div>
                 `;
@@ -3357,9 +3370,87 @@ function renderNobles() {
             }
         }
 
+        // 桌遊式飛行動畫：先擷取來源，再於狀態重繪後飛向玩家面板。
+        function captureFlightSource(element) {
+            if (!element) return null;
+            const rect = element.getBoundingClientRect();
+            if (!rect || (!rect.width && !rect.height)) return null;
+            return {
+                rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+                html: element.innerHTML,
+                className: element.className || ''
+            };
+        }
+
+        function playTabletopFlight(snapshot, targetElement, kind = 'gem', delay = 0) {
+            if (!snapshot || !targetElement || typeof targetElement.getBoundingClientRect !== 'function') return;
+            const target = targetElement.getBoundingClientRect();
+            if (!target || (!target.width && !target.height)) return;
+
+            const flyer = document.createElement('div');
+            flyer.className = `tabletop-flight ${kind === 'card' ? 'poke-color-card' : ''}`;
+            flyer.innerHTML = snapshot.html;
+            flyer.style.left = `${snapshot.rect.left}px`;
+            flyer.style.top = `${snapshot.rect.top}px`;
+            flyer.style.width = `${Math.max(18, snapshot.rect.width)}px`;
+            flyer.style.height = `${Math.max(18, snapshot.rect.height)}px`;
+            flyer.style.boxSizing = 'border-box';
+            flyer.style.opacity = '1';
+            if (kind === 'card') {
+                flyer.style.background = 'linear-gradient(145deg, rgba(30,41,59,.98), rgba(15,23,42,.98))';
+                flyer.style.border = '1px solid rgba(251,191,36,.8)';
+                flyer.style.borderRadius = '8px';
+                flyer.style.padding = '4px';
+            } else {
+                flyer.style.display = 'flex';
+                flyer.style.alignItems = 'center';
+                flyer.style.justifyContent = 'center';
+                flyer.style.background = 'rgba(15,23,42,.9)';
+                flyer.style.borderRadius = '999px';
+            }
+            document.body.appendChild(flyer);
+
+            const fromX = snapshot.rect.left + snapshot.rect.width / 2;
+            const fromY = snapshot.rect.top + snapshot.rect.height / 2;
+            const toX = target.left + target.width / 2;
+            const toY = target.top + target.height / 2;
+            const dx = toX - fromX;
+            const dy = toY - fromY;
+            const finalScale = kind === 'card' ? Math.max(.16, Math.min(.32, target.width / Math.max(snapshot.rect.width, 1))) : .42;
+
+            const animation = flyer.animate([
+                { transform: 'translate(0px, 0px) scale(1) rotate(0deg)', opacity: 1 },
+                { transform: `translate(${dx * .58}px, ${dy * .58 - 26}px) scale(.72) rotate(8deg)`, opacity: 1, offset: .62 },
+                { transform: `translate(${dx}px, ${dy}px) scale(${finalScale}) rotate(18deg)`, opacity: .18 }
+            ], { duration: kind === 'card' ? 820 : 680, delay, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'forwards' });
+
+            animation.onfinish = () => flyer.remove();
+            targetElement.classList.remove('tabletop-arrival-pulse');
+            void targetElement.offsetWidth;
+            targetElement.classList.add('tabletop-arrival-pulse');
+            window.setTimeout(() => targetElement.classList.remove('tabletop-arrival-pulse'), 750 + delay);
+        }
+
+        function animateGemPickup(sources) {
+            sources.forEach((item, index) => {
+                const target = document.querySelector(`[data-player-index="${myPlayerIndex}"][data-player-gem="${item.gem}"]`);
+                playTabletopFlight(item.snapshot, target, 'gem', index * 95);
+            });
+        }
+
+        function animateCardCapture(snapshot, bonus) {
+            const target = document.querySelector(`[data-player-index="${myPlayerIndex}"][data-player-card-target="${bonus}"]`)
+                || document.getElementById(`player-panel-${myPlayerIndex}`);
+            playTabletopFlight(snapshot, target, 'card', 0);
+        }
+
         async function confirmTakeGems() {
             if (selectedGemsBuffer.length === 0) return;
             const player = gameState.players[myPlayerIndex];
+            const pickupFlights = selectedGemsBuffer.map(gem => ({
+                gem,
+                snapshot: captureFlightSource(document.querySelector(`[data-bank-gem="${gem}"] .bank-gem-visual`))
+            }));
             const gemNamesSummary = selectedGemsBuffer.map(g => BANK_ITEMS[g].name).join('、');
             selectedGemsBuffer.forEach(gem => {
                 gameState.bank[gem] -= 1;
@@ -3367,6 +3458,8 @@ function renderNobles() {
             });
             addGameLog(`${player.name} 拿取了進化石：${gemNamesSummary}`);
             selectedGemsBuffer = [];
+            renderAll();
+            animateGemPickup(pickupFlights);
             finishActionAndCheckPhase();
         }
 
@@ -3420,7 +3513,7 @@ function renderNobles() {
                 }
 
                 return `
-                    <div class="glass-panel rounded-xl p-2.5 ${isCurrent ? 'active-turn-glow' : 'opacity-85'} space-y-1.5">
+                    <div id="player-panel-${idx}" class="glass-panel rounded-xl p-2.5 ${isCurrent ? 'active-turn-glow' : 'opacity-85'} space-y-1.5">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <span class="font-bold text-xs text-white">${p.name} ${isMe ? '(你)' : ''}${isCurrent ? '<span class="active-turn-label">⚡ 正在行動</span>' : ''}</span>
@@ -3437,9 +3530,9 @@ function renderNobles() {
                                 const gemCount = p.gems[g];
                                 const cardCount = p.bonuses[g];
                                 return `
-                                    <div class="flex flex-col items-center justify-between p-0.5 rounded border ${attr.bg} text-[9px] text-center">
+                                    <div data-player-index="${idx}" data-player-card-target="${g}" class="flex flex-col items-center justify-between p-0.5 rounded border ${attr.bg} text-[9px] text-center">
                                         <span class="font-bold text-slate-300">${attr.title}</span>
-                                        <span class="${attr.gemColor} font-black my-0.2">${gemCount}</span>
+                                        <span data-player-index="${idx}" data-player-gem="${g}" class="${attr.gemColor} font-black my-0.2">${gemCount}</span>
                                         <span class="px-0.5 rounded border text-[8px] ${attr.cardBadge}">${cardCount}卡</span>
                                     </div>
                                 `;
@@ -3588,6 +3681,11 @@ function renderNobles() {
                 return;
             }
 
+            const cardSourceElement = source === 'market'
+                ? document.querySelector(`[data-market-card="${level}-${idx}"]`)
+                : (source === 'reserved' ? document.querySelector(`[data-reserved-card="${idx}"]`) : document.getElementById('modal-card-preview'));
+            const cardFlightSnapshot = captureFlightSource(cardSourceElement);
+
             // 所有檢查完成後才扣除資源。
             ALL_GEMS.forEach(g => {
                 const amount = payment.payGems[g] || 0;
@@ -3612,6 +3710,7 @@ function renderNobles() {
 
             closeCardModal();
             renderAll();
+            animateCardCapture(cardFlightSnapshot, card.bonus);
             finishActionAndCheckPhase();
         }
 
