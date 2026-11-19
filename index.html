@@ -2746,6 +2746,7 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
         will-change: transform, opacity; filter: drop-shadow(0 8px 14px rgba(0,0,0,.55));
       }
       .tabletop-arrival-pulse { animation: tabletopArrivalPulse .65s ease-out; }
+      .noble-tabletop-flight img { width: 100% !important; height: 100% !important; object-fit: contain !important; }
       @keyframes tabletopArrivalPulse {
         0% { filter: brightness(1); box-shadow: 0 0 0 rgba(251,191,36,0); }
         45% { filter: brightness(1.65); box-shadow: 0 0 18px rgba(251,191,36,.9); }
@@ -2918,6 +2919,7 @@ function renderMyReservedCards(myReservedCards) {
         let activeCardSelection = null;
         let realtimeChannel = null;
         let lastNotifiedPlayerIdx = null; // 用來追蹤換人提示
+        const processedVisualEventIds = new Set(); // 避免同一個多人同步動畫重複播放
 
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -3057,6 +3059,7 @@ function renderMyReservedCards(myReservedCards) {
             gameState.currentPlayerIdx = Number.isInteger(Number(gameState.currentPlayerIdx))
                 ? Number(gameState.currentPlayerIdx) : 0;
             if (!Array.isArray(gameState.logs)) gameState.logs = [];
+            if (!Array.isArray(gameState.visualEvents)) gameState.visualEvents = gameState.visualEvent ? [gameState.visualEvent] : [];
             if (!Array.isArray(gameState.nobles)) gameState.nobles = [];
             if (!gameState.bank || typeof gameState.bank !== 'object') {
                 gameState.bank = { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, gold: 0 };
@@ -3085,6 +3088,12 @@ function renderMyReservedCards(myReservedCards) {
         }
 
         function enterGameScreen() {
+            // 新加入房間時不重播加入前已發生的視覺事件。
+            if (gameState && Array.isArray(gameState.visualEvents)) {
+                gameState.visualEvents.forEach(event => { if (event && event.id) processedVisualEventIds.add(event.id); });
+            } else if (gameState && gameState.visualEvent && gameState.visualEvent.id) {
+                processedVisualEventIds.add(gameState.visualEvent.id);
+            }
             // 新房間重新開始換人提示追蹤，避免沿用上一場遊戲的索引。
             lastNotifiedPlayerIdx = null;
 
@@ -3111,9 +3120,17 @@ function renderMyReservedCards(myReservedCards) {
                 .channel(`room-${currentRoomId}`)
                 .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `room_id=eq.${currentRoomId}` }, payload => {
                     if (payload.new && payload.new.game_state) {
-                        gameState = payload.new.game_state;
+                        const incomingState = payload.new.game_state;
+                        const incomingVisualEvents = Array.isArray(incomingState.visualEvents)
+                            ? incomingState.visualEvents
+                            : (incomingState.visualEvent ? [incomingState.visualEvent] : []);
+                        const preparedVisualEvents = incomingVisualEvents
+                            .map(event => prepareVisualEvent(event))
+                            .filter(Boolean);
+                        gameState = incomingState;
                         normalizeGameState();
                         renderAll();
+                        preparedVisualEvents.forEach(playPreparedVisualEvent);
                     }
                 })
                 .subscribe();
@@ -3232,7 +3249,7 @@ function renderNobles() {
             container.innerHTML = `
                 <div class="nobles-flex-container">
                     ${gameState.nobles.map(n => `
-                        <div class="glass-card noble-mini-card border-amber-500/40 !flex-row !items-center !justify-center !px-1 !py-1 gap-1">
+                        <div data-noble-id="${n.id}" class="glass-card noble-mini-card border-amber-500/40 !flex-row !items-center !justify-center !px-1 !py-1 gap-1">
                             
                             <!-- 1. 左側：直式寶可夢名字 (緊貼圖片左側) -->
                             <div class="flex items-center justify-end shrink-0">
@@ -3444,13 +3461,147 @@ function renderNobles() {
             playTabletopFlight(snapshot, target, 'card', 0);
         }
 
+        // 將視覺事件寫進共用遊戲狀態，讓所有連線玩家都能播放同一段動畫。
+        function createVisualEvent(type, details = {}) {
+            const event = {
+                id: `${Date.now()}-${myPlayerIndex}-${Math.random().toString(36).slice(2, 9)}`,
+                createdAt: Date.now(),
+                type,
+                playerIndex: myPlayerIndex,
+                ...details
+            };
+            if (!Array.isArray(gameState.visualEvents)) gameState.visualEvents = [];
+            gameState.visualEvents.push(event);
+            if (gameState.visualEvents.length > 12) gameState.visualEvents = gameState.visualEvents.slice(-12);
+            return prepareVisualEvent(event);
+        }
+
+        function captureDeckFlightSource(level) {
+            const anchor = document.getElementById(`deck-count-${level}`);
+            if (!anchor) return null;
+            const rect = anchor.getBoundingClientRect();
+            if (!rect || (!rect.width && !rect.height)) return null;
+            const width = 42, height = 58;
+            return {
+                rect: { left: rect.left + rect.width / 2 - width / 2, top: rect.top + rect.height / 2 - height / 2, width, height },
+                html: '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;border:2px solid #c4b5fd;border-radius:7px;background:linear-gradient(145deg,#312e81,#0f172a);color:#fff;font-size:26px;font-weight:900;box-shadow:inset 0 0 12px #a78bfa">?</div>'
+            };
+        }
+
+        function captureVisualEventSources(event) {
+            if (!event) return null;
+            if (event.type === 'gems') {
+                return { gems: (event.gems || []).map(gem => ({ gem, snapshot: captureFlightSource(document.querySelector(`[data-bank-gem="${gem}"] .bank-gem-visual`)) })) };
+            }
+            if (event.type === 'reserveCard') {
+                let snapshot = null;
+                if (event.sourceType === 'market') {
+                    snapshot = captureFlightSource(document.querySelector(`[data-market-card="${event.level}-${event.idx}"]`));
+                } else {
+                    snapshot = captureDeckFlightSource(event.level);
+                }
+                return { card: snapshot };
+            }
+            if (event.type === 'captureCard') {
+                let snapshot = null;
+                if (event.sourceType === 'market') {
+                    snapshot = captureFlightSource(document.querySelector(`[data-market-card="${event.level}-${event.idx}"]`));
+                } else if (event.sourceType === 'reserved' && Number(event.ownerIdx) === myPlayerIndex) {
+                    snapshot = captureFlightSource(document.querySelector(`[data-reserved-card="${event.idx}"]`));
+                } else if (event.sourceType === 'reserved') {
+                    snapshot = captureFlightSource(document.querySelector(`[data-player-reserved-target="${event.ownerIdx}"]`));
+                } else {
+                    snapshot = captureFlightSource(document.getElementById('modal-card-preview'));
+                }
+                return { card: snapshot };
+            }
+            if (event.type === 'nobleClaim') {
+                return { noble: captureFlightSource(document.querySelector(`[data-noble-id="${event.nobleId}"]`)) };
+            }
+            return null;
+        }
+
+        function prepareVisualEvent(event) {
+            if (!event || !event.id || processedVisualEventIds.has(event.id)) return null;
+            return { event, snapshots: captureVisualEventSources(event) };
+        }
+
+        function playNobleClaimFlight(snapshot, targetElement) {
+            if (!snapshot || !targetElement) return;
+            const target = targetElement.getBoundingClientRect();
+            if (!target || (!target.width && !target.height)) return;
+            const flyer = document.createElement('div');
+            flyer.className = 'tabletop-flight noble-tabletop-flight';
+            flyer.innerHTML = snapshot.html;
+            flyer.style.left = `${snapshot.rect.left}px`;
+            flyer.style.top = `${snapshot.rect.top}px`;
+            flyer.style.width = `${Math.max(34, snapshot.rect.width)}px`;
+            flyer.style.height = `${Math.max(34, snapshot.rect.height)}px`;
+            flyer.style.boxSizing = 'border-box';
+            flyer.style.border = '2px solid rgba(251,191,36,.95)';
+            flyer.style.borderRadius = '12px';
+            flyer.style.padding = '4px';
+            flyer.style.background = 'linear-gradient(145deg,rgba(120,53,15,.98),rgba(15,23,42,.98))';
+            flyer.style.boxShadow = '0 0 30px rgba(251,191,36,.85),0 12px 30px rgba(0,0,0,.65)';
+            flyer.style.display = 'flex';
+            flyer.style.alignItems = 'center';
+            flyer.style.justifyContent = 'center';
+            flyer.style.overflow = 'hidden';
+            flyer.querySelectorAll('img').forEach(img => { img.style.maxWidth = '100%'; img.style.maxHeight = '100%'; img.style.objectFit = 'contain'; });
+            document.body.appendChild(flyer);
+
+            const fromX = snapshot.rect.left + snapshot.rect.width / 2;
+            const fromY = snapshot.rect.top + snapshot.rect.height / 2;
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const toX = target.left + target.width / 2;
+            const toY = target.top + target.height / 2;
+            const firstX = centerX - fromX;
+            const firstY = centerY - fromY;
+            const finalX = toX - fromX;
+            const finalY = toY - fromY;
+            const animation = flyer.animate([
+                { transform: 'translate(0,0) scale(.85) rotate(-5deg)', opacity: 1, offset: 0 },
+                { transform: `translate(${firstX}px,${firstY}px) scale(2.35) rotate(0deg)`, opacity: 1, offset: .52 },
+                { transform: `translate(${finalX}px,${finalY}px) scale(.38) rotate(12deg)`, opacity: .18, offset: 1 }
+            ], { duration: 1550, easing: 'cubic-bezier(.2,.72,.25,1)', fill: 'forwards' });
+            animation.onfinish = () => flyer.remove();
+            targetElement.classList.remove('tabletop-arrival-pulse');
+            void targetElement.offsetWidth;
+            window.setTimeout(() => targetElement.classList.add('tabletop-arrival-pulse'), 760);
+            window.setTimeout(() => targetElement.classList.remove('tabletop-arrival-pulse'), 1550);
+        }
+
+        function playPreparedVisualEvent(prepared) {
+            if (!prepared || !prepared.event) return;
+            const { event, snapshots } = prepared;
+            if (processedVisualEventIds.has(event.id)) return;
+            processedVisualEventIds.add(event.id);
+            if (event.type === 'gems') {
+                (snapshots && snapshots.gems || []).forEach((item, index) => {
+                    const target = document.querySelector(`[data-player-index="${event.playerIndex}"][data-player-gem="${item.gem}"]`);
+                    playTabletopFlight(item.snapshot, target, 'gem', index * 95);
+                });
+            } else if (event.type === 'reserveCard') {
+                const target = Number(event.playerIndex) === myPlayerIndex
+                    ? document.querySelector(`[data-reserved-card="${event.cardIndex}"]`)
+                    : document.querySelector(`[data-player-reserved-target="${event.playerIndex}"]`);
+                playTabletopFlight(snapshots && snapshots.card, target, 'card', 0);
+            } else if (event.type === 'captureCard') {
+                const target = document.querySelector(`[data-player-index="${event.playerIndex}"][data-player-card-target="${event.bonus}"]`)
+                    || document.getElementById(`player-panel-${event.playerIndex}`);
+                playTabletopFlight(snapshots && snapshots.card, target, 'card', 0);
+            } else if (event.type === 'nobleClaim') {
+                const target = document.querySelector(`[data-player-noble-target="${event.playerIndex}"]`)
+                    || document.getElementById(`player-panel-${event.playerIndex}`);
+                playNobleClaimFlight(snapshots && snapshots.noble, target);
+            }
+        }
+
         async function confirmTakeGems() {
             if (selectedGemsBuffer.length === 0) return;
             const player = gameState.players[myPlayerIndex];
-            const pickupFlights = selectedGemsBuffer.map(gem => ({
-                gem,
-                snapshot: captureFlightSource(document.querySelector(`[data-bank-gem="${gem}"] .bank-gem-visual`))
-            }));
+            const visualEvent = createVisualEvent('gems', { gems: [...selectedGemsBuffer] });
             const gemNamesSummary = selectedGemsBuffer.map(g => BANK_ITEMS[g].name).join('、');
             selectedGemsBuffer.forEach(gem => {
                 gameState.bank[gem] -= 1;
@@ -3459,7 +3610,7 @@ function renderNobles() {
             addGameLog(`${player.name} 拿取了進化石：${gemNamesSummary}`);
             selectedGemsBuffer = [];
             renderAll();
-            animateGemPickup(pickupFlights);
+            playPreparedVisualEvent(visualEvent);
             finishActionAndCheckPhase();
         }
 
@@ -3509,7 +3660,7 @@ function renderNobles() {
                 let reservedHtml = '';
                 if (p.reserved && p.reserved.length > 0) {
                     const cardsText = p.reserved.map(rc => `🔒 Lv.${rc.level}卡`).join(' ');
-                    reservedHtml = `<span class="text-[9px] text-purple-300 font-bold ml-1">${isMe ? '你的' : `${p.name}的`}保留區 (${p.reserved.length}/3)：${cardsText}</span>`;
+                    reservedHtml = `<span data-player-reserved-target="${idx}" class="text-[9px] text-purple-300 font-bold ml-1">${isMe ? '你的' : `${p.name}的`}保留區 (${p.reserved.length}/3)：${cardsText}</span>`;
                 }
 
                 return `
@@ -3518,7 +3669,7 @@ function renderNobles() {
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <span class="font-bold text-xs text-white">${p.name} ${isMe ? '(你)' : ''}${isCurrent ? '<span class="active-turn-label">⚡ 正在行動</span>' : ''}</span>
                                 <span class="text-[9px] px-1 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">道具 ${totalGems}/10</span>
-                                <span class="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">稀有 ${p.nobles.length}</span>
+                                <span data-player-noble-target="${idx}" class="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">稀有 ${p.nobles.length}</span>
                                 ${reservedHtml}
                             </div>
                             <span class="font-title font-black text-base text-amber-400 shrink-0">${p.points}分</span>
@@ -3572,9 +3723,9 @@ function renderNobles() {
             const isMyTurn = (gameState.currentPlayerIdx === myPlayerIndex) && !gameState.winner;
 
             document.getElementById('modal-card-preview').innerHTML = `
-                <div class="flex flex-col items-center gap-1">
-                    <img src="${card.pokeImg}" class="w-14 h-14 object-contain drop-shadow" />
-                    <div class="text-xs font-bold text-amber-300">Lv.${card.level} ${colorInfo.name}（+${card.points}分）</div>
+                <div class="flex flex-col items-center gap-2">
+                    <img src="${card.pokeImg}" class="w-32 h-32 sm:w-40 sm:h-40 object-contain drop-shadow-[0_0_18px_rgba(251,191,36,.28)]" />
+                    <div class="text-sm font-bold text-amber-300">Lv.${card.level} ${colorInfo.name}（+${card.points}分）</div>
                 </div>
             `;
 
@@ -3684,7 +3835,13 @@ function renderNobles() {
             const cardSourceElement = source === 'market'
                 ? document.querySelector(`[data-market-card="${level}-${idx}"]`)
                 : (source === 'reserved' ? document.querySelector(`[data-reserved-card="${idx}"]`) : document.getElementById('modal-card-preview'));
-            const cardFlightSnapshot = captureFlightSource(cardSourceElement);
+            const ownerIdxForVisual = source === 'reserved' ? myPlayerIndex : Number(targetPlayerIdx);
+            const visualEvent = createVisualEvent('captureCard', {
+                sourceType: source === 'reservedPlayer' ? 'reserved' : source,
+                level, idx,
+                ownerIdx: source === 'reserved' ? myPlayerIndex : ownerIdxForVisual,
+                bonus: card.bonus
+            });
 
             // 所有檢查完成後才扣除資源。
             ALL_GEMS.forEach(g => {
@@ -3710,7 +3867,7 @@ function renderNobles() {
 
             closeCardModal();
             renderAll();
-            animateCardCapture(cardFlightSnapshot, card.bonus);
+            playPreparedVisualEvent(visualEvent);
             finishActionAndCheckPhase();
         }
 
@@ -3738,6 +3895,10 @@ function renderNobles() {
 
             if (!confirmReserveWithoutMasterBall()) return;
 
+            const reservedCardIndex = player.reserved.length;
+            const visualEvent = createVisualEvent('reserveCard', {
+                sourceType: 'market', level, idx, cardIndex: reservedCardIndex
+            });
             player.reserved.push(card);
             gameState.market[level][idx] = gameState.decks[level].shift() || null;
             const receivedMasterBall = Number(gameState.bank.gold || 0) > 0;
@@ -3751,6 +3912,7 @@ function renderNobles() {
                 : `${player.name} 保留卡片（銀行大師球已用完，未獲得大師球）`);
             closeCardModal();
             renderAll();
+            playPreparedVisualEvent(visualEvent);
             finishActionAndCheckPhase();
         }
 
@@ -3765,6 +3927,10 @@ function renderNobles() {
             if (!gameState.decks[level] || gameState.decks[level].length === 0) { alert('牌庫已空！'); return; }
             if (!confirmReserveWithoutMasterBall()) return;
 
+            const reservedCardIndex = player.reserved.length;
+            const visualEvent = createVisualEvent('reserveCard', {
+                sourceType: 'deck', level, idx: 0, cardIndex: reservedCardIndex
+            });
             const topCard = gameState.decks[level].shift();
             player.reserved.push(topCard);
             const receivedMasterBall = Number(gameState.bank.gold || 0) > 0;
@@ -3777,6 +3943,7 @@ function renderNobles() {
                 ? `${player.name} 從 Lv.${level} 牌庫盲抽保留並獲得 1 顆大師球`
                 : `${player.name} 從 Lv.${level} 牌庫盲抽保留（銀行大師球已用完，未獲得大師球）`);
             renderAll();
+            playPreparedVisualEvent(visualEvent);
             finishActionAndCheckPhase();
         }
 
@@ -3837,17 +4004,20 @@ function renderNobles() {
         function claimNobleAndEndTurn(nobleId) {
             document.getElementById('noble-choice-modal').classList.add('hidden');
             const nobleIdx = gameState.nobles.findIndex(n => n.id === nobleId);
+            let visualEvent = null;
             if (nobleIdx !== -1) {
-                const noble = gameState.nobles.splice(nobleIdx, 1)[0];
+                const noble = gameState.nobles[nobleIdx];
+                visualEvent = createVisualEvent('nobleClaim', { nobleId: noble.id });
+                gameState.nobles.splice(nobleIdx, 1);
                 const player = gameState.players[myPlayerIndex];
                 player.nobles.push(noble);
                 player.points += noble.points;
                 addGameLog(`${player.name} 吸引了稀有寶可夢「${noble.name}」（+3分）`);
             }
-            endPlayerTurn();
+            endPlayerTurn(visualEvent);
         }
 
-        async function endPlayerTurn() {
+        async function endPlayerTurn(preparedVisualEvent = null) {
             // 掃描是否有人達到 15 分，若有則觸發最終回合
             gameState.players.forEach(pl => {
                 if (pl.points >= 15 && gameState.finalRoundTriggered !== true) {
@@ -3883,6 +4053,7 @@ function renderNobles() {
 
             await saveGameState();
             renderAll();
+            if (preparedVisualEvent) playPreparedVisualEvent(preparedVisualEvent);
         }
 
         function triggerVictoryModal(winnerName) {
