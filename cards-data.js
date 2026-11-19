@@ -2945,6 +2945,7 @@ function renderMyReservedCards(myReservedCards) {
         }
 
         async function joinOrCreateRoom() {
+            try {
             const rawRoomId = document.getElementById('input-room-id').value.trim();
             const playerName = document.getElementById('input-player-name').value.trim() || '小智';
             const maxPlayers = parseInt(document.getElementById('input-max-players').value);
@@ -3015,18 +3016,55 @@ function renderMyReservedCards(myReservedCards) {
                 });
             }
 
+            normalizeGameState();
+            if (!Array.isArray(gameState.players) || !gameState.players[myPlayerIndex]) {
+                throw new Error('玩家資料不完整，無法建立遊戲畫面。請更換房號再試一次。');
+            }
             enterGameScreen();
             subscribeRealtime();
+            } catch (error) {
+                console.error('進入遊戲失敗：', error);
+                const msg = error && error.message ? error.message : String(error);
+                document.getElementById('lobby-status-msg').textContent = `進入失敗：${msg}`;
+                alert(`無法進入遊戲：${msg}`);
+            }
         }
 
         function normalizeGameState() {
-            if (!gameState) return;
+            if (!gameState || typeof gameState !== 'object') {
+                throw new Error('房間資料格式錯誤，請使用新的房號建立房間。');
+            }
             // Supabase 舊資料可能把 boolean 存成字串；"false" 在 JS 會被當成 true。
             gameState.finalRoundTriggered = gameState.finalRoundTriggered === true ||
                 gameState.finalRoundTriggered === 1 ||
                 gameState.finalRoundTriggered === 'true';
-            gameState.maxPlayers = Number(gameState.maxPlayers) || (gameState.players || []).length;
             if (!Array.isArray(gameState.players)) gameState.players = [];
+            gameState.players = gameState.players.filter(p => p && typeof p === 'object');
+            gameState.maxPlayers = Number(gameState.maxPlayers) || gameState.players.length || 2;
+            gameState.currentPlayerIdx = Number.isInteger(Number(gameState.currentPlayerIdx))
+                ? Number(gameState.currentPlayerIdx) : 0;
+            if (!Array.isArray(gameState.logs)) gameState.logs = [];
+            if (!Array.isArray(gameState.nobles)) gameState.nobles = [];
+            if (!gameState.bank || typeof gameState.bank !== 'object') {
+                gameState.bank = { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, gold: 0 };
+            }
+            if (!gameState.decks || typeof gameState.decks !== 'object') gameState.decks = { 1: [], 2: [], 3: [] };
+            if (!gameState.market || typeof gameState.market !== 'object') gameState.market = { 1: [], 2: [], 3: [] };
+            for (const level of [1, 2, 3]) {
+                if (!Array.isArray(gameState.decks[level])) gameState.decks[level] = [];
+                if (!Array.isArray(gameState.market[level])) gameState.market[level] = [];
+            }
+            if (gameState.currentPlayerIdx < 0 || gameState.currentPlayerIdx >= gameState.players.length) {
+                gameState.currentPlayerIdx = 0;
+            }
+            for (const player of gameState.players) {
+                if (!player.gems || typeof player.gems !== 'object') player.gems = {};
+                if (!player.bonuses || typeof player.bonuses !== 'object') player.bonuses = {};
+                if (!Array.isArray(player.cards)) player.cards = [];
+                if (!Array.isArray(player.reserved)) player.reserved = [];
+                if (!Array.isArray(player.nobles)) player.nobles = [];
+                if (typeof player.name !== 'string') player.name = '未命名玩家';
+            }
         }
 
         function createPlayerObj(id, name) {
