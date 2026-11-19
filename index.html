@@ -193,7 +193,48 @@ html, body {
 
 .item-orb-btn { transition: transform 0.15s ease; }
 .item-orb-btn:hover:not(:disabled) { transform: translateY(-2px); }
-.active-turn-glow { border-color: #fbbf24 !important; box-shadow: 0 0 12px rgba(251, 191, 36, 0.3); }
+.active-turn-glow {
+    position: relative !important;
+    border: 2px solid #fbbf24 !important;
+    background: linear-gradient(110deg, rgba(120, 82, 12, 0.42), rgba(15, 23, 42, 0.92)) !important;
+    box-shadow:
+        0 0 0 2px rgba(251, 191, 36, 0.22),
+        0 0 14px rgba(251, 191, 36, 0.75),
+        0 0 30px rgba(251, 191, 36, 0.42),
+        inset 0 0 16px rgba(251, 191, 36, 0.16) !important;
+    animation: activePlayerPulse 1.35s ease-in-out infinite;
+    z-index: 2;
+}
+@keyframes activePlayerPulse {
+    0%, 100% {
+        border-color: #fbbf24;
+        box-shadow: 0 0 0 2px rgba(251,191,36,.20), 0 0 14px rgba(251,191,36,.65), 0 0 26px rgba(251,191,36,.35), inset 0 0 12px rgba(251,191,36,.12);
+    }
+    50% {
+        border-color: #fff1a8;
+        box-shadow: 0 0 0 3px rgba(253,224,71,.30), 0 0 22px rgba(251,191,36,.95), 0 0 42px rgba(251,191,36,.58), inset 0 0 20px rgba(251,191,36,.24);
+    }
+}
+
+.active-turn-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: 5px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: rgba(251,191,36,.18);
+    border: 1px solid rgba(251,191,36,.85);
+    color: #fde68a;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .04em;
+    animation: activeLabelPulse 1.1s ease-in-out infinite;
+}
+@keyframes activeLabelPulse {
+    0%, 100% { opacity: .78; box-shadow: 0 0 3px rgba(251,191,36,.25); }
+    50% { opacity: 1; box-shadow: 0 0 12px rgba(251,191,36,.8); }
+}
 
 @keyframes pulseGold { 
     0%, 100% { box-shadow: 0 0 6px rgba(251, 191, 36, 0.4); } 
@@ -207,7 +248,7 @@ html, body {
     85% { opacity: 1; transform: scale(1); }
     100% { opacity: 0; transform: scale(1.05); }
 }
-.toast-popup { animation: fadeInOut 0.5s ease-in-out forwards; }
+.toast-popup { animation: fadeInOut 2s ease-in-out forwards; }
 
 .vertical-text {
     writing-mode: vertical-lr;
@@ -2770,6 +2811,11 @@ function renderMyReservedCards(myReservedCards) {
                 const card = myReservedCards ? myReservedCards[i] : null;
                 if (card) {
                     const colorStyle = CARD_COLORS[card.bonus] || CARD_COLORS['diamond'];
+                    const currentPlayer = gameState && gameState.players ? gameState.players[myPlayerIndex] : null;
+                    const canAffordReserved = !!(currentPlayer &&
+                        gameState.currentPlayerIdx === myPlayerIndex &&
+                        !gameState.winner &&
+                        calculatePurchasePayment(currentPlayer, card).canAfford);
                     
                     let costHtml = '';
                     for (const [g, costVal] of Object.entries(card.cost || {})) {
@@ -2784,8 +2830,9 @@ function renderMyReservedCards(myReservedCards) {
                     }
 
                     html += `
-                        <div onclick="openCardModal('reserved', ${card.level}, ${i})" class="reserved-mini-card border ${colorStyle.bgClass} cursor-pointer relative overflow-hidden group">
+                        <div onclick="openCardModal('reserved', ${card.level}, ${i})" class="reserved-mini-card border ${colorStyle.bgClass} cursor-pointer relative overflow-hidden group ${canAffordReserved ? 'affordable-card' : ''}">
                             <div class="flex justify-between items-center z-10 text-[8px] font-bold">
+                                ${canAffordReserved ? '<span class="absolute top-0.5 left-0.5 px-1 py-0.2 rounded bg-emerald-400 text-slate-950 font-black text-[8px] shadow animate-pulse z-40">可收服</span>' : ''}
                                 <span class="${colorStyle.scoreClass}">${card.points > 0 ? '+' + card.points : ''}</span>
                                 <span class="px-0.5 rounded border text-[7px] font-bold leading-none ${colorStyle.badgeClass}">${colorStyle.name[0]}</span>
                             </div>
@@ -2898,6 +2945,7 @@ function renderMyReservedCards(myReservedCards) {
         }
 
         async function joinOrCreateRoom() {
+            try {
             const rawRoomId = document.getElementById('input-room-id').value.trim();
             const playerName = document.getElementById('input-player-name').value.trim() || '小智';
             const maxPlayers = parseInt(document.getElementById('input-max-players').value);
@@ -2914,6 +2962,7 @@ function renderMyReservedCards(myReservedCards) {
 
             if (data && data.game_state) {
                 gameState = data.game_state;
+                normalizeGameState();
                 let existingIdx = gameState.players.findIndex(p => p.name === playerName);
                 if (existingIdx !== -1) {
                     myPlayerIndex = existingIdx;
@@ -2967,8 +3016,55 @@ function renderMyReservedCards(myReservedCards) {
                 });
             }
 
+            normalizeGameState();
+            if (!Array.isArray(gameState.players) || !gameState.players[myPlayerIndex]) {
+                throw new Error('玩家資料不完整，無法建立遊戲畫面。請更換房號再試一次。');
+            }
             enterGameScreen();
             subscribeRealtime();
+            } catch (error) {
+                console.error('進入遊戲失敗：', error);
+                const msg = error && error.message ? error.message : String(error);
+                document.getElementById('lobby-status-msg').textContent = `進入失敗：${msg}`;
+                alert(`無法進入遊戲：${msg}`);
+            }
+        }
+
+        function normalizeGameState() {
+            if (!gameState || typeof gameState !== 'object') {
+                throw new Error('房間資料格式錯誤，請使用新的房號建立房間。');
+            }
+            // Supabase 舊資料可能把 boolean 存成字串；"false" 在 JS 會被當成 true。
+            gameState.finalRoundTriggered = gameState.finalRoundTriggered === true ||
+                gameState.finalRoundTriggered === 1 ||
+                gameState.finalRoundTriggered === 'true';
+            if (!Array.isArray(gameState.players)) gameState.players = [];
+            gameState.players = gameState.players.filter(p => p && typeof p === 'object');
+            gameState.maxPlayers = Number(gameState.maxPlayers) || gameState.players.length || 2;
+            gameState.currentPlayerIdx = Number.isInteger(Number(gameState.currentPlayerIdx))
+                ? Number(gameState.currentPlayerIdx) : 0;
+            if (!Array.isArray(gameState.logs)) gameState.logs = [];
+            if (!Array.isArray(gameState.nobles)) gameState.nobles = [];
+            if (!gameState.bank || typeof gameState.bank !== 'object') {
+                gameState.bank = { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, gold: 0 };
+            }
+            if (!gameState.decks || typeof gameState.decks !== 'object') gameState.decks = { 1: [], 2: [], 3: [] };
+            if (!gameState.market || typeof gameState.market !== 'object') gameState.market = { 1: [], 2: [], 3: [] };
+            for (const level of [1, 2, 3]) {
+                if (!Array.isArray(gameState.decks[level])) gameState.decks[level] = [];
+                if (!Array.isArray(gameState.market[level])) gameState.market[level] = [];
+            }
+            if (gameState.currentPlayerIdx < 0 || gameState.currentPlayerIdx >= gameState.players.length) {
+                gameState.currentPlayerIdx = 0;
+            }
+            for (const player of gameState.players) {
+                if (!player.gems || typeof player.gems !== 'object') player.gems = {};
+                if (!player.bonuses || typeof player.bonuses !== 'object') player.bonuses = {};
+                if (!Array.isArray(player.cards)) player.cards = [];
+                if (!Array.isArray(player.reserved)) player.reserved = [];
+                if (!Array.isArray(player.nobles)) player.nobles = [];
+                if (typeof player.name !== 'string') player.name = '未命名玩家';
+            }
         }
 
         function createPlayerObj(id, name) {
@@ -2976,6 +3072,9 @@ function renderMyReservedCards(myReservedCards) {
         }
 
         function enterGameScreen() {
+            // 新房間重新開始換人提示追蹤，避免沿用上一場遊戲的索引。
+            lastNotifiedPlayerIdx = null;
+
             // 務必確認這裡有這行指令，才能讓點擊進入遊戲後，大廳畫面徹底消失！
             document.getElementById('lobby-screen').classList.add('hidden');
             
@@ -3000,6 +3099,7 @@ function renderMyReservedCards(myReservedCards) {
                 .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `room_id=eq.${currentRoomId}` }, payload => {
                     if (payload.new && payload.new.game_state) {
                         gameState = payload.new.game_state;
+                        normalizeGameState();
                         renderAll();
                     }
                 })
@@ -3044,8 +3144,9 @@ function renderMyReservedCards(myReservedCards) {
             updateStatusBanner();
             checkAndShowTurnToast(); // 檢查並跳出換人提示框
 
-            if (gameState.finalRoundTriggered) {
-                document.getElementById('final-round-badge').classList.remove('hidden');
+            const finalRoundBadge = document.getElementById('final-round-badge');
+            if (finalRoundBadge) {
+                finalRoundBadge.classList.toggle('hidden', gameState.finalRoundTriggered !== true);
             }
             if (gameState.winner) {
                 triggerVictoryModal(gameState.winner);
@@ -3077,7 +3178,7 @@ function renderMyReservedCards(myReservedCards) {
                     if (toastEl && toastEl.parentNode) {
                         toastEl.parentNode.removeChild(toastEl);
                     }
-                }, 500); // 0.5秒自動消失
+                }, 2000); // 2秒自動消失，讓玩家有時間看清楚
             }
         }
 
@@ -3322,7 +3423,7 @@ function renderNobles() {
                     <div class="glass-panel rounded-xl p-2.5 ${isCurrent ? 'active-turn-glow' : 'opacity-85'} space-y-1.5">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <span class="font-bold text-xs text-white">${p.name} ${isMe ? '(你)' : ''}</span>
+                                <span class="font-bold text-xs text-white">${p.name} ${isMe ? '(你)' : ''}${isCurrent ? '<span class="active-turn-label">⚡ 正在行動</span>' : ''}</span>
                                 <span class="text-[9px] px-1 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">道具 ${totalGems}/10</span>
                                 <span class="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">稀有 ${p.nobles.length}</span>
                                 ${reservedHtml}
@@ -3447,35 +3548,70 @@ function renderNobles() {
 
         async function executeBuyCard() {
             if (!activeCardSelection) return;
-            const { card, source, level, idx, targetPlayerIdx } = activeCardSelection;
+
+            const { source, level, idx, targetPlayerIdx } = activeCardSelection;
             const player = gameState.players[myPlayerIndex];
+            if (!player || gameState.currentPlayerIdx !== myPlayerIndex || gameState.winner) return;
+
+            // 自己的預留卡沒有 targetPlayerIdx，必須使用 myPlayerIndex。
+            // 先確認卡片仍存在，再計算費用，避免扣款後才發現找不到卡片。
+            let card = activeCardSelection.card;
+            let reservedOwner = null;
+
+            if (source === 'market') {
+                card = gameState.market[level] && gameState.market[level][idx];
+                if (!card) {
+                    alert('這張市場卡已經被收服，請重新選擇。');
+                    closeCardModal();
+                    return;
+                }
+            } else if (source === 'reserved' || source === 'reservedPlayer') {
+                const reservedOwnerIdx = source === 'reserved' ? myPlayerIndex : Number(targetPlayerIdx);
+                reservedOwner = Number.isInteger(reservedOwnerIdx) && reservedOwnerIdx >= 0
+                    ? gameState.players[reservedOwnerIdx] : null;
+
+                if (!reservedOwner || !Array.isArray(reservedOwner.reserved) || !reservedOwner.reserved[idx]) {
+                    alert('這張預留卡已不存在，請重新選擇。');
+                    closeCardModal();
+                    renderAll();
+                    return;
+                }
+
+                // 以目前遊戲狀態中的卡片為準，避免使用過期的彈窗資料。
+                card = reservedOwner.reserved[idx];
+            }
+
             const payment = calculatePurchasePayment(player, card);
 
             if (!payment.canAfford) {
-                alert('資源不足！');
+                alert(`資源不足！${payment.missingDetails.join('、')}`);
                 return;
             }
 
+            // 所有檢查完成後才扣除資源。
             ALL_GEMS.forEach(g => {
-                if (payment.payGems[g] > 0) {
-                    player.gems[g] -= payment.payGems[g];
-                    gameState.bank[g] += payment.payGems[g];
+                const amount = payment.payGems[g] || 0;
+                if (amount > 0) {
+                    player.gems[g] -= amount;
+                    gameState.bank[g] += amount;
                 }
             });
 
             player.cards.push(card);
-            player.bonuses[card.bonus] += 1;
-            player.points += card.points;
+            player.bonuses[card.bonus] = (player.bonuses[card.bonus] || 0) + 1;
+            player.points += card.points || 0;
 
             addGameLog(`${player.name} 收服了 Lv.${card.level} ${CARD_COLORS[card.bonus].name}（+${card.points}分）`);
 
             if (source === 'market') {
                 gameState.market[level][idx] = gameState.decks[level].shift() || null;
             } else if (source === 'reserved' || source === 'reservedPlayer') {
-                gameState.players[targetPlayerIdx].reserved.splice(idx, 1);
+                // 使用正確的預留卡持有人，避免 2P 收服時誤刪 1P 的卡片。
+                reservedOwner.reserved.splice(idx, 1);
             }
 
             closeCardModal();
+            renderAll();
             finishActionAndCheckPhase();
         }
 
@@ -3588,7 +3724,7 @@ function renderNobles() {
         async function endPlayerTurn() {
             // 掃描是否有人達到 15 分，若有則觸發最終回合
             gameState.players.forEach(pl => {
-                if (pl.points >= 15 && !gameState.finalRoundTriggered) {
+                if (pl.points >= 15 && gameState.finalRoundTriggered !== true) {
                     gameState.finalRoundTriggered = true;
                     addGameLog(`⭐ 訓練家 ${pl.name} 率先達成 15 分，觸發最終回合！`);
                 }
