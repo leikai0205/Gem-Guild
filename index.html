@@ -3615,21 +3615,43 @@ function renderNobles() {
             finishActionAndCheckPhase();
         }
 
+        // 銀行沒有大師球時，先提醒玩家；取消就不執行預留行動。
+        function confirmReserveWithoutMasterBall() {
+            if (Number(gameState.bank && gameState.bank.gold || 0) > 0) return true;
+            return window.confirm('⚠️ 銀行的大師球已經用完！\n\n這次預留卡片將不會獲得大師球。\n仍然要繼續預留嗎？');
+        }
+
         async function executeReserveCard() {
             if (!activeCardSelection) return;
-            const { card, level, idx } = activeCardSelection;
+            const { level, idx } = activeCardSelection;
             const player = gameState.players[myPlayerIndex];
-            if ((player.reserved || []).length >= 3) return;
+            if (!player || gameState.currentPlayerIdx !== myPlayerIndex || gameState.winner) return;
+            if ((player.reserved || []).length >= 3) { alert('保留區最多 3 張！'); return; }
+
+            // 以目前市場狀態為準，避免預留已被其他玩家取走的舊卡片。
+            const card = gameState.market[level] && gameState.market[level][idx];
+            if (!card) {
+                alert('這張市場卡已經不在了，請重新選擇。');
+                closeCardModal();
+                renderAll();
+                return;
+            }
+
+            if (!confirmReserveWithoutMasterBall()) return;
 
             player.reserved.push(card);
             gameState.market[level][idx] = gameState.decks[level].shift() || null;
-            if (gameState.bank.gold > 0) {
+            const receivedMasterBall = Number(gameState.bank.gold || 0) > 0;
+            if (receivedMasterBall) {
                 gameState.bank.gold -= 1;
                 player.gems.gold += 1;
             }
 
-            addGameLog(`${player.name} 保留卡片並獲得 1 顆大師球`);
+            addGameLog(receivedMasterBall
+                ? `${player.name} 保留卡片並獲得 1 顆大師球`
+                : `${player.name} 保留卡片（銀行大師球已用完，未獲得大師球）`);
             closeCardModal();
+            renderAll();
             finishActionAndCheckPhase();
         }
 
@@ -3641,16 +3663,21 @@ function renderNobles() {
 
             const player = gameState.players[myPlayerIndex];
             if ((player.reserved || []).length >= 3) { alert('保留區最多 3 張！'); return; }
-            if (gameState.decks[level].length === 0) { alert('牌庫已空！'); return; }
+            if (!gameState.decks[level] || gameState.decks[level].length === 0) { alert('牌庫已空！'); return; }
+            if (!confirmReserveWithoutMasterBall()) return;
 
             const topCard = gameState.decks[level].shift();
             player.reserved.push(topCard);
-            if (gameState.bank.gold > 0) {
+            const receivedMasterBall = Number(gameState.bank.gold || 0) > 0;
+            if (receivedMasterBall) {
                 gameState.bank.gold -= 1;
                 player.gems.gold += 1;
             }
 
-            addGameLog(`${player.name} 從 Lv.${level} 牌庫盲抽保留並獲得 1 顆大師球`);
+            addGameLog(receivedMasterBall
+                ? `${player.name} 從 Lv.${level} 牌庫盲抽保留並獲得 1 顆大師球`
+                : `${player.name} 從 Lv.${level} 牌庫盲抽保留（銀行大師球已用完，未獲得大師球）`);
+            renderAll();
             finishActionAndCheckPhase();
         }
 
