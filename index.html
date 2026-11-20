@@ -3729,24 +3729,33 @@ function renderNobles() {
                 </div>
             `;
 
-            document.getElementById('modal-cost-breakdown').innerHTML = Object.entries(card.cost).map(([g, costVal]) => {
+            const costRowsHtml = Object.entries(card.cost).map(([g, costVal]) => {
                 if (costVal <= 0) return '';
                 const itemInfo = BANK_ITEMS[g] || { name: g };
-                const ownedBonus = (me.bonuses && me.bonuses[g]) || 0;
-                const shortCount = Math.max(0, costVal - ownedBonus);
+                const ownedCards = Number((me.bonuses && me.bonuses[g]) || 0);
+                const ownedGems = Number((me.gems && me.gems[g]) || 0);
+                const discount = Math.min(costVal, ownedCards);
+                const netCost = Math.max(0, costVal - discount);
+                const shortCount = Math.max(0, netCost - ownedGems);
                 return `
-                    <div class="flex justify-between items-center py-0.5 border-b border-slate-800/60 last:border-0 text-xs">
-                        <span class="flex items-center gap-1">
+                    <div class="flex justify-between items-center gap-2 py-1 border-b border-slate-800/60 last:border-0 text-xs">
+                        <span class="flex items-center gap-1 shrink-0">
                             ${getGemOrbHTML(g, 'w-3.5 h-3.5')}
                             <span>${itemInfo.name}</span>
                         </span>
                         <span class="text-right">
-                            <span>${costVal}顆</span>
-                            <span class="text-slate-400 text-[10px] ml-1">(持有 ${ownedBonus} ➔ <b class="text-amber-300">缺 ${shortCount}</b>)</span>
+                            <b>${costVal}顆</b>
+                            <span class="text-slate-400 text-[10px] ml-1">(持有 ${ownedGems}顆｜持有 ${ownedCards}卡，折抵 ${discount} ➔ <b class="${shortCount > 0 ? 'text-amber-300' : 'text-emerald-300'}">缺 ${shortCount}</b>)</span>
                         </span>
                     </div>
                 `;
             }).join('');
+            const goldOwned = Number((me.gems && me.gems.gold) || 0);
+            const goldNeeded = Number(payment.goldUsed || 0);
+            const goldSummaryHtml = goldNeeded > 0
+                ? `<div class="mt-2 pt-2 border-t border-purple-500/30 text-right text-[11px] ${goldOwned >= goldNeeded ? 'text-purple-300' : 'text-rose-300'}">${goldOwned >= goldNeeded ? `本次需要使用 ${goldNeeded} 顆大師球（持有 ${goldOwned} 顆）` : `需要 ${goldNeeded} 顆大師球補差額，但目前只持有 ${goldOwned} 顆，還差 ${goldNeeded - goldOwned} 顆`}</div>`
+                : `<div class="mt-2 pt-2 border-t border-slate-800/60 text-right text-[11px] text-slate-400">不需要使用大師球</div>`;
+            document.getElementById('modal-cost-breakdown').innerHTML = costRowsHtml + goldSummaryHtml;
 
             const statusEl = document.getElementById('modal-afford-status');
             const buyBtn = document.getElementById('modal-btn-buy');
@@ -3771,7 +3780,9 @@ function renderNobles() {
                     : `<span class="text-emerald-400">資源足夠，可直接收服！</span>`;
             } else {
                 buyBtn.disabled = true;
-                statusEl.innerHTML = `<span class="text-rose-400">進化石不足（${payment.missingDetails.join('、')}）</span>`;
+                const goldOwnedNow = Number((me.gems && me.gems.gold) || 0);
+                const goldShort = Math.max(0, Number(payment.goldUsed || 0) - goldOwnedNow);
+                statusEl.innerHTML = `<span class="text-rose-400">進化石不足（${payment.missingDetails.join('、')}）</span>${payment.goldUsed > 0 ? `<div class="text-rose-300 text-xs mt-1">需要 ${payment.goldUsed} 顆大師球補差額，目前持有 ${goldOwnedNow} 顆${goldShort > 0 ? `，還差 ${goldShort} 顆` : ''}</div>` : ''}`;
             }
 
             if (source === 'market') {
