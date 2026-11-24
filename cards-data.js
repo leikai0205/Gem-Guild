@@ -53,75 +53,206 @@ function shuffle(arr) {
     return copy;
 }
 
-// 3. 建立 100% 原版《璀璨寶石》90 張發展卡牌庫
-// 陣列索引順序：[同色(0), 順位+1, 順位+2, 順位+3, 順位+4]
+
+// 3. 90 張發展卡：依照整理表逐張設定
+// 每筆資料格式：[分數, 白色, 藍色, 綠色, 紅色, 黑色]
+// 白色 = diamond（遊戲黃色）
+// 黑色 = onyx（遊戲紫色）
+//
+// 每種永久顏色：
+// L1：8 張、L2：6 張、L3：4 張
+
+const CARD_COST_ORDER = [
+    'diamond',
+    'sapphire',
+    'emerald',
+    'ruby',
+    'onyx'
+];
+
+// 每種永久顏色的 18 張卡牌資料
+const CARD_DATA_BY_BONUS = {
+
+    // 白色永久卡（遊戲黃色）
+    diamond: [
+        // Level 1
+        [0, 0, 3, 0, 0, 0],
+        [1, 0, 0, 4, 0, 0],
+        [0, 0, 0, 0, 2, 1],
+        [0, 0, 2, 0, 0, 2],
+        [0, 3, 1, 0, 0, 1],
+        [0, 0, 2, 2, 0, 1],
+        [0, 0, 1, 1, 1, 1],
+        [0, 0, 1, 2, 1, 1],
+
+        // Level 2
+        [2, 0, 0, 0, 5, 0],
+        [3, 6, 0, 0, 0, 0],
+        [2, 0, 0, 0, 5, 3],
+        [2, 0, 0, 1, 4, 2],
+        [1, 0, 0, 3, 2, 2],
+        [1, 2, 3, 0, 3, 0],
+
+        // Level 3
+        [4, 0, 0, 0, 0, 7],
+        [4, 3, 0, 0, 3, 6],
+        [3, 0, 3, 3, 5, 3],
+        [5, 3, 0, 0, 0, 7]
+    ],
+
+    // 藍色永久卡
+    sapphire: [
+        // Level 1
+        [0, 0, 0, 0, 0, 3],
+        [1, 0, 0, 0, 4, 0],
+        [0, 1, 0, 0, 0, 2],
+        [0, 0, 0, 2, 0, 2],
+        [0, 0, 1, 3, 1, 0],
+        [0, 1, 0, 2, 2, 0],
+        [0, 1, 0, 1, 1, 1],
+        [0, 1, 0, 1, 2, 1],
+
+        // Level 2
+        [2, 0, 5, 0, 0, 0],
+        [3, 0, 6, 0, 0, 0],
+        [2, 5, 3, 0, 0, 0],
+        [2, 2, 0, 0, 1, 4],
+        [1, 0, 2, 2, 3, 0],
+        [1, 0, 2, 3, 0, 3],
+
+        // Level 3
+        [4, 7, 0, 0, 0, 0],
+        [4, 6, 3, 0, 0, 3],
+        [3, 3, 0, 3, 3, 5],
+        [5, 7, 3, 0, 0, 0]
+    ],
+
+    // 綠色永久卡
+    emerald: [
+        // Level 1
+        [0, 0, 0, 0, 3, 0],
+        [1, 0, 0, 0, 0, 4],
+        [0, 2, 1, 0, 0, 0],
+        [0, 0, 2, 0, 2, 0],
+        [0, 1, 3, 1, 0, 0],
+        [0, 0, 1, 0, 2, 2],
+        [0, 1, 1, 0, 1, 1],
+        [0, 1, 1, 0, 1, 2],
+
+        // Level 2
+        [2, 0, 0, 5, 0, 0],
+        [3, 0, 0, 6, 0, 0],
+        [2, 0, 5, 3, 0, 0],
+        [2, 4, 2, 0, 0, 1],
+        [1, 2, 3, 0, 0, 2],
+        [1, 3, 0, 2, 3, 0],
+
+        // Level 3
+        [4, 0, 7, 0, 0, 0],
+        [4, 3, 6, 3, 0, 0],
+        [3, 5, 0, 3, 3, 3],
+        [5, 0, 7, 3, 0, 0]
+    ],
+
+    // 紅色永久卡
+    ruby: [
+        // Level 1
+        [0, 3, 0, 0, 0, 0],
+        [1, 4, 0, 0, 0, 0],
+        [0, 0, 2, 1, 0, 0],
+        [0, 2, 0, 0, 2, 0],
+        [0, 1, 0, 0, 1, 3],
+        [0, 2, 0, 1, 0, 2],
+        [0, 1, 1, 1, 0, 1],
+        [0, 2, 1, 1, 0, 1],
+
+        // Level 2
+        [2, 0, 0, 0, 0, 5],
+        [3, 0, 0, 0, 6, 0],
+        [2, 3, 0, 0, 0, 5],
+        [2, 1, 4, 2, 0, 0],
+        [1, 2, 0, 0, 2, 3],
+        [1, 0, 3, 0, 2, 3],
+
+        // Level 3
+        [4, 0, 0, 7, 0, 0],
+        [4, 0, 3, 6, 3, 0],
+        [3, 3, 5, 3, 0, 3],
+        [5, 0, 0, 7, 3, 0]
+    ],
+
+    // 黑色永久卡（遊戲紫色）
+    onyx: [
+        // Level 1
+        [0, 0, 0, 3, 0, 0],
+        [1, 0, 4, 0, 0, 0],
+        [0, 0, 0, 2, 1, 0],
+        [0, 2, 0, 2, 0, 0],
+        [0, 0, 0, 1, 3, 1],
+        [0, 2, 2, 0, 1, 0],
+        [0, 1, 1, 1, 1, 0],
+        [0, 1, 2, 1, 1, 0],
+
+        // Level 2
+        [2, 5, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 6],
+        [2, 0, 0, 5, 3, 0],
+        [2, 0, 1, 4, 2, 0],
+        [1, 3, 2, 2, 0, 0],
+        [1, 3, 0, 3, 0, 2],
+
+        // Level 3
+        [4, 0, 0, 0, 7, 0],
+        [4, 0, 0, 3, 6, 3],
+        [3, 3, 3, 5, 3, 0],
+        [5, 0, 0, 0, 7, 3]
+    ]
+};
+
+
 function buildFullDeck() {
     let idCounter = 1;
     const cards = [];
 
-    // 正統 Level 1：每色 8 張（7 張 0 分 + 1 張 1 分，共 40 張）
-    const l1Official = [
-        { pts: 0, cost: [0, 1, 1, 1, 1] }, // 4色各1
-        { pts: 0, cost: [0, 2, 1, 1, 0] }, // 3色 2+1+1
-        { pts: 0, cost: [0, 1, 1, 0, 2] }, // 3色 2+1+1
-        { pts: 0, cost: [0, 0, 2, 1, 0] }, // 2色 2+1
-        { pts: 0, cost: [0, 0, 0, 2, 1] }, // 2色 2+1
-        { pts: 0, cost: [0, 2, 0, 2, 0] }, // 2色 2+2
-        { pts: 0, cost: [0, 0, 3, 0, 0] }, // 單色 3
-        { pts: 1, cost: [0, 0, 0, 4, 0] }  // 單色 4 (+1分)
-    ];
+    // 沿用原本的寶可夢分配與圖片
+    GEM_TYPES.forEach((bonus) => {
 
-    // 正統 Level 2：每色 6 張（2 張 1 分 + 3 張 2 分 + 1 張 3 分，共 30 張）
-    const l2Official = [
-        { pts: 1, cost: [0, 2, 2, 3, 0] }, // 3色 3+2+2 (+1分)
-        { pts: 1, cost: [2, 3, 0, 0, 3] }, // 3色 3+3+2 (+1分)
-        { pts: 2, cost: [0, 4, 2, 1, 0] }, // 3色 4+2+1 (+2分)
-        { pts: 2, cost: [0, 0, 5, 3, 0] }, // 2色 5+3 (+2分)
-        { pts: 2, cost: [0, 0, 0, 5, 0] }, // 單色 5 (+2分)
-        { pts: 3, cost: [6, 0, 0, 0, 0] }  // 同色 6 (+3分)
-    ];
+        const pokemonGroups = POKEMON_DATABASE[bonus];
 
-    // 正統 Level 3：每色 4 張（1 張 3 分 + 2 張 4 分 + 1 張 5 分，共 20 張）
-    const l3Official = [
-        { pts: 3, cost: [0, 3, 3, 5, 3] }, // 4色 5+3+3+3 (+3分)
-        { pts: 4, cost: [0, 0, 0, 7, 0] }, // 單色 7 (+4分)
-        { pts: 4, cost: [3, 0, 0, 6, 3] }, // 3色 6+3+3 (+4分)
-        { pts: 5, cost: [3, 0, 0, 7, 0] }  // 2色 7+3 (+5分)
-    ];
+        const pokemonIds = [
+            ...pokemonGroups.l1,
+            ...pokemonGroups.l2,
+            ...pokemonGroups.l3
+        ];
 
-    GEM_TYPES.forEach((bonus, gIdx) => {
-        POKEMON_DATABASE[bonus].l1.forEach((pId, idx) => {
-            const tpl = l1Official[idx];
-            const costObj = {};
-            tpl.cost.forEach((amt, cIdx) => {
-                if (amt > 0) costObj[GEM_TYPES[(gIdx + cIdx) % 5]] = amt;
+        const cardRows = CARD_DATA_BY_BONUS[bonus];
+
+        cardRows.forEach((row, index) => {
+
+            const points = row[0];
+
+            const level =
+                index < 8 ? 1 :
+                index < 14 ? 2 : 3;
+
+            const pId = pokemonIds[index];
+
+            const cost = {};
+
+            CARD_COST_ORDER.forEach((color, colorIndex) => {
+                const amount = row[colorIndex + 1];
+
+                if (amount > 0) {
+                    cost[color] = amount;
+                }
             });
+
             cards.push({
-                id: `c${idCounter++}`, level: 1, bonus, points: tpl.pts, cost: costObj,
-                pokeImg: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pId}.png`
-            });
-        });
-
-        POKEMON_DATABASE[bonus].l2.forEach((pId, idx) => {
-            const tpl = l2Official[idx];
-            const costObj = {};
-            tpl.cost.forEach((amt, cIdx) => {
-                if (amt > 0) costObj[GEM_TYPES[(gIdx + cIdx) % 5]] = amt;
-            });
-            cards.push({
-                id: `c${idCounter++}`, level: 2, bonus, points: tpl.pts, cost: costObj,
-                pokeImg: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pId}.png`
-            });
-        });
-
-        POKEMON_DATABASE[bonus].l3.forEach((pId, idx) => {
-            const tpl = l3Official[idx];
-            const costObj = {};
-            tpl.cost.forEach((amt, cIdx) => {
-                if (amt > 0) costObj[GEM_TYPES[(gIdx + cIdx) % 5]] = amt;
-            });
-            cards.push({
-                id: `c${idCounter++}`, level: 3, bonus, points: tpl.pts, cost: costObj,
+                id: `c${idCounter++}`,
+                level,
+                bonus,
+                points,
+                cost,
                 pokeImg: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pId}.png`
             });
         });
@@ -129,3 +260,4 @@ function buildFullDeck() {
 
     return shuffle(cards);
 }
+
