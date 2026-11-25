@@ -3317,7 +3317,7 @@ function openNoblePokedex(nobleId) {
     if (!noble) return;
 
     // 取得圖鑑編號
-    const pokedexId = noble.pokedexId || noble.id;
+    const pokedexId = noble.pokedexId;
 
     // 查詢圖鑑資料
     const entry = typeof getPokedexEntry === 'function'
@@ -3837,6 +3837,9 @@ function openNoblePokedex(nobleId) {
             }
 
             if (!card) return;
+            // 一般發展卡重新顯示成本資訊
+document.getElementById('modal-cost-breakdown').classList.remove('hidden');
+document.getElementById('modal-afford-status').classList.remove('hidden');
 
             activeCardSelection = { card, source, level, idx, targetPlayerIdx };
             const colorInfo = CARD_COLORS[card.bonus];
