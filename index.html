@@ -4200,16 +4200,16 @@ if (pokedexEl) {
 
             const pokedexEntry = getPokedexEntry(card.pokedexId);
 
+
 addGameLog(
     `${player.name} 收服了 Lv.${card.level} ${CARD_COLORS[card.bonus].name} ${pokedexEntry ? pokedexEntry.name : ''}（+${card.points}分）`,
     {
-        {
-    name: pokedexEntry ? pokedexEntry.name : '',
-    pokedexId: card.pokedexId,
-    image: card.pokeImg
-}
+        name: pokedexEntry ? pokedexEntry.name : '',
+        pokedexId: card.pokedexId,
+        image: card.pokeImg
     }
 );
+
 
             if (source === 'market') {
                 gameState.market[level][idx] = gameState.decks[level].shift() || null;
