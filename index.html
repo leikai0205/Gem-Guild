@@ -2669,13 +2669,38 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
 
     <!-- 彈窗區塊 -->
     <div id="card-action-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="glass-panel max-w-sm w-full rounded-3xl p-5 border border-amber-400/50 space-y-4">
+        <div class="glass-panel max-w-4xl w-full rounded-3xl p-5 border border-amber-400/50 space-y-4">
             <div class="flex items-center justify-between">
                 <h3 id="modal-title" class="font-bold text-base text-amber-300">選擇寶可夢卡行動</h3>
                 <button onclick="closeCardModal()" class="text-slate-400 hover:text-white text-lg cursor-pointer">✕</button>
             </div>
-            <div id="modal-card-preview" class="flex justify-center py-1"></div>
-            <div id="modal-cost-breakdown" class="bg-slate-900/90 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800"></div>
+           
+<!-- 卡片資訊與寶可夢圖鑑：左右排列 -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+
+    <!-- 左側：原本的卡片資訊 -->
+    <div class="space-y-3 min-w-0">
+        <div id="modal-card-preview" class="flex justify-center py-1"></div>
+
+        <div id="modal-cost-breakdown" class="bg-slate-900/90 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800"></div>
+    </div>
+
+    <!-- 右側：新增寶可夢圖鑑 -->
+    <div id="modal-pokedex" class="bg-slate-900/90 rounded-xl p-4 border border-cyan-500/30 min-w-0">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="text-cyan-300 text-lg">📖</span>
+            <h4 class="font-bold text-cyan-300 text-sm">寶可夢圖鑑資料</h4>
+        </div>
+
+        <div id="modal-pokedex-content" class="text-xs text-slate-300 space-y-2">
+            <div class="text-slate-500 text-center py-6">
+                等待載入寶可夢資料...
+            </div>
+        </div>
+    </div>
+
+</div>
+
             <div id="modal-afford-status" class="text-center text-xs font-bold"></div>
             <div id="modal-action-buttons" class="grid grid-cols-1 gap-2.5 pt-1">
                 <button id="modal-btn-buy" onclick="executeBuyCard()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-black text-sm shadow transition cursor-pointer">收服此寶可夢卡</button>
