@@ -3240,7 +3240,7 @@ function renderMyReservedCards(myReservedCards) {
 
         
 // ===== 開啟戰報中的寶可夢圖鑑 =====
-function openBattlePokedex(pokedexId) {
+function openBattlePokedex(pokedexId, imageUrl = '') {
     const entry = typeof getPokedexEntry === 'function'
         ? getPokedexEntry(pokedexId)
         : null;
@@ -3297,7 +3297,7 @@ function openBattlePokedex(pokedexId) {
 
     document.getElementById('modal-card-preview').innerHTML = `
         <div class="flex flex-col items-center gap-2">
-            <img src="${entry.image || ''}" class="w-32 h-32 object-contain" />
+            <img src="${imageUrl || ''}" class="w-32 h-32 object-contain" />
             <div class="text-sm font-bold text-amber-300">${entry.name}</div>
         </div>
     `;
@@ -3348,7 +3348,7 @@ function renderBattleLogs() {
         const safeId = pokedexId.replace(/[^0-9]/g, '');
 
         const clickableName = safeId
-            ? `<button type="button" onclick="openBattlePokedex('${safeId}')" class="underline text-cyan-300 hover:text-cyan-200 font-bold">${safeName}</button>`
+            ? `<button type="button" onclick="openBattlePokedex('${safeId}', '${String(log.image || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" class="underline text-cyan-300 hover:text-cyan-200 font-bold">${safeName}</button>`
             : safeName;
 
         const displayMessage = safeMessage.replace(
@@ -3375,6 +3375,7 @@ function addGameLog(message, pokemonData = null) {
             message: fullMessage,
             pokemonName: pokemonData.name,
             pokedexId: String(pokemonData.pokedexId)
+            image: pokemonData.image || ''
         });
     } else {
         gameState.logs.push(fullMessage);
@@ -4202,8 +4203,11 @@ if (pokedexEl) {
 addGameLog(
     `${player.name} 收服了 Lv.${card.level} ${CARD_COLORS[card.bonus].name} ${pokedexEntry ? pokedexEntry.name : ''}（+${card.points}分）`,
     {
-        name: pokedexEntry ? pokedexEntry.name : '',
-        pokedexId: card.pokedexId
+        {
+    name: pokedexEntry ? pokedexEntry.name : '',
+    pokedexId: card.pokedexId,
+    image: card.pokeImg
+}
     }
 );
 
