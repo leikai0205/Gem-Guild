@@ -3238,20 +3238,148 @@ function renderMyReservedCards(myReservedCards) {
             }
         }
 
-        function renderBattleLogs() {
-            const container = document.getElementById('battle-log-container');
-            if (!gameState.logs || gameState.logs.length === 0) {
-                container.innerHTML = `<div class="text-slate-500">尚無戰報紀錄...</div>`;
-                return;
-            }
-            container.innerHTML = gameState.logs.slice(-30).reverse().map(log => `<div class="border-b border-slate-900 pb-0.5">${log}</div>`).join('');
+        
+// ===== 開啟戰報中的寶可夢圖鑑 =====
+function openBattlePokedex(pokedexId) {
+    const entry = typeof getPokedexEntry === 'function'
+        ? getPokedexEntry(pokedexId)
+        : null;
+
+    if (!entry) {
+        alert('找不到這隻寶可夢的圖鑑資料！');
+        return;
+    }
+
+    const pokedexEl = document.getElementById('modal-pokedex-content');
+    if (!pokedexEl) return;
+
+    pokedexEl.innerHTML = `
+        <div class="space-y-2">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                <span class="text-cyan-300 font-bold">No. ${entry.id}</span>
+                <span class="text-white font-bold">${entry.name}</span>
+            </div>
+
+            <div class="flex flex-wrap gap-1">
+                ${(entry.types || []).map(type => `
+                    <span class="px-2 py-1 rounded-full bg-cyan-500/20 text-cyan-200 text-[11px]">${type}</span>
+                `).join('')}
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-slate-800 rounded-lg p-2">
+                    <div class="text-slate-500">身高</div>
+                    <div>${entry.height || '未提供'}</div>
+                </div>
+                <div class="bg-slate-800 rounded-lg p-2">
+                    <div class="text-slate-500">體重</div>
+                    <div>${entry.weight || '未提供'}</div>
+                </div>
+            </div>
+
+            <div><span class="text-cyan-300">性別：</span>${entry.gender || '未提供'}</div>
+            <div><span class="text-cyan-300">分類：</span>${entry.category || '未提供'}</div>
+            <div><span class="text-cyan-300">特性：</span>${Array.isArray(entry.abilities) ? entry.abilities.join('、') : entry.abilities || '未提供'}</div>
+
+            <div>
+                <div class="text-cyan-300 mb-1">圖鑑介紹</div>
+                <div class="leading-relaxed">${entry.description || '暫無介紹'}</div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('modal-title').textContent = '寶可夢圖鑑';
+
+    document.getElementById('modal-btn-buy').classList.add('hidden');
+    document.getElementById('modal-btn-reserve').classList.add('hidden');
+    document.getElementById('modal-cost-breakdown').classList.add('hidden');
+    document.getElementById('modal-afford-status').classList.add('hidden');
+
+    document.getElementById('modal-card-preview').innerHTML = `
+        <div class="flex flex-col items-center gap-2">
+            <img src="${entry.image || ''}" class="w-32 h-32 object-contain" />
+            <div class="text-sm font-bold text-amber-300">${entry.name}</div>
+        </div>
+    `;
+
+    document.getElementById('card-action-modal').classList.remove('hidden');
+}
+
+        
+
+function renderBattleLogs() {
+    const container = document.getElementById('battle-log-container');
+
+    if (!gameState.logs || gameState.logs.length === 0) {
+        container.innerHTML = `<div class="text-slate-500">尚無戰報紀錄...</div>`;
+        return;
+    }
+
+    container.innerHTML = gameState.logs.slice(-30).reverse().map(log => {
+        // 支援舊版字串戰報及新版物件戰報
+        if (typeof log === 'string') {
+            return `
+                <div class="border-b border-slate-900 pb-0.5 whitespace-nowrap overflow-x-auto">
+                    ${log}
+                </div>
+            `;
         }
 
-        function addGameLog(message) {
-            if (!gameState.logs) gameState.logs = [];
-            const round = gameState.roundCount || 1;
-            gameState.logs.push(`[第 ${round} 回合] ${message}`);
-        }
+        const message = String(log.message || '');
+        const name = String(log.pokemonName || '');
+        const pokedexId = String(log.pokedexId || '');
+
+        const safeMessage = message.replace(/[&<>"']/g, char => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        })[char]);
+
+        const safeName = name.replace(/[&<>"']/g, char => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        })[char]);
+
+        const safeId = pokedexId.replace(/[^0-9]/g, '');
+
+        const clickableName = safeId
+            ? `<button type="button" onclick="openBattlePokedex('${safeId}')" class="underline text-cyan-300 hover:text-cyan-200 font-bold">${safeName}</button>`
+            : safeName;
+
+        const displayMessage = safeMessage.replace(
+            safeName,
+            clickableName
+        );
+
+        return `
+            <div class="border-b border-slate-900 pb-0.5 whitespace-nowrap overflow-x-auto">
+                ${displayMessage}
+            </div>
+        `;
+    }).join('');
+}
+
+function addGameLog(message, pokemonData = null) {
+    if (!gameState.logs) gameState.logs = [];
+
+    const round = gameState.roundCount || 1;
+    const fullMessage = `[第 ${round} 回合] ${message}`;
+
+    if (pokemonData && pokemonData.pokedexId && pokemonData.name) {
+        gameState.logs.push({
+            message: fullMessage,
+            pokemonName: pokemonData.name,
+            pokedexId: String(pokemonData.pokedexId)
+        });
+    } else {
+        gameState.logs.push(fullMessage);
+    }
+}
 
         function updateStatusBanner() {
             const curPlayer = gameState.players[gameState.currentPlayerIdx];
@@ -4069,7 +4197,15 @@ if (pokedexEl) {
             player.bonuses[card.bonus] = (player.bonuses[card.bonus] || 0) + 1;
             player.points += card.points || 0;
 
-            addGameLog(`${player.name} 收服了 Lv.${card.level} ${CARD_COLORS[card.bonus].name}（+${card.points}分）`);
+            const pokedexEntry = getPokedexEntry(card.pokedexId);
+
+addGameLog(
+    `${player.name} 收服了 Lv.${card.level} ${CARD_COLORS[card.bonus].name} ${pokedexEntry ? pokedexEntry.name : ''}（+${card.points}分）`,
+    {
+        name: pokedexEntry ? pokedexEntry.name : '',
+        pokedexId: card.pokedexId
+    }
+);
 
             if (source === 'market') {
                 gameState.market[level][idx] = gameState.decks[level].shift() || null;
