@@ -3275,7 +3275,12 @@ function renderNobles() {
             container.innerHTML = `
                 <div class="nobles-flex-container">
                     ${gameState.nobles.map(n => `
-                        <div data-noble-id="${n.id}" class="glass-card noble-mini-card border-amber-500/40 !flex-row !items-center !justify-center !px-1 !py-1 gap-1">
+                        <div
+    data-noble-id="${n.id}"
+    onclick="openNoblePokedex('${n.id}')"
+    class="glass-card noble-mini-card border-amber-500/40 !flex-row !items-center !justify-center !px-1 !py-1 gap-1 cursor-pointer"
+    title="點擊查看寶可夢圖鑑"
+>
                             
                             <!-- 1. 左側：直式寶可夢名字 (緊貼圖片左側) -->
                             <div class="flex items-center justify-end shrink-0">
@@ -3301,6 +3306,96 @@ function renderNobles() {
                 </div>
             `;
         }
+
+        
+function openNoblePokedex(nobleId) {
+    // 取得稀有寶可夢資料
+    const noble = gameState.nobles.find(
+        n => String(n.id) === String(nobleId)
+    );
+
+    if (!noble) return;
+
+    // 取得圖鑑編號
+    const pokedexId = noble.pokedexId || noble.id;
+
+    // 查詢圖鑑資料
+    const entry = typeof getPokedexEntry === 'function'
+        ? getPokedexEntry(pokedexId)
+        : null;
+
+    const pokedexEl = document.getElementById('modal-pokedex-content');
+
+    if (!pokedexEl) return;
+
+    if (!entry) {
+        pokedexEl.innerHTML = `
+            <div class="text-center text-rose-300 py-6">
+                找不到這隻寶可夢的圖鑑資料
+                <div class="text-slate-500 mt-2">
+                    圖鑑編號：${pokedexId || '未設定'}
+                </div>
+            </div>
+        `;
+    } else {
+        pokedexEl.innerHTML = `
+            <div class="space-y-2">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                    <span class="text-cyan-300 font-bold">No. ${entry.id}</span>
+                    <span class="text-white font-bold">${entry.name}</span>
+                </div>
+
+                <div class="flex flex-wrap gap-1">
+                    ${(entry.types || []).map(type => `
+                        <span class="px-2 py-1 rounded-full bg-cyan-500/20 text-cyan-200 text-[11px]">${type}</span>
+                    `).join('')}
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="bg-slate-800 rounded-lg p-2">
+                        <div class="text-slate-500">身高</div>
+                        <div>${entry.height || '未提供'}</div>
+                    </div>
+                    <div class="bg-slate-800 rounded-lg p-2">
+                        <div class="text-slate-500">體重</div>
+                        <div>${entry.weight || '未提供'}</div>
+                    </div>
+                </div>
+
+                <div><span class="text-cyan-300">性別：</span>${entry.gender || '未提供'}</div>
+                <div><span class="text-cyan-300">分類：</span>${entry.category || '未提供'}</div>
+                <div><span class="text-cyan-300">特性：</span>${Array.isArray(entry.abilities) ? entry.abilities.join('、') : entry.abilities || '未提供'}</div>
+
+                <div>
+                    <div class="text-cyan-300 mb-1">圖鑑介紹</div>
+                    <div class="leading-relaxed">${entry.description || '暫無介紹'}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    // 設定標題
+    document.getElementById('modal-title').textContent = '稀有寶可夢圖鑑';
+
+    // 隱藏收服及預留按鈕
+    document.getElementById('modal-btn-buy').classList.add('hidden');
+    document.getElementById('modal-btn-reserve').classList.add('hidden');
+
+    // 隱藏原本的卡片成本資訊
+    document.getElementById('modal-cost-breakdown').classList.add('hidden');
+    document.getElementById('modal-afford-status').classList.add('hidden');
+
+    // 顯示稀有寶可夢圖片
+    document.getElementById('modal-card-preview').innerHTML = `
+        <div class="flex flex-col items-center gap-2">
+            <img src="${noble.img}" class="w-32 h-32 object-contain drop-shadow-[0_0_18px_rgba(251,191,36,.28)]" />
+            <div class="text-sm font-bold text-amber-300">${noble.name}</div>
+        </div>
+    `;
+
+    document.getElementById('card-action-modal').classList.remove('hidden');
+}
+
 
         function renderBank() {
             const hasWaiting = gameState.players.some(p => p.name.startsWith('等待玩家'));
