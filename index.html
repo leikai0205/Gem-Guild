@@ -3028,7 +3028,54 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
         gap: 8px !important;
     }
 }
+
+    
 </style>
+    
+<style id="guild-lobby-landscape-proportional-fit">
+@media (orientation: landscape) and (max-width: 1023px) {
+
+    /* 大廳整體等比例縮放 */
+    #lobby-screen.guild-lobby-fit-active {
+        position: fixed !important;
+        inset: auto !important;
+        left: 50% !important;
+        top: 50% !important;
+
+        width: 420px !important;
+        height: 650px !important;
+
+        padding: 16px !important;
+        box-sizing: border-box !important;
+
+        transform:
+            translate(-50%, -50%)
+            scale(var(--guild-lobby-scale)) !important;
+
+        transform-origin: center center !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        overflow: hidden !important;
+    }
+
+    /* 大廳內部面板 */
+    #lobby-screen.guild-lobby-fit-active > .glass-panel {
+        width: 100% !important;
+        max-width: none !important;
+        max-height: 100% !important;
+
+        margin: 0 !important;
+        box-sizing: border-box !important;
+
+        transform: none !important;
+        overflow-y: auto !important;
+    }
+}
+</style>
+
 
     
 
@@ -4682,47 +4729,88 @@ addGameLog(
         }
     </script>
 
+
 <script id="guild-viewport-fit">
 (function () {
     const game = document.getElementById('game-screen');
-    if (!game) return;
+    const lobby = document.getElementById('lobby-screen');
+
+    if (!game || !lobby) return;
 
     function fitGameBoard() {
-        if (!game.classList.contains('hidden')) {
-            const portrait = window.matchMedia('(orientation: portrait)').matches;
-const phoneLandscape = window.matchMedia(
-    '(orientation: landscape) and (max-width: 1023px)'
-).matches;
+        const phoneLandscape = window.matchMedia(
+            '(orientation: landscape) and (max-width: 1023px)'
+        ).matches;
 
-const baseW = portrait ? 430 : (phoneLandscape ? 900 : 1440);
-const baseH = portrait ? 900 : (phoneLandscape ? 430 : 810);
+        if (!game.classList.contains('hidden')) {
+            const portrait = window.matchMedia(
+                '(orientation: portrait)'
+            ).matches;
+
+            const baseW = portrait ? 430 : (phoneLandscape ? 900 : 1440);
+            const baseH = portrait ? 900 : (phoneLandscape ? 430 : 810);
+
             const vw = document.documentElement.clientWidth || window.innerWidth;
             const vh = document.documentElement.clientHeight || window.innerHeight;
+
             const scale = Math.min(vw / baseW, vh / baseH);
 
             game.style.setProperty('--guild-base-w', baseW + 'px');
             game.style.setProperty('--guild-base-h', baseH + 'px');
             game.style.setProperty('--guild-fit-scale', String(scale));
+
             game.style.left = (vw / 2) + 'px';
             game.style.top = Math.max(0, (vh - baseH * scale) / 2) + 'px';
-            if (!game.classList.contains('guild-fit-active')) {
-                game.classList.add('guild-fit-active');
-            }
+
+            game.classList.add('guild-fit-active');
         } else {
-            if (game.classList.contains('guild-fit-active')) {
-                game.classList.remove('guild-fit-active');
-            }
+            game.classList.remove('guild-fit-active');
+        }
+
+        // 手機橫式大廳：獨立計算縮放比例
+        if (phoneLandscape && !lobby.classList.contains('hidden')) {
+            const lobbyW = 420;
+            const lobbyH = 650;
+
+            const vw = document.documentElement.clientWidth || window.innerWidth;
+            const vh = document.documentElement.clientHeight || window.innerHeight;
+
+            const lobbyScale = Math.min(
+                vw / lobbyW,
+                vh / lobbyH
+            );
+
+            lobby.style.setProperty(
+                '--guild-lobby-scale',
+                String(lobbyScale)
+            );
+
+            lobby.classList.add('guild-lobby-fit-active');
+        } else {
+            lobby.classList.remove('guild-lobby-fit-active');
         }
     }
 
     const observer = new MutationObserver(fitGameBoard);
-    observer.observe(game, { attributes: true, attributeFilter: ['class'] });
+
+    observer.observe(game, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+
+    observer.observe(lobby, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+
     window.addEventListener('resize', fitGameBoard, { passive: true });
     window.addEventListener('orientationchange', fitGameBoard, { passive: true });
     document.addEventListener('visibilitychange', fitGameBoard);
+
     fitGameBoard();
 })();
 </script>
+
     
 
 <script id="lobby-viewport-fit">
