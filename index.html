@@ -2186,11 +2186,14 @@ async function executeBuyCard() {
             const availableH = vh - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
 
             panel.style.transform = 'none';
+            panel.style.height = 'auto';
 
             const panelW = Math.max(panel.offsetWidth, panel.scrollWidth);
             const panelH = Math.max(panel.offsetHeight, panel.scrollHeight);
 
             if (!panelW || !panelH) return;
+
+            panel.style.height = `${panelH}px`;
 
             const scale = Math.min(1, availableW / panelW, availableH / panelH);
             panel.style.transform = `scale(${scale})`;
