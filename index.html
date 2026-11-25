@@ -2349,8 +2349,274 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
   }
 }
     
+</style>
+
+        <!-- 遊戲核心邏輯 -->
+    <style>
+      .tabletop-flight {
+        position: fixed !important; z-index: 99999 !important; pointer-events: none !important;
+        margin: 0 !important; transform-origin: center center !important;
+        will-change: transform, opacity; filter: drop-shadow(0 8px 14px rgba(0,0,0,.55));
+      }
+      .tabletop-arrival-pulse { animation: tabletopArrivalPulse .65s ease-out; }
+      .noble-tabletop-flight img { width: 100% !important; height: 100% !important; object-fit: contain !important; }
+      @keyframes tabletopArrivalPulse {
+        0% { filter: brightness(1); box-shadow: 0 0 0 rgba(251,191,36,0); }
+        45% { filter: brightness(1.65); box-shadow: 0 0 18px rgba(251,191,36,.9); }
+        100% { filter: brightness(1); box-shadow: 0 0 0 rgba(251,191,36,0); }
+      }
+
+        
+/* ==========================================
+   Pokémon Guild - 一般卡片彈窗自動縮放
+   僅影響一般卡片，不影響稀有寶可夢圖鑑
+   ========================================== */
+
+/* 平板直式、橫式 */
+@media (max-width: 1023px) {
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) {
+        padding: 6px !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
+        zoom: 0.86;
+        width: 116.28% !important;
+        max-width: 116.28% !important;
+        box-sizing: border-box;
+        padding: 12px !important;
+        border-radius: 22px !important;
+    }
+}
+
+/* 一般手機直式 */
+@media (max-width: 600px) {
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
+        zoom: 0.72;
+        width: 138.89% !important;
+        max-width: 138.89% !important;
+        padding: 9px !important;
+        border-radius: 18px !important;
+    }
+}
+
+/* 較小尺寸手機 */
+@media (max-width: 390px) {
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
+        zoom: 0.66;
+        width: 151.52% !important;
+        max-width: 151.52% !important;
+    }
+}
+
+/* 手機橫式：優先適應較短的螢幕高度 */
+
+/* 手機橫式：加強高度壓縮 */
+@media (max-height: 500px) and (orientation: landscape) {
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
+        zoom: 0.48;
+        width: 208.33% !important;
+        max-width: 208.33% !important;
+        padding: 6px !important;
+    }
+
+    /* 縮小彈窗內部區塊間距 */
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
+        row-gap: 5px !important;
+    }
+
+    /* 卡片與圖鑑之間的距離 */
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-layout {
+        gap: 6px !important;
+    }
+
+    /* 三個按鈕縮小上下間距 */
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) #modal-action-buttons {
+        row-gap: 4px !important;
+        padding-top: 2px !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) #modal-action-buttons button {
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+    }
+}
 
 
+    </style>
+    
+
+<style id="guild-landscape-modal-height-fix-v2">
+/* 手機橫式：直接依照手機可見畫面控制彈窗 */
+@media (orientation: landscape) and (max-width: 1023px) {
+
+    #card-action-modal:not(.hidden):has(#modal-cost-breakdown:not(.hidden)) {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        padding: 6px !important;
+        box-sizing: border-box !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    .card-action-panel {
+        zoom: 1 !important;
+        width: 100% !important;
+        max-width: 900px !important;
+        max-height: calc(100vh - 12px) !important;
+        max-height: calc(100dvh - 12px) !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 8px !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        border-radius: 16px !important;
+        gap: 5px !important;
+    }
+
+    /* 標題 */
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-title {
+        font-size: 13px !important;
+    }
+
+    /* 左右雙欄 */
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    .card-action-layout {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+        gap: 6px !important;
+    }
+
+    /* 卡片圖片 */
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-card-preview {
+        padding: 0 !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-card-preview img {
+        max-height: 90px !important;
+        width: auto !important;
+        object-fit: contain !important;
+    }
+
+    /* 卡片費用 */
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-cost-breakdown {
+        padding: 6px !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        gap: 3px !important;
+    }
+
+    /* 寶可夢圖鑑 */
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-pokedex {
+        padding: 7px !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-pokedex-content {
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        gap: 3px !important;
+    }
+
+    /* 收服狀態 */
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-afford-status {
+        margin: 0 !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+    }
+
+    /* 三個按鈕改成橫向排列，節省上下空間 */
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-action-buttons {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 5px !important;
+        padding-top: 2px !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-action-buttons button {
+        min-width: 0 !important;
+        min-height: 34px !important;
+        padding: 5px 3px !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        white-space: normal !important;
+    }
+}
+
+    
+
+/* =========================================================
+   Pokémon Guild：手機橫式大廳等比例縮放
+   ========================================================= */
+
+@media (orientation: landscape) and (max-width: 1023px) {
+
+    #lobby-screen {
+        position: relative !important;
+        width: 100% !important;
+        height: 100dvh !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 6px !important;
+        box-sizing: border-box !important;
+    }
+
+    #lobby-screen > .glass-panel {
+        width: 420px !important;
+        max-width: none !important;
+        height: auto !important;
+        max-height: none !important;
+        flex: 0 0 auto !important;
+        margin: 0 !important;
+        padding: 12px !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+
+        transform: scale(
+            min(
+                calc((100vw - 12px) / 420),
+                calc((100dvh - 12px) / 420)
+            )
+        ) !important;
+
+        transform-origin: center center !important;
+    }
+
+    #lobby-screen > .glass-panel > .text-center {
+        margin-bottom: 10px !important;
+    }
+
+    #lobby-screen > .glass-panel > .flex.justify-center.gap-4 {
+        margin-bottom: 10px !important;
+        gap: 10px !important;
+    }
+
+    #lobby-screen > .glass-panel > .space-y-3\.5 {
+        gap: 8px !important;
+    }
+}
+
+    
 </style>
 
 </head>
@@ -2767,273 +3033,7 @@ html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; 
         </div>
     </div>
 
-    <!-- 遊戲核心邏輯 -->
-    <style>
-      .tabletop-flight {
-        position: fixed !important; z-index: 99999 !important; pointer-events: none !important;
-        margin: 0 !important; transform-origin: center center !important;
-        will-change: transform, opacity; filter: drop-shadow(0 8px 14px rgba(0,0,0,.55));
-      }
-      .tabletop-arrival-pulse { animation: tabletopArrivalPulse .65s ease-out; }
-      .noble-tabletop-flight img { width: 100% !important; height: 100% !important; object-fit: contain !important; }
-      @keyframes tabletopArrivalPulse {
-        0% { filter: brightness(1); box-shadow: 0 0 0 rgba(251,191,36,0); }
-        45% { filter: brightness(1.65); box-shadow: 0 0 18px rgba(251,191,36,.9); }
-        100% { filter: brightness(1); box-shadow: 0 0 0 rgba(251,191,36,0); }
-      }
 
-        
-/* ==========================================
-   Pokémon Guild - 一般卡片彈窗自動縮放
-   僅影響一般卡片，不影響稀有寶可夢圖鑑
-   ========================================== */
-
-/* 平板直式、橫式 */
-@media (max-width: 1023px) {
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) {
-        padding: 6px !important;
-    }
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
-        zoom: 0.86;
-        width: 116.28% !important;
-        max-width: 116.28% !important;
-        box-sizing: border-box;
-        padding: 12px !important;
-        border-radius: 22px !important;
-    }
-}
-
-/* 一般手機直式 */
-@media (max-width: 600px) {
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
-        zoom: 0.72;
-        width: 138.89% !important;
-        max-width: 138.89% !important;
-        padding: 9px !important;
-        border-radius: 18px !important;
-    }
-}
-
-/* 較小尺寸手機 */
-@media (max-width: 390px) {
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
-        zoom: 0.66;
-        width: 151.52% !important;
-        max-width: 151.52% !important;
-    }
-}
-
-/* 手機橫式：優先適應較短的螢幕高度 */
-
-/* 手機橫式：加強高度壓縮 */
-@media (max-height: 500px) and (orientation: landscape) {
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
-        zoom: 0.48;
-        width: 208.33% !important;
-        max-width: 208.33% !important;
-        padding: 6px !important;
-    }
-
-    /* 縮小彈窗內部區塊間距 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
-        row-gap: 5px !important;
-    }
-
-    /* 卡片與圖鑑之間的距離 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-layout {
-        gap: 6px !important;
-    }
-
-    /* 三個按鈕縮小上下間距 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) #modal-action-buttons {
-        row-gap: 4px !important;
-        padding-top: 2px !important;
-    }
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) #modal-action-buttons button {
-        padding-top: 4px !important;
-        padding-bottom: 4px !important;
-    }
-}
-
-
-    </style>
-    
-
-<style id="guild-landscape-modal-height-fix-v2">
-/* 手機橫式：直接依照手機可見畫面控制彈窗 */
-@media (orientation: landscape) and (max-width: 1023px) {
-
-    #card-action-modal:not(.hidden):has(#modal-cost-breakdown:not(.hidden)) {
-        position: fixed !important;
-        inset: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        height: 100dvh !important;
-        padding: 6px !important;
-        box-sizing: border-box !important;
-        align-items: center !important;
-        justify-content: center !important;
-        overflow: hidden !important;
-    }
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    .card-action-panel {
-        zoom: 1 !important;
-        width: 100% !important;
-        max-width: 900px !important;
-        max-height: calc(100vh - 12px) !important;
-        max-height: calc(100dvh - 12px) !important;
-        height: auto !important;
-        margin: 0 !important;
-        padding: 8px !important;
-        box-sizing: border-box !important;
-        overflow-x: hidden !important;
-        overflow-y: auto !important;
-        border-radius: 16px !important;
-        gap: 5px !important;
-    }
-
-    /* 標題 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-title {
-        font-size: 13px !important;
-    }
-
-    /* 左右雙欄 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    .card-action-layout {
-        display: grid !important;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-        gap: 6px !important;
-    }
-
-    /* 卡片圖片 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-card-preview {
-        padding: 0 !important;
-    }
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-card-preview img {
-        max-height: 90px !important;
-        width: auto !important;
-        object-fit: contain !important;
-    }
-
-    /* 卡片費用 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-cost-breakdown {
-        padding: 6px !important;
-        font-size: 10px !important;
-        line-height: 1.2 !important;
-        gap: 3px !important;
-    }
-
-    /* 寶可夢圖鑑 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-pokedex {
-        padding: 7px !important;
-    }
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-pokedex-content {
-        font-size: 10px !important;
-        line-height: 1.2 !important;
-        gap: 3px !important;
-    }
-
-    /* 收服狀態 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-afford-status {
-        margin: 0 !important;
-        font-size: 10px !important;
-        line-height: 1.2 !important;
-    }
-
-    /* 三個按鈕改成橫向排列，節省上下空間 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-action-buttons {
-        display: grid !important;
-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-        gap: 5px !important;
-        padding-top: 2px !important;
-    }
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-action-buttons button {
-        min-width: 0 !important;
-        min-height: 34px !important;
-        padding: 5px 3px !important;
-        font-size: 10px !important;
-        line-height: 1.2 !important;
-        white-space: normal !important;
-    }
-}
-
-    
-
-/* =========================================================
-   Pokémon Guild：手機橫式大廳等比例縮放
-   ========================================================= */
-
-@media (orientation: landscape) and (max-width: 1023px) {
-
-    #lobby-screen {
-        position: relative !important;
-        width: 100% !important;
-        height: 100dvh !important;
-        min-height: 0 !important;
-        overflow: hidden !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        padding: 6px !important;
-        box-sizing: border-box !important;
-    }
-
-    #lobby-screen > .glass-panel {
-        width: 420px !important;
-        max-width: none !important;
-        height: auto !important;
-        max-height: none !important;
-        flex: 0 0 auto !important;
-        margin: 0 !important;
-        padding: 12px !important;
-        overflow: visible !important;
-        box-sizing: border-box !important;
-
-        transform: scale(
-            min(
-                calc((100vw - 12px) / 420),
-                calc((100dvh - 12px) / 420)
-            )
-        ) !important;
-
-        transform-origin: center center !important;
-    }
-
-    #lobby-screen > .glass-panel > .text-center {
-        margin-bottom: 10px !important;
-    }
-
-    #lobby-screen > .glass-panel > .flex.justify-center.gap-4 {
-        margin-bottom: 10px !important;
-        gap: 10px !important;
-    }
-
-    #lobby-screen > .glass-panel > .space-y-3\.5 {
-        gap: 8px !important;
-    }
-}
-
-    
-</style>
 
     <script>
         // 渲染市場（使用緊湊靠左排列，讓妙蛙花與拉普拉斯緊鄰）
