@@ -183,11 +183,6 @@ html,body{font-family:'Noto Sans TC',sans-serif;background:radial-gradient(circl
 #game-screen.guild-fit-active #bank-gems-container{gap:3px!important}
 }
 
-/* 手機橫式：900 × 430 */
-@media(orientation:landscape) and (max-width:1023px){
-#game-screen.guild-fit-active{--guild-base-w:900px;--guild-base-h:430px}
-}
-
 /* 費用列：手機與桌面共用 */
 #game-screen .reserved-mini-card{overflow:visible!important}
 #game-screen .reserved-mini-card .reserved-cost-row{display:flex!important;flex-wrap:nowrap!important;gap:2px!important;width:100%!important;min-width:0!important;overflow:visible!important}
@@ -309,35 +304,6 @@ html,body{font-family:'Noto Sans TC',sans-serif;background:radial-gradient(circl
 #game-screen #reserved-cards-container .reserved-mini-card img{height:58px!important;max-height:58px!important;object-fit:contain!important}
 #game-screen #reserved-cards-container .reserved-mini-card .reserved-cost-row{min-height:22px!important;max-height:24px!important;flex-wrap:nowrap!important;overflow:visible!important}
 #game-screen #battle-log-container{height:clamp(64px,10vh,104px)!important}
-}
-
-/* 平板橫向與手機橫向備用版面 */
-@media(min-width:600px) and (max-width:1023px) and (orientation:landscape){
-#game-screen{padding:4px!important;gap:4px!important}
-#game-screen>.grid{display:grid!important;grid-template-columns:minmax(0,1.55fr) minmax(220px,.9fr)!important;grid-template-rows:minmax(0,1fr);gap:6px!important;min-height:0!important;overflow:hidden!important}
-#game-screen>.grid>div,#game-screen>.grid>aside{grid-column:auto!important;min-width:0!important;min-height:0!important;height:100%!important;overflow-x:hidden!important;overflow-y:auto!important;padding-right:2px!important;display:flex;flex-direction:column;gap:5px!important}
-#game-screen .glass-panel{padding:6px!important}
-#game-screen .nobles-flex-container{flex-wrap:nowrap!important;gap:3px!important;overflow:hidden!important}
-#game-screen .noble-mini-card{flex:1 1 0!important;min-width:0!important;padding:2px!important}
-#game-screen .noble-mini-card img{width:24px!important;height:24px!important}
-#game-screen .noble-mini-card span{font-size:6.5px!important}
-#game-screen main.glass-panel>.flex.flex-nowrap.items-start.justify-between{gap:5px!important}
-#game-screen main.glass-panel>.flex.flex-nowrap.items-start.justify-between>.space-y-3.flex-1.min-w-0{flex:1 1 0%!important;min-width:0!important}
-#game-screen #market-row-1,#game-screen #market-row-2,#game-screen #market-row-3{gap:3px!important}
-#game-screen .poke-color-card{flex:1 1 0%!important;width:auto!important;min-width:0!important;max-width:none!important;height:clamp(88px,18vh,116px)!important;max-height:116px!important;aspect-ratio:auto!important;padding:2px!important}
-#game-screen .poke-color-card img{height:clamp(52px,11vh,72px)!important;max-height:72px!important;max-width:96%!important;object-fit:contain!important}
-#game-screen .poke-color-card .font-title{font-size:8px!important}
-#game-screen .poke-color-card span.border{font-size:6px!important}
-#game-screen main.glass-panel>.flex.flex-nowrap.items-start.justify-between>div:last-child{flex:0 0 62px!important;width:62px!important;min-width:62px!important}
-#game-screen #reserved-cards-container{display:flex!important;flex-direction:column!important;gap:3px!important}
-#game-screen #reserved-cards-container>div{height:56px!important;min-height:56px!important;padding:2px!important}
-#game-screen .reserved-mini-card{height:68px!important;min-height:68px!important;aspect-ratio:auto!important}
-#game-screen .reserved-mini-card img{height:38px!important;max-height:38px!important}
-#game-screen #bank-gems-container{gap:3px!important}
-#game-screen #bank-gems-container>div{padding:4px 1px!important}
-#game-screen #bank-gems-container img,#game-screen #bank-gems-container .rounded-full{width:18px!important;height:18px!important}
-#game-screen #battle-log-container{height:58px!important}
-#players-container .font-title{font-size:16px!important}
 }
 
 /* 手機直式備用版面 */
@@ -2103,9 +2069,8 @@ async function executeBuyCard() {
     function fitGameBoard() {
         if (!game.classList.contains('hidden')) {
             const portrait = window.matchMedia('(orientation: portrait)').matches;
-            const phoneLandscape = window.matchMedia('(orientation: landscape) and (max-width: 1023px)').matches;
-            const baseW = portrait ? 430 : (phoneLandscape ? 900 : 1440);
-            const baseH = portrait ? 900 : (phoneLandscape ? 430 : 810);
+            const baseW = portrait ? 430 : 1440;
+            const baseH = portrait ? 900 : 810;
             const vw = document.documentElement.clientWidth || window.innerWidth;
             const vh = document.documentElement.clientHeight || window.innerHeight;
             const scale = Math.min(vw / baseW, vh / baseH);
