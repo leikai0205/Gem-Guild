@@ -248,13 +248,14 @@ function buildFullDeck() {
             });
 
             cards.push({
-                id: `c${idCounter++}`,
-                level,
-                bonus,
-                points,
-                cost,
-                pokeImg: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pId}.png`
-            });
+    id: `c${idCounter++}`,
+    pokedexId: String(pId).padStart(3, '0'),
+    level,
+    bonus,
+    points,
+    cost,
+    pokeImg: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pId}.png`
+});
         });
     });
 
