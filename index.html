@@ -245,23 +245,9 @@ html,body{font-family:'Noto Sans TC',sans-serif;background:radial-gradient(circl
 #lobby-screen>.glass-panel>.space-y-3\.5{gap:8px!important}
 }
 
-/* 卡片動作彈窗縮放 */
-@media(max-width:1023px){
-#card-action-modal:has(#modal-cost-breakdown:not(.hidden)){padding:6px!important}
-#card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel{zoom:.86;width:116.28%!important;max-width:116.28%!important;box-sizing:border-box;padding:12px!important;border-radius:22px!important}
-}
-@media(max-width:600px){
-#card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel{zoom:.72;width:138.89%!important;max-width:138.89%!important;padding:9px!important;border-radius:18px!important}
-}
-@media(max-width:390px){
-#card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel{zoom:.66;width:151.52%!important;max-width:151.52%!important}
-}
-@media(max-height:500px) and (orientation:landscape){
-#card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel{zoom:.48;width:208.33%!important;max-width:208.33%!important;padding:6px!important;row-gap:5px!important}
-#card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-layout{gap:6px!important}
-#card-action-modal:has(#modal-cost-breakdown:not(.hidden)) #modal-action-buttons{row-gap:4px!important;padding-top:2px!important}
-#card-action-modal:has(#modal-cost-breakdown:not(.hidden)) #modal-action-buttons button{padding-top:4px!important;padding-bottom:4px!important}
-}
+/* ===== 卡片圖鑑彈窗：完整等比例縮放 ===== */
+#card-action-modal:not(.hidden){position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+#card-action-modal .card-action-panel{width:100%!important;max-width:900px!important;max-height:none!important;height:auto!important;margin:0!important;box-sizing:border-box!important;overflow:visible!important;zoom:1!important;transform-origin:center center!important;flex:0 0 auto!important}
 
 /* 手機橫式：彈窗依可見畫面縮放 */
 @media(orientation:landscape) and (max-width:1023px){
@@ -2167,6 +2153,63 @@ async function executeBuyCard() {
     // 大廳重新顯示時重新計算
     const lobbyObserver = new MutationObserver(fitLobby);
     lobbyObserver.observe(lobby, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
+
+    
+<script>
+/* ===== 圖鑑彈窗：完整畫面自動縮放 ===== */
+(function () {
+    const modal = document.getElementById('card-action-modal');
+    if (!modal) return;
+
+    const panel = modal.querySelector('.card-action-panel');
+    if (!panel) return;
+
+    let frame = 0;
+
+    function fitCardModal() {
+        cancelAnimationFrame(frame);
+
+        frame = requestAnimationFrame(() => {
+            if (modal.classList.contains('hidden')) {
+                panel.style.transform = '';
+                return;
+            }
+
+            const viewport = window.visualViewport;
+            const vw = viewport?.width || document.documentElement.clientWidth;
+            const vh = viewport?.height || document.documentElement.clientHeight;
+
+            const style = getComputedStyle(modal);
+            const availableW = vw - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+            const availableH = vh - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+
+            panel.style.transform = 'none';
+
+            const panelW = panel.offsetWidth;
+            const panelH = panel.offsetHeight;
+            if (!panelW || !panelH) return;
+
+            const scale = Math.min(1, availableW / panelW, availableH / panelH);
+            panel.style.transform = `scale(${scale})`;
+        });
+    }
+
+    const observer = new MutationObserver(fitCardModal);
+    observer.observe(modal, {
+        attributes: true,
+        attributeFilter: ['class'],
+        childList: true,
+        characterData: true,
+        subtree: true
+    });
+
+    window.addEventListener('resize', fitCardModal);
+    window.addEventListener('orientationchange', fitCardModal);
+    window.visualViewport?.addEventListener('resize', fitCardModal);
+
+    fitCardModal();
 })();
 </script>
 
