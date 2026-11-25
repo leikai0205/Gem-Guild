@@ -3364,6 +3364,7 @@ function renderBattleLogs() {
     }).join('');
 }
 
+
 function addGameLog(message, pokemonData = null) {
     if (!gameState.logs) gameState.logs = [];
 
@@ -3374,13 +3375,14 @@ function addGameLog(message, pokemonData = null) {
         gameState.logs.push({
             message: fullMessage,
             pokemonName: pokemonData.name,
-            pokedexId: String(pokemonData.pokedexId)
+            pokedexId: String(pokemonData.pokedexId),
             image: pokemonData.image || ''
         });
     } else {
         gameState.logs.push(fullMessage);
     }
 }
+
 
         function updateStatusBanner() {
             const curPlayer = gameState.players[gameState.currentPlayerIdx];
