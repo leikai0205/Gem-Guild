@@ -2054,39 +2054,60 @@ async function executeBuyCard() {
         }
     </script>
 
+
 <script id="guild-viewport-fit">
 (function () {
     const game = document.getElementById('game-screen');
     if (!game) return;
 
-    function fitGameBoard() {
-        if (!game.classList.contains('hidden')) {
-            const portrait = window.matchMedia('(orientation: portrait)').matches;
-            const baseW = portrait ? 430 : 1440;
-            const baseH = portrait ? 900 : 810;
-            const vw = document.documentElement.clientWidth || window.innerWidth;
-            const vh = document.documentElement.clientHeight || window.innerHeight;
-            const scale = Math.min(vw / baseW, vh / baseH);
+    let timers = [];
 
-            game.style.setProperty('--guild-base-w', baseW + 'px');
-            game.style.setProperty('--guild-base-h', baseH + 'px');
-            game.style.setProperty('--guild-fit-scale', String(scale));
-            game.style.left = (vw / 2) + 'px';
-            game.style.top = Math.max(0, (vh - baseH * scale) / 2) + 'px';
-            if (!game.classList.contains('guild-fit-active')) game.classList.add('guild-fit-active');
-        } else {
-            if (game.classList.contains('guild-fit-active')) game.classList.remove('guild-fit-active');
+    function fitGameBoard() {
+        if (game.classList.contains('hidden')) {
+            game.classList.remove('guild-fit-active');
+            return;
         }
+
+        const portrait = matchMedia('(orientation: portrait)').matches;
+        const baseW = portrait ? 430 : 1440;
+        const baseH = portrait ? 900 : 810;
+        const vw = document.documentElement.clientWidth || innerWidth;
+        const vh = document.documentElement.clientHeight || innerHeight;
+        const scale = Math.min(vw / baseW, vh / baseH);
+
+        game.style.setProperty('--guild-base-w', baseW + 'px');
+        game.style.setProperty('--guild-base-h', baseH + 'px');
+        game.style.setProperty('--guild-fit-scale', scale);
+        game.style.left = (vw / 2) + 'px';
+        game.style.top = Math.max(0, (vh - baseH * scale) / 2) + 'px';
+        game.classList.add('guild-fit-active');
     }
 
-    const observer = new MutationObserver(fitGameBoard);
-    observer.observe(game, { attributes: true, attributeFilter: ['class'] });
-    window.addEventListener('resize', fitGameBoard, { passive: true });
-    window.addEventListener('orientationchange', fitGameBoard, { passive: true });
-    document.addEventListener('visibilitychange', fitGameBoard);
-    fitGameBoard();
+    function scheduleFit() {
+        timers.forEach(clearTimeout);
+        timers = [];
+        requestAnimationFrame(fitGameBoard);
+        [100, 300, 600].forEach(ms =>
+            timers.push(setTimeout(() => requestAnimationFrame(fitGameBoard), ms))
+        );
+    }
+
+    new MutationObserver(scheduleFit).observe(game, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+
+    window.addEventListener('resize', scheduleFit, { passive: true });
+    window.addEventListener('orientationchange', scheduleFit, { passive: true });
+    document.addEventListener('visibilitychange', scheduleFit);
+
+    if (visualViewport)
+        visualViewport.addEventListener('resize', scheduleFit, { passive: true });
+
+    scheduleFit();
 })();
 </script>
+
 
 <script id="lobby-viewport-fit">
 (function () {
