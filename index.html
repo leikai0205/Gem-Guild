@@ -141,7 +141,7 @@ html,body{font-family:'Noto Sans TC',sans-serif;background:radial-gradient(circl
 @keyframes tabletopArrivalPulse{0%{filter:brightness(1);box-shadow:0 0 0 rgba(251,191,36,0)}45%{filter:brightness(1.65);box-shadow:0 0 18px rgba(251,191,36,.9)}100%{filter:brightness(1);box-shadow:0 0 0 rgba(251,191,36,0)}}
 
 /* 遊戲桌：等比例縮放 */
-#game-screen.guild-fit-active{position:fixed!important;inset:auto!important;left:50%!important;top:0!important;width:var(--guild-base-w)!important;height:var(--guild-base-h)!important;min-height:0!important;max-height:none!important;margin:0!important;padding:10px!important;overflow:hidden!important;transform:translateX(-50%) scale(var(--guild-fit-scale))!important;transform-origin:top center!important;box-sizing:border-box!important}
+#game-screen.guild-fit-active{position:fixed!important;inset:auto!important;left:50%!important;top:50%!important;width:var(--guild-base-w)!important;height:var(--guild-base-h)!important;min-height:0!important;max-height:none!important;margin:0!important;padding:10px!important;overflow:hidden!important;transform:translate(-50%,-50%) scale(var(--guild-fit-scale))!important;transform-origin:center center!important;box-sizing:border-box!important}
 #game-screen.guild-fit-active>header{min-height:42px}
 #game-screen.guild-fit-active>.grid{display:grid!important;grid-template-columns:minmax(0,2fr) minmax(300px,1fr)!important;grid-template-rows:minmax(0,1fr)!important;gap:10px!important;height:calc(100% - 54px)!important;min-height:0!important;overflow:hidden!important}
 #game-screen.guild-fit-active>.grid>div,#game-screen.guild-fit-active>.grid>aside{min-width:0!important;min-height:0!important;height:100%!important;overflow:hidden!important}
