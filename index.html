@@ -2187,8 +2187,9 @@ async function executeBuyCard() {
 
             panel.style.transform = 'none';
 
-            const panelW = panel.offsetWidth;
-            const panelH = panel.offsetHeight;
+            const panelW = Math.max(panel.offsetWidth, panel.scrollWidth);
+            const panelH = Math.max(panel.offsetHeight, panel.scrollHeight);
+
             if (!panelW || !panelH) return;
 
             const scale = Math.min(1, availableW / panelW, availableH / panelH);
