@@ -3754,6 +3754,84 @@ function renderNobles() {
                     <div class="text-sm font-bold text-amber-300">Lv.${card.level} ${colorInfo.name}（+${card.points}分）</div>
                 </div>
             `;
+            
+// ===== 載入寶可夢圖鑑資料 =====
+const pokedexEl = document.getElementById('modal-pokedex-content');
+
+if (pokedexEl) {
+    const pokedexEntry = typeof getPokedexEntry === 'function'
+        ? getPokedexEntry(card.pokedexId)
+        : null;
+
+    if (pokedexEntry) {
+        pokedexEl.innerHTML = `
+            <div class="space-y-2">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                    <span class="text-cyan-300 font-bold text-sm">
+                        No. ${pokedexEntry.id}
+                    </span>
+                    <span class="text-white font-bold text-base">
+                        ${pokedexEntry.name}
+                    </span>
+                </div>
+
+                <div class="flex flex-wrap gap-1">
+                    ${(pokedexEntry.types || []).map(type => `
+                        <span class="px-2 py-1 rounded-full bg-cyan-500/20 text-cyan-200 text-[11px]">
+                            ${type}
+                        </span>
+                    `).join('')}
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="bg-slate-800/70 rounded-lg p-2">
+                        <div class="text-slate-500">身高</div>
+                        <div class="text-white">${pokedexEntry.height || '未提供'}</div>
+                    </div>
+                    <div class="bg-slate-800/70 rounded-lg p-2">
+                        <div class="text-slate-500">體重</div>
+                        <div class="text-white">${pokedexEntry.weight || '未提供'}</div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="text-cyan-300 font-bold mb-1">性別</div>
+                    <div>${pokedexEntry.gender || '未提供'}</div>
+                </div>
+
+                <div>
+                    <div class="text-cyan-300 font-bold mb-1">分類</div>
+                    <div>${pokedexEntry.category || '未提供'}</div>
+                </div>
+
+                <div>
+                    <div class="text-cyan-300 font-bold mb-1">特性</div>
+                    <div>${Array.isArray(pokedexEntry.abilities)
+                        ? pokedexEntry.abilities.join('、')
+                        : pokedexEntry.abilities || '未提供'}
+                    </div>
+                </div>
+
+                <div>
+                    <div class="text-cyan-300 font-bold mb-1">圖鑑介紹</div>
+                    <div class="leading-relaxed text-slate-300">
+                        ${pokedexEntry.description || '暫無介紹'}
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        pokedexEl.innerHTML = `
+            <div class="text-center text-rose-300 py-6">
+                找不到這隻寶可夢的圖鑑資料
+                <div class="text-slate-500 mt-2">
+                    圖鑑編號：${card.pokedexId || '未設定'}
+                </div>
+            </div>
+        `;
+    }
+}
+
 
             const costRowsHtml = Object.entries(card.cost).map(([g, costVal]) => {
                 if (costVal <= 0) return '';
