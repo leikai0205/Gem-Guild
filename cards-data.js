@@ -3,16 +3,16 @@ const GEM_TYPES = ['ruby', 'sapphire', 'emerald', 'diamond', 'onyx'];
 
 // 1. 10 隻稀有寶可夢夥伴（皇家貴族卡）- 正統規則：5張雙色各4 + 5張三色各3，皆為 +3 分
 const POKEMON_NOBLES = [
-    { id: 'n113', name: '吉利蛋', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/113.png', req: { ruby: 4, emerald: 4 } },
-    { id: 'n122', name: '魔牆人偶', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/122.png', req: { sapphire: 4, diamond: 4 } },
-    { id: 'n139', name: '多刺菊石獸', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/139.png', req: { sapphire: 4, emerald: 4 } },
-    { id: 'n140', name: '化石盔', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/140.png', req: { ruby: 4, onyx: 4 } },
-    { id: 'n132', name: '百變怪', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/132.png', req: { diamond: 4, onyx: 4 } },
-    { id: 'n137', name: '多邊獸', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/137.png', req: { diamond: 3, sapphire: 3, onyx: 3 } },
-    { id: 'n143', name: '卡比獸', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/143.png', req: { sapphire: 3, emerald: 3, diamond: 3 } },
-    { id: 'n149', name: '快龍', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/149.png', req: { ruby: 3, onyx: 3, emerald: 3 } },
-    { id: 'n150', name: '超夢', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png', req: { diamond: 3, onyx: 3, ruby: 3 } },
-    { id: 'n151', name: '夢幻', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/151.png', req: { ruby: 3, emerald: 3, sapphire: 3 } }
+    { id: 'n113',pokedexId: '113', name: '吉利蛋', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/113.png', req: { ruby: 4, emerald: 4 } },
+    { id: 'n122',pokedexId: '122', name: '魔牆人偶', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/122.png', req: { sapphire: 4, diamond: 4 } },
+    { id: 'n139',pokedexId: '139', name: '多刺菊石獸', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/139.png', req: { sapphire: 4, emerald: 4 } },
+    { id: 'n140',pokedexId: '140', name: '化石盔', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/140.png', req: { ruby: 4, onyx: 4 } },
+    { id: 'n132',pokedexId: '132', name: '百變怪', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/132.png', req: { diamond: 4, onyx: 4 } },
+    { id: 'n137',pokedexId: '137', name: '多邊獸', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/137.png', req: { diamond: 3, sapphire: 3, onyx: 3 } },
+    { id: 'n143',pokedexId: '143', name: '卡比獸', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/143.png', req: { sapphire: 3, emerald: 3, diamond: 3 } },
+    { id: 'n149',pokedexId: '149', name: '快龍', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/149.png', req: { ruby: 3, onyx: 3, emerald: 3 } },
+    { id: 'n150',pokedexId: '150', name: '超夢', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png', req: { diamond: 3, onyx: 3, ruby: 3 } },
+    { id: 'n151',pokedexId: '151', name: '夢幻', points: 3, img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/151.png', req: { ruby: 3, emerald: 3, sapphire: 3 } }
 ];
 
 // 2. 90 張資源卡專屬寶可夢圖鑑編號對應表
