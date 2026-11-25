@@ -144,6 +144,8 @@ html,body{font-family:'Noto Sans TC',sans-serif;background:radial-gradient(circl
 #game-screen.guild-fit-active{position:fixed!important;inset:auto!important;left:50%!important;top:50%!important;width:var(--guild-base-w)!important;height:var(--guild-base-h)!important;min-height:0!important;max-height:none!important;margin:0!important;padding:10px!important;overflow:hidden!important;transform:translate(-50%,-50%) scale(var(--guild-fit-scale))!important;transform-origin:center center!important;box-sizing:border-box!important}
 #game-screen.guild-fit-active>header{min-height:42px}
 #game-screen.guild-fit-active>.grid{display:grid!important;grid-template-columns:minmax(0,2fr) minmax(300px,1fr)!important;grid-template-rows:minmax(0,1fr)!important;gap:10px!important;height:calc(100% - 54px)!important;min-height:0!important;overflow:hidden!important}
+/* 市場與預留卡：統一使用電腦版欄位比例 */
+#game-screen.guild-fit-active main.glass-panel>.flex.flex-nowrap.items-start.justify-between>div:last-child{flex:0 0 132px!important;width:132px!important;min-width:132px!important;}
 #game-screen.guild-fit-active>.grid>div,#game-screen.guild-fit-active>.grid>aside{min-width:0!important;min-height:0!important;height:100%!important;overflow:hidden!important}
 #game-screen.guild-fit-active>.grid>div{display:flex!important;flex-direction:column!important;gap:8px!important}
 #game-screen.guild-fit-active>.grid>div>section{flex:0 0 auto!important}
