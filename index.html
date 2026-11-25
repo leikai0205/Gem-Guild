@@ -330,6 +330,13 @@ html,body{height:100%;overflow:hidden}
 #game-screen .poke-color-card img{height:clamp(42px,9vh,54px)!important;max-height:54px!important}
 #game-screen #battle-log-container{height:40px!important;max-height:40px!important}
 }
+
+    @media(orientation:landscape) and (max-width:1023px){
+#card-action-modal .card-action-layout{align-items:stretch!important}
+#card-action-modal #modal-pokedex{height:100%!important}
+#card-action-modal #modal-pokedex-content{overflow:visible!important}
+#card-action-modal .card-action-panel{overflow:visible!important}
+}
 </style>
 
 </head>
