@@ -2195,7 +2195,7 @@ async function executeBuyCard() {
 
             panel.style.height = `${panelH}px`;
 
-            const scale = Math.min(1, availableW / panelW, availableH / panelH);
+            const scale = Math.min(availableW / panelW, availableH / panelH);
             panel.style.transform = `scale(${scale})`;
         });
     }
