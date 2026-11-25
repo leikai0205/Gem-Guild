@@ -9,36 +9,28 @@
     <script src="cards-data.js"></script>
     <script src="pokedex-data.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+
 <style id="guild-clean-css">
 /* =========================================================
-   Pokémon Guild — 整合版 CSS
-   桌面 / 平板 / 手機直式 / 手機橫式
+   Pokémon Guild — 統一畫布版 CSS
+   桌面 1440×810
+   手機直式 430×900
+   手機橫式 900×430
+
+   核心：整個 #game-screen 一起等比例縮放
+   不對外框、卡片、圖片分別縮放
    ========================================================= */
 
-/* ===================== 1. 基礎 ===================== */
+/* 1. 基礎設定 */
 
 :root {
     --guild-fit-scale: 1;
-    --guild-base-w: 1200px;
-    --guild-base-h: 900px;
+    --guild-base-w: 1440px;
+    --guild-base-h: 810px;
 
     --guild-bg: #020617;
     --guild-panel: rgba(15, 23, 42, .88);
     --guild-border: rgba(148, 163, 184, .28);
-}
-
-html,
-body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background:
-        radial-gradient(ellipse at top, #1e293b 0%, #020617 75%);
-    color: #f8fafc;
-    font-family: 'Noto Sans TC', sans-serif;
-    overflow: hidden;
-    box-sizing: border-box;
 }
 
 *,
@@ -47,11 +39,23 @@ body {
     box-sizing: border-box;
 }
 
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: radial-gradient(ellipse at top, #1e293b 0%, #020617 75%);
+    color: #f8fafc;
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
 #app {
+    position: relative;
     width: 100%;
     height: 100%;
     min-height: 100dvh;
-    position: relative;
     overflow: hidden;
 }
 
@@ -59,17 +63,19 @@ body {
     display: none !important;
 }
 
-/* ===================== 2. 大廳 ===================== */
+/* 2. 大廳 */
 
 #lobby-screen {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 16px;
-    overflow-y: auto;
     overflow-x: hidden;
+    overflow-y: auto;
 }
 
 #lobby-screen > .glass-panel {
@@ -79,15 +85,14 @@ body {
     flex-shrink: 0;
 }
 
-/* ===================== 3. 共用面板 ===================== */
+/* 3. 共用面板 */
 
 .glass-panel {
     background: rgba(15, 23, 42, .86);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(148, 163, 184, .25);
-    box-shadow:
-        0 10px 30px rgba(0, 0, 0, .25);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
 }
 
 .glass-card {
@@ -100,7 +105,7 @@ body {
     font-family: 'Cinzel', 'Noto Sans TC', serif;
 }
 
-/* ===================== 4. 遊戲畫面 ===================== */
+/* 4. 遊戲畫面：一般狀態 */
 
 #game-screen {
     position: relative;
@@ -120,8 +125,8 @@ body {
 }
 
 #game-screen > .grid {
-    min-height: 0;
     flex: 1 1 auto;
+    min-height: 0;
 }
 
 #game-screen main.glass-panel {
@@ -129,7 +134,32 @@ body {
     min-height: 0;
 }
 
-/* ===================== 5. 市場卡 ===================== */
+/* 5. 統一遊戲畫布
+   JS 負責計算縮放比例及 left/top 位置。
+   CSS 只負責讓整張畫布使用同一個比例縮放。
+*/
+
+#game-screen.guild-fit-active {
+    position: absolute !important;
+
+    left: 0;
+    top: 0;
+
+    width: var(--guild-base-w) !important;
+    height: var(--guild-base-h) !important;
+
+    max-width: none !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    transform: scale(var(--guild-fit-scale)) !important;
+    transform-origin: top left !important;
+
+    overflow: hidden !important;
+}
+
+/* 6. 市場卡片 */
 
 .poke-color-card {
     position: relative;
@@ -150,61 +180,35 @@ body {
 
 /* 黃卡 */
 .poke-color-card[class*="from-amber-100"] {
-    background: linear-gradient(
-        145deg,
-        #fef3c7 0%,
-        #fde68a 55%,
-        #d97706 100%
-    ) !important;
+    background: linear-gradient(145deg, #fef3c7, #fde68a 55%, #d97706) !important;
     border-color: #fbbf24 !important;
 }
 
 /* 藍卡 */
 .poke-color-card[class*="from-blue-700"] {
-    background: linear-gradient(
-        145deg,
-        #1d4ed8 0%,
-        #075985 52%,
-        #172554 100%
-    ) !important;
+    background: linear-gradient(145deg, #1d4ed8, #075985 52%, #172554) !important;
     border-color: #60a5fa !important;
 }
 
 /* 綠卡 */
 .poke-color-card[class*="from-emerald-700"] {
-    background: linear-gradient(
-        145deg,
-        #047857 0%,
-        #166534 52%,
-        #022c22 100%
-    ) !important;
+    background: linear-gradient(145deg, #047857, #166534 52%, #022c22) !important;
     border-color: #34d399 !important;
 }
 
 /* 紅卡 */
 .poke-color-card[class*="from-red-700"],
 .poke-color-card[class*="from-rose-700"] {
-    background: linear-gradient(
-        145deg,
-        #b91c1c 0%,
-        #9f1239 52%,
-        #4c0519 100%
-    ) !important;
+    background: linear-gradient(145deg, #b91c1c, #9f1239 52%, #4c0519) !important;
     border-color: #fb7185 !important;
 }
 
 /* 紫卡 */
 .poke-color-card[class*="from-purple-800"] {
-    background: linear-gradient(
-        145deg,
-        #6b21a8 0%,
-        #581c87 52%,
-        #170b2e 100%
-    ) !important;
+    background: linear-gradient(145deg, #6b21a8, #581c87 52%, #170b2e) !important;
     border-color: #c084fc !important;
 }
 
-/* 黃卡分數 */
 .poke-color-card[class*="from-amber-100"]
 > div:first-child > span:first-child {
     color: #78350f !important;
@@ -213,6 +217,7 @@ body {
 }
 
 /* 卡片標籤 */
+
 .poke-color-card[class*="from-blue-700"]
 > div:first-of-type > span:last-child {
     background: rgba(30,64,175,.92);
@@ -248,7 +253,7 @@ body {
     border-color: #f59e0b;
 }
 
-/* ===================== 6. 費用 ===================== */
+/* 7. 寶石費用 */
 
 .gem-cost-item {
     display: inline-flex;
@@ -277,7 +282,6 @@ body {
     white-space: nowrap;
 }
 
-/* 費用數字色彩 */
 .gem-cost-diamond .gem-cost-number {
     color: #facc15 !important;
 }
@@ -302,7 +306,6 @@ body {
     color: #fbbf24 !important;
 }
 
-/* 市場卡費用列 */
 .poke-color-card > .flex.flex-nowrap.items-center.justify-center {
     display: flex;
     flex-direction: row;
@@ -317,7 +320,7 @@ body {
     overflow: hidden;
 }
 
-/* ===================== 7. 預留卡 ===================== */
+/* 8. 預留卡 */
 
 .reserved-mini-card {
     position: relative;
@@ -367,7 +370,7 @@ body {
     white-space: nowrap;
 }
 
-/* ===================== 8. 稀有寶可夢 ===================== */
+/* 9. 稀有寶可夢 */
 
 .nobles-flex-container {
     display: flex;
@@ -378,16 +381,17 @@ body {
     min-width: 0;
 }
 
-.noble-mini-card,
-.reserved-mini-card {
+.noble-mini-card {
     min-width: 0;
 }
 
 .noble-mini-card img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
     object-fit: contain;
 }
 
-/* 稀有需求標籤 */
 .noble-cost-diamond {
     background: rgba(120,53,15,.92) !important;
     color: #fef3c7 !important;
@@ -418,7 +422,7 @@ body {
     border: 1px solid #c084fc !important;
 }
 
-/* ===================== 9. 銀行資源 ===================== */
+/* 10. 銀行資源 */
 
 #bank-gems-container .item-orb-btn {
     position: relative;
@@ -445,7 +449,7 @@ body {
     pointer-events: none;
 }
 
-/* ===================== 10. 玩家區 ===================== */
+/* 11. 玩家區 */
 
 #players-container > div {
     background: linear-gradient(
@@ -465,7 +469,6 @@ body {
     border-radius: 5px;
 }
 
-/* 玩家資源色 */
 #players-container .grid > div:nth-child(1) {
     background: rgba(120,53,15,.48);
     border-color: rgba(251,191,36,.55);
@@ -496,7 +499,6 @@ body {
     border-color: rgba(148,163,184,.5);
 }
 
-/* 玩家文字色 */
 #players-container .grid > div:nth-child(1) > span:first-child {
     color: #fde68a;
 }
@@ -521,7 +523,7 @@ body {
     color: #e2e8f0;
 }
 
-/* ===================== 11. 動畫 ===================== */
+/* 12. 動畫 */
 
 @keyframes pulseGold {
     0%, 100% {
@@ -568,22 +570,9 @@ body {
     animation: fadeInOut 3s ease forwards;
 }
 
-/* ===================== 12. 桌面版 ===================== */
+/* 13. 桌面版 */
 
 @media (min-width: 1024px) {
-
-    #game-screen {
-        max-width: 1500px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    #game-screen > header,
-    #game-screen > .grid {
-        width: 100%;
-        margin-left: auto;
-        margin-right: auto;
-    }
 
     #game-screen > .grid {
         display: grid;
@@ -605,10 +594,6 @@ body {
         margin: 0;
     }
 
-    #game-screen #status-banner {
-        text-align: center;
-    }
-
     #game-screen .nobles-flex-container {
         justify-content: center;
     }
@@ -623,20 +608,17 @@ body {
         flex: 0 0 auto;
     }
 
-    #game-screen #reserved-cards-container > .reserved-mini-card {
+    #game-screen #reserved-cards-container > .reserved-mini-card,
+    #game-screen #reserved-cards-container > div:not(.reserved-mini-card) {
         flex: 0 0 104px;
         width: 100%;
         height: 104px;
         min-height: 104px;
         max-height: 104px;
-        aspect-ratio: auto;
-        padding: 5px 4px 3px;
     }
 
-    #game-screen #reserved-cards-container > div:not(.reserved-mini-card) {
-        flex: 0 0 104px;
-        height: 104px;
-        min-height: 104px;
+    #game-screen #reserved-cards-container > .reserved-mini-card {
+        padding: 5px 4px 3px;
     }
 
     #game-screen #reserved-cards-container .reserved-mini-card img {
@@ -688,17 +670,13 @@ body {
     }
 }
 
-/* ===================== 13. 手機 / 平板 ===================== */
+/* 14. 手機及平板 */
 
 @media (max-width: 1023px) {
 
     #game-screen {
         gap: 4px;
         padding: 4px;
-    }
-
-    #game-screen > header {
-        min-height: 0;
     }
 
     #game-screen > .grid {
@@ -755,7 +733,6 @@ body {
         object-fit: contain;
     }
 
-    /* 費用單排 */
     #game-screen .reserved-mini-card .reserved-cost-row,
     #game-screen .poke-color-card
     > .flex.flex-nowrap.items-center.justify-center {
@@ -836,14 +813,11 @@ body {
         font-size: 13px;
         font-weight: 900;
         line-height: 1.15;
-        text-shadow:
-            0 1px 3px rgba(0,0,0,.95),
-            0 0 3px rgba(0,0,0,.8);
+        text-shadow: 0 1px 3px rgba(0,0,0,.95);
         position: relative;
         z-index: 15;
     }
 
-    /* 玩家區 */
     #players-container .grid > div {
         min-width: 0;
         overflow: hidden;
@@ -853,7 +827,6 @@ body {
         font-weight: 900;
     }
 
-    /* 去除費用外框 */
     #game-screen .reserved-mini-card .reserved-cost-row,
     #game-screen .poke-color-card > div:last-child,
     #game-screen .poke-color-card
@@ -864,14 +837,9 @@ body {
     }
 }
 
-/* ===================== 14. 手機直式 ===================== */
+/* 15. 手機直式 */
 
 @media (max-width: 767px) and (orientation: portrait) {
-
-    #game-screen {
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
 
     #game-screen > .grid {
         display: flex;
@@ -890,16 +858,11 @@ body {
     }
 }
 
-/* ===================== 15. 手機橫式 ===================== */
+/* 16. 手機橫式
+   只設定畫布內的排版，不對整個畫面做第二次縮放。
+*/
 
 @media (orientation: landscape) and (max-width: 1023px) {
-
-    #game-screen {
-        --guild-base-w: 900px;
-        --guild-base-h: 430px;
-        padding: 4px;
-        gap: 4px;
-    }
 
     #game-screen > .grid {
         display: grid;
@@ -918,19 +881,15 @@ body {
         flex-wrap: nowrap;
         justify-content: center;
     }
-
-    #game-screen .poke-color-card {
-        aspect-ratio: 1 / 1.48;
-    }
 }
 
-/* ===================== 16. 矮螢幕 ===================== */
+/* 17. 矮螢幕 */
 
-@media (max-height: 650px) and (orientation: landscape) {
+@media (max-height: 500px) and (orientation: landscape) {
 
     #game-screen {
-        padding: 4px;
         gap: 4px;
+        padding: 4px;
     }
 
     #game-screen > header {
@@ -940,31 +899,123 @@ body {
     }
 }
 
-/* ===================== 17. 遊戲畫布縮放 ===================== */
+/* 18. 一般卡片彈窗
+   不使用 zoom，避免彈窗外框和內容分開縮放。
+*/
 
-#game-screen.guild-fit-active {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: var(--guild-base-w);
-    height: var(--guild-base-h);
-    max-width: none;
-    min-height: 0;
-    transform: translateX(-50%) scale(var(--guild-fit-scale));
-    transform-origin: top center;
-    overflow: hidden;
+#card-action-modal:has(#modal-cost-breakdown:not(.hidden)) {
+    box-sizing: border-box;
 }
 
-/* ===================== 18. 稀有寶可夢圖片 ===================== */
-
-.noble-mini-card img {
-    width: auto;
+#card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+.card-action-panel {
+    box-sizing: border-box;
     max-width: 100%;
-    height: auto;
-    object-fit: contain;
 }
 
-/* ===================== 19. 大廳高度適應 ===================== */
+/* 19. 手機橫式彈窗 */
+
+@media (orientation: landscape) and (max-width: 1023px) {
+
+    #card-action-modal:not(.hidden):has(#modal-cost-breakdown:not(.hidden)) {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        height: 100dvh !important;
+        padding: 6px !important;
+        box-sizing: border-box !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    .card-action-panel {
+        width: 100% !important;
+        max-width: 900px !important;
+        max-height: calc(100dvh - 12px) !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 8px !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        border-radius: 16px !important;
+        gap: 5px !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-title {
+        font-size: 13px !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    .card-action-layout {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+        gap: 6px !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-card-preview {
+        padding: 0 !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-card-preview img {
+        max-height: 90px !important;
+        width: auto !important;
+        object-fit: contain !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-cost-breakdown {
+        padding: 6px !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        gap: 3px !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-pokedex {
+        padding: 7px !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-pokedex-content {
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        gap: 3px !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-afford-status {
+        margin: 0 !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-action-buttons {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 5px !important;
+        padding-top: 2px !important;
+    }
+
+    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
+    #modal-action-buttons button {
+        min-width: 0 !important;
+        min-height: 34px !important;
+        padding: 5px 3px !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        white-space: normal !important;
+    }
+}
+
+/* 20. 桌面大廳高度 */
 
 @media (min-width: 1024px) {
 
@@ -989,6 +1040,43 @@ body {
         margin: auto;
         max-height: none;
         overflow: visible;
+    }
+}
+
+/* 21. 桌面飛行動畫 */
+
+.tabletop-flight {
+    position: fixed !important;
+    z-index: 99999 !important;
+    pointer-events: none !important;
+    margin: 0 !important;
+    transform-origin: center center !important;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 8px 14px rgba(0,0,0,.55));
+}
+
+.tabletop-arrival-pulse {
+    animation: tabletopArrivalPulse .65s ease-out;
+}
+
+.noble-tabletop-flight img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+
+@keyframes tabletopArrivalPulse {
+    0% {
+        filter: brightness(1);
+        box-shadow: 0 0 0 rgba(251,191,36,0);
+    }
+    45% {
+        filter: brightness(1.65);
+        box-shadow: 0 0 18px rgba(251,191,36,.9);
+    }
+    100% {
+        filter: brightness(1);
+        box-shadow: 0 0 0 rgba(251,191,36,0);
     }
 }
 
@@ -1408,273 +1496,7 @@ body {
         </div>
     </div>
 
-    <!-- 遊戲核心邏輯 -->
-    <style>
-      .tabletop-flight {
-        position: fixed !important; z-index: 99999 !important; pointer-events: none !important;
-        margin: 0 !important; transform-origin: center center !important;
-        will-change: transform, opacity; filter: drop-shadow(0 8px 14px rgba(0,0,0,.55));
-      }
-      .tabletop-arrival-pulse { animation: tabletopArrivalPulse .65s ease-out; }
-      .noble-tabletop-flight img { width: 100% !important; height: 100% !important; object-fit: contain !important; }
-      @keyframes tabletopArrivalPulse {
-        0% { filter: brightness(1); box-shadow: 0 0 0 rgba(251,191,36,0); }
-        45% { filter: brightness(1.65); box-shadow: 0 0 18px rgba(251,191,36,.9); }
-        100% { filter: brightness(1); box-shadow: 0 0 0 rgba(251,191,36,0); }
-      }
 
-        
-/* ==========================================
-   Pokémon Guild - 一般卡片彈窗自動縮放
-   僅影響一般卡片，不影響稀有寶可夢圖鑑
-   ========================================== */
-
-/* 平板直式、橫式 */
-@media (max-width: 1023px) {
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) {
-        padding: 6px !important;
-    }
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
-        zoom: 0.86;
-        width: 116.28% !important;
-        max-width: 116.28% !important;
-        box-sizing: border-box;
-        padding: 12px !important;
-        border-radius: 22px !important;
-    }
-}
-
-/* 一般手機直式 */
-@media (max-width: 600px) {
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
-        zoom: 0.72;
-        width: 138.89% !important;
-        max-width: 138.89% !important;
-        padding: 9px !important;
-        border-radius: 18px !important;
-    }
-}
-
-/* 較小尺寸手機 */
-@media (max-width: 390px) {
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
-        zoom: 0.66;
-        width: 151.52% !important;
-        max-width: 151.52% !important;
-    }
-}
-
-/* 手機橫式：優先適應較短的螢幕高度 */
-
-/* 手機橫式：加強高度壓縮 */
-@media (max-height: 500px) and (orientation: landscape) {
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
-        zoom: 0.48;
-        width: 208.33% !important;
-        max-width: 208.33% !important;
-        padding: 6px !important;
-    }
-
-    /* 縮小彈窗內部區塊間距 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel {
-        row-gap: 5px !important;
-    }
-
-    /* 卡片與圖鑑之間的距離 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-layout {
-        gap: 6px !important;
-    }
-
-    /* 三個按鈕縮小上下間距 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) #modal-action-buttons {
-        row-gap: 4px !important;
-        padding-top: 2px !important;
-    }
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) #modal-action-buttons button {
-        padding-top: 4px !important;
-        padding-bottom: 4px !important;
-    }
-}
-
-
-    </style>
-    
-
-<style id="guild-landscape-modal-height-fix-v2">
-/* 手機橫式：直接依照手機可見畫面控制彈窗 */
-@media (orientation: landscape) and (max-width: 1023px) {
-
-    #card-action-modal:not(.hidden):has(#modal-cost-breakdown:not(.hidden)) {
-        position: fixed !important;
-        inset: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        height: 100dvh !important;
-        padding: 6px !important;
-        box-sizing: border-box !important;
-        align-items: center !important;
-        justify-content: center !important;
-        overflow: hidden !important;
-    }
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    .card-action-panel {
-        zoom: 1 !important;
-        width: 100% !important;
-        max-width: 900px !important;
-        max-height: calc(100vh - 12px) !important;
-        max-height: calc(100dvh - 12px) !important;
-        height: auto !important;
-        margin: 0 !important;
-        padding: 8px !important;
-        box-sizing: border-box !important;
-        overflow-x: hidden !important;
-        overflow-y: auto !important;
-        border-radius: 16px !important;
-        gap: 5px !important;
-    }
-
-    /* 標題 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-title {
-        font-size: 13px !important;
-    }
-
-    /* 左右雙欄 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    .card-action-layout {
-        display: grid !important;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-        gap: 6px !important;
-    }
-
-    /* 卡片圖片 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-card-preview {
-        padding: 0 !important;
-    }
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-card-preview img {
-        max-height: 90px !important;
-        width: auto !important;
-        object-fit: contain !important;
-    }
-
-    /* 卡片費用 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-cost-breakdown {
-        padding: 6px !important;
-        font-size: 10px !important;
-        line-height: 1.2 !important;
-        gap: 3px !important;
-    }
-
-    /* 寶可夢圖鑑 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-pokedex {
-        padding: 7px !important;
-    }
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-pokedex-content {
-        font-size: 10px !important;
-        line-height: 1.2 !important;
-        gap: 3px !important;
-    }
-
-    /* 收服狀態 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-afford-status {
-        margin: 0 !important;
-        font-size: 10px !important;
-        line-height: 1.2 !important;
-    }
-
-    /* 三個按鈕改成橫向排列，節省上下空間 */
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-action-buttons {
-        display: grid !important;
-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-        gap: 5px !important;
-        padding-top: 2px !important;
-    }
-
-    #card-action-modal:has(#modal-cost-breakdown:not(.hidden))
-    #modal-action-buttons button {
-        min-width: 0 !important;
-        min-height: 34px !important;
-        padding: 5px 3px !important;
-        font-size: 10px !important;
-        line-height: 1.2 !important;
-        white-space: normal !important;
-    }
-}
-
-    
-
-/* =========================================================
-   Pokémon Guild：手機橫式大廳等比例縮放
-   ========================================================= */
-
-@media (orientation: landscape) and (max-width: 1023px) {
-
-    #lobby-screen {
-        position: relative !important;
-        width: 100% !important;
-        height: 100dvh !important;
-        min-height: 0 !important;
-        overflow: hidden !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        padding: 6px !important;
-        box-sizing: border-box !important;
-    }
-
-    #lobby-screen > .glass-panel {
-        width: 420px !important;
-        max-width: none !important;
-        height: auto !important;
-        max-height: none !important;
-        flex: 0 0 auto !important;
-        margin: 0 !important;
-        padding: 12px !important;
-        overflow: visible !important;
-        box-sizing: border-box !important;
-
-        transform: scale(
-            min(
-                calc((100vw - 12px) / 420),
-                calc((100dvh - 12px) / 420)
-            )
-        ) !important;
-
-        transform-origin: center center !important;
-    }
-
-    #lobby-screen > .glass-panel > .text-center {
-        margin-bottom: 10px !important;
-    }
-
-    #lobby-screen > .glass-panel > .flex.justify-center.gap-4 {
-        margin-bottom: 10px !important;
-        gap: 10px !important;
-    }
-
-    #lobby-screen > .glass-panel > .space-y-3\.5 {
-        gap: 8px !important;
-    }
-}
-
-    
-</style>
 
     <script>
         // 渲染市場（使用緊湊靠左排列，讓妙蛙花與拉普拉斯緊鄰）
