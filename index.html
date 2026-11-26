@@ -2,7 +2,10 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#090d16" />
     <title>Pokémon Guild</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -141,7 +144,7 @@ html,body{font-family:'Noto Sans TC',sans-serif;background:radial-gradient(circl
 @keyframes tabletopArrivalPulse{0%{filter:brightness(1);box-shadow:0 0 0 rgba(251,191,36,0)}45%{filter:brightness(1.65);box-shadow:0 0 18px rgba(251,191,36,.9)}100%{filter:brightness(1);box-shadow:0 0 0 rgba(251,191,36,0)}}
 
 /* 遊戲桌：等比例縮放 */
-#game-screen.guild-fit-active{position:fixed!important;inset:auto!important;left:50%!important;top:50%!important;width:var(--guild-base-w)!important;height:var(--guild-base-h)!important;min-height:0!important;max-height:none!important;margin:0!important;padding:10px!important;overflow:hidden!important;transform:translate(-50%,-50%) scale(var(--guild-fit-scale))!important;transform-origin:center center!important;box-sizing:border-box!important}
+#game-screen.guild-fit-active{position:fixed!important;inset:auto!important;left:var(--guild-viewport-left,50%)!important;top:var(--guild-viewport-top,50%)!important;width:var(--guild-base-w)!important;height:var(--guild-base-h)!important;min-height:0!important;max-height:none!important;margin:0!important;padding:10px!important;overflow:hidden!important;transform:translate(-50%,-50%) scale(var(--guild-fit-scale))!important;transform-origin:center center!important;box-sizing:border-box!important}
 #game-screen.guild-fit-active>header{min-height:42px}
 #game-screen.guild-fit-active>.grid{display:grid!important;grid-template-columns:minmax(0,2fr) minmax(300px,1fr)!important;grid-template-rows:minmax(0,1fr)!important;gap:10px!important;height:calc(100% - 54px)!important;min-height:0!important;overflow:hidden!important}
 /* 市場與預留卡：統一使用電腦版欄位比例 */
