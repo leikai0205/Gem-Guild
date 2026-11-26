@@ -685,6 +685,10 @@ html,body{height:100%;overflow:hidden}
         };
 
 let gameState=null,currentRoomId=null,myPlayerIndex=null;
+        // ===== 自動跳過回合控制 =====
+let autoSkipCheckTimer = null;
+let autoSkipInProgress = false;
+let autoSkipTurnKey = null;
 let selectedGemsBuffer=[],activeCardSelection=null,realtimeChannel=null,lastNotifiedPlayerIdx=null;
 const deviceSessionId=crypto.randomUUID?.()||`device-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 let realtimeReady=false,presenceSyncWaiters=[];
@@ -897,16 +901,27 @@ function subscribeRealtime(){
         normalizeGameState();
         renderAll();
         events.forEach(playPreparedVisualEvent);
+        // 遊戲狀態更新後，檢查目前玩家是否還有合法行動
+        scheduleAutoSkipCheck(500);
     })
     .subscribe(async status=>{
         if(status!=='SUBSCRIBED')return;
         const {error}=await channel.track({
-            playerIndex:myPlayerIndex,
-            playerName:gameState.players[myPlayerIndex].name,
-            deviceId:deviceSessionId
-        });
-        if(error)console.error('裝置在線註冊失敗：',error);
-        else realtimeReady=true;
+    playerIndex:myPlayerIndex,
+    playerName:gameState.players[myPlayerIndex].name,
+    deviceId:deviceSessionId,
+    joinedAt:Date.now()
+});
+
+if(error) {
+    console.error('裝置在線註冊失敗：',error);
+} else {
+    realtimeReady=true;
+
+    // 等待 Presence 同步完成，再檢查是否需要自動跳過
+    await waitForPresenceSync(1000);
+    scheduleAutoSkipCheck(500);
+}
     });
 
     realtimeChannel=channel;
@@ -1547,18 +1562,17 @@ async function confirmTakeGems() {
     finishActionAndCheckPhase();
 }
 
+
 function calculatePurchasePayment(player, card) {
-    const payGems = { diamond: 0, sapphire: 0, emerald: 0, ruby: 0, onyx: 0, gold: 0 };
+    const payGems = { diamond:0, sapphire:0, emerald:0, ruby:0, onyx:0, gold:0 };
     let goldNeeded = 0;
     const missingDetails = [];
 
     for (const [gem, rawCost] of Object.entries(card.cost)) {
-        const discount = player.bonuses[gem] || 0;
-        const netCost = Math.max(0, rawCost - discount);
+        const netCost = Math.max(0, rawCost - (player.bonuses[gem] || 0));
         const owned = player.gems[gem] || 0;
-        if (owned >= netCost) {
-            payGems[gem] = netCost;
-        } else {
+        if (owned >= netCost) payGems[gem] = netCost;
+        else {
             payGems[gem] = owned;
             const short = netCost - owned;
             goldNeeded += short;
@@ -1568,18 +1582,132 @@ function calculatePurchasePayment(player, card) {
 
     if (goldNeeded <= (player.gems.gold || 0)) {
         payGems.gold = goldNeeded;
-        return { canAfford: true, payGems, goldUsed: goldNeeded, missingDetails: [] };
-    } else {
-        return { canAfford: false, payGems, goldUsed: goldNeeded, missingDetails };
+        return { canAfford:true, payGems, goldUsed:goldNeeded, missingDetails:[] };
+    }
+    return { canAfford:false, payGems, goldUsed:goldNeeded, missingDetails };
+}
+
+// ===== 自動跳過回合 =====
+function waitForPresenceSync(timeout = 500) {
+    return new Promise(resolve => {
+        let done = false;
+        const finish = () => {
+            if (done) return;
+            done = true;
+            clearTimeout(timer);
+            presenceSyncWaiters = presenceSyncWaiters.filter(fn => fn !== finish);
+            resolve();
+        };
+        const timer = setTimeout(finish, timeout);
+        presenceSyncWaiters.push(finish);
+    });
+}
+
+function hasAnyLegalAction(player) {
+    if (!player || !gameState) return true;
+
+    try {
+        // 1. 檢查市場卡及自己的預留卡，包含大師球補差額
+        for (const level of [1, 2, 3]) {
+            for (const card of (gameState.market?.[level] || [])) {
+                if (card && calculatePurchasePayment(player, card).canAfford) return true;
+            }
+        }
+
+        for (const card of (player.reserved || [])) {
+            if (card && calculatePurchasePayment(player, card).canAfford) return true;
+        }
+
+        // 2. 檢查能否拿取寶石
+        const colors = CARD_GEM_ORDER.filter(g => Number(gameState.bank?.[g] || 0) > 0);
+        if (colors.length >= 3) return true;
+        if (CARD_GEM_ORDER.some(g => Number(gameState.bank?.[g] || 0) >= 4)) return true;
+
+        // 3. 檢查能否預留市場卡或盲抽牌
+        if ((player.reserved || []).length < 3) {
+            for (const level of [1, 2, 3]) {
+                if ((gameState.market?.[level] || []).some(Boolean)) return true;
+                if ((gameState.decks?.[level] || []).length > 0) return true;
+            }
+        }
+
+        return false;
+    } catch (error) {
+        console.error('檢查合法行動時發生錯誤：', error);
+        return true;
+    }
+}
+
+function isAutoSkipCoordinator() {
+    if (!realtimeReady || !realtimeChannel) return false;
+
+    const sessions = [];
+    Object.values(realtimeChannel.presenceState()).forEach(metas => {
+        (metas || []).forEach(meta => {
+            if (Number(meta.playerIndex) === Number(myPlayerIndex) && meta.deviceId) {
+                sessions.push({
+                    deviceId:String(meta.deviceId),
+                    joinedAt:Number(meta.joinedAt) || 0
+                });
+            }
+        });
+    });
+
+    if (!sessions.length) return false;
+    sessions.sort((a, b) => a.joinedAt - b.joinedAt || a.deviceId.localeCompare(b.deviceId));
+    return sessions[0].deviceId === deviceSessionId;
+}
+
+function scheduleAutoSkipCheck(delay = 400) {
+    clearTimeout(autoSkipCheckTimer);
+    autoSkipCheckTimer = setTimeout(checkAndAutoSkipTurn, delay);
+}
+
+async function checkAndAutoSkipTurn() {
+    if (autoSkipInProgress || !gameState || gameState.winner) return;
+    if (myPlayerIndex == null || gameState.currentPlayerIdx !== myPlayerIndex) return;
+    if (!gameState.players || gameState.players.some(p => p.name.startsWith('等待玩家'))) return;
+    if (!isAutoSkipCoordinator()) return;
+
+    const player = gameState.players[myPlayerIndex];
+    if (!player || hasAnyLegalAction(player)) return;
+
+    autoSkipInProgress = true;
+
+    try {
+        // 等待其他裝置的 Presence 狀態同步，再重新確認
+        await waitForPresenceSync(500);
+
+        if (!gameState || gameState.winner || gameState.currentPlayerIdx !== myPlayerIndex) return;
+        if (!isAutoSkipCoordinator()) return;
+
+        const latestPlayer = gameState.players[myPlayerIndex];
+        if (!latestPlayer || hasAnyLegalAction(latestPlayer)) return;
+
+        const turnKey = `${currentRoomId}-${gameState.roundCount || 1}-${gameState.currentPlayerIdx}`;
+        if (autoSkipTurnKey === turnKey) return;
+
+        autoSkipTurnKey = turnKey;
+        addGameLog(`${latestPlayer.name} 此回合沒有任何動作可以執行，系統自動跳過。`);
+        renderAll();
+
+        await endPlayerTurn();
+
+        alert('目前無法收服卡片、拿取寶石或預留卡片，\n系統已自動結束本回合。');
+    } catch (error) {
+        console.error('自動跳過回合失敗：', error);
+        autoSkipTurnKey = null;
+    } finally {
+        autoSkipInProgress = false;
     }
 }
 
 const ROW_1X6_ATTRS = {
-    diamond: { title: '雷|黃', bg: 'bg-amber-950/50 border-amber-500/60', gemColor: 'text-amber-200', cardBadge: 'bg-amber-100 text-amber-950 font-black border-amber-300' },
-    sapphire: { title: '水|藍', bg: 'bg-blue-950/50 border-blue-500/60', gemColor: 'text-blue-300', cardBadge: 'bg-blue-950/80 text-blue-200 border-blue-400/50' },
-    emerald: { title: '葉|綠', bg: 'bg-emerald-950/50 border-emerald-500/60', gemColor: 'text-emerald-300', cardBadge: 'bg-emerald-950/80 text-emerald-200 border-emerald-400/50' },
-    ruby: { title: '火|紅', bg: 'bg-rose-950/50 border-rose-500/60', gemColor: 'text-rose-300', cardBadge: 'bg-red-950/80 text-red-200 border-red-400/50' },
-    onyx: { title: '月|紫', bg: 'bg-purple-950/60 border-purple-500/60', gemColor: 'text-purple-300', cardBadge: 'bg-purple-950/90 text-purple-200 border-purple-400/60' }
+    diamond: { title:'雷|黃', bg:'bg-amber-950/50 border-amber-500/60', gemColor:'text-amber-200', cardBadge:'bg-amber-100 text-amber-950 font-black border-amber-300' },
+    sapphire: { title:'水|藍', bg:'bg-blue-950/50 border-blue-500/60', gemColor:'text-blue-300', cardBadge:'bg-blue-950/80 text-blue-200 border-blue-400/50' },
+    emerald: { title:'葉|綠', bg:'bg-emerald-950/50 border-emerald-500/60', gemColor:'text-emerald-300', cardBadge:'bg-emerald-950/80 text-emerald-200 border-emerald-400/50' },
+    ruby: { title:'火|紅', bg:'bg-rose-950/50 border-rose-500/60', gemColor:'text-rose-300', cardBadge:'bg-red-950/80 text-red-200 border-red-400/50' },
+    onyx: { title:'月|紫', bg:'bg-purple-950/60 border-purple-500/60', gemColor:'text-purple-300', cardBadge:'bg-purple-950/90 text-purple-200 border-purple-400/60' }
 };
 
 function renderPlayers() {
@@ -2057,6 +2185,7 @@ async function executeBuyCard() {
             await saveGameState();
             renderAll();
             if (preparedVisualEvent) playPreparedVisualEvent(preparedVisualEvent);
+            scheduleAutoSkipCheck(500);
         }
 
         function triggerVictoryModal(winnerName) {
