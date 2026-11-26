@@ -252,7 +252,7 @@ html,body{font-family:'Noto Sans TC',sans-serif;background:radial-gradient(circl
 /* 手機橫式：彈窗依可見畫面縮放 */
 @media(orientation:landscape) and (max-width:1023px){
 #card-action-modal:not(.hidden):has(#modal-cost-breakdown:not(.hidden)){position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;padding:6px!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
-#card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel{zoom:1!important;width:100%!important;max-width:900px!important;max-height:calc(100dvh - 12px)!important;height:auto!important;margin:0!important;padding:8px!important;box-sizing:border-box!important;overflow-x:hidden!important;overflow-y:auto!important;border-radius:16px!important;gap:5px!important}
+#card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-panel{zoom:1!important;width:100%!important;max-width:900px!important;margin:0!important;padding:8px!important;box-sizing:border-box!important;overflow:visible!important;border-radius:16px!important;gap:5px!important}
 #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) #modal-title{font-size:13px!important}
 #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) .card-action-layout{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:6px!important}
 #card-action-modal:has(#modal-cost-breakdown:not(.hidden)) #modal-card-preview{padding:0!important}
