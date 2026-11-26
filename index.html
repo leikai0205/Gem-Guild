@@ -1592,31 +1592,18 @@ function waitForPresenceSync(timeout = 500) {
 
 function hasAnyLegalAction(player) {
     if (!player || !gameState) return true;
-
     try {
-        // 1. 檢查市場卡及自己的預留卡，包含大師球補差額
         for (const level of [1, 2, 3]) {
-            for (const card of (gameState.market?.[level] || [])) {
-                if (card && calculatePurchasePayment(player, card).canAfford) return true;
-            }
+            const cards = [...(gameState.market?.[level] || []), ...(level === 1 ? player.reserved || [] : [])];
+            if (cards.some(c => c && calculatePurchasePayment(player, c).canAfford)) return true;
         }
 
-        for (const card of (player.reserved || [])) {
-            if (card && calculatePurchasePayment(player, card).canAfford) return true;
-        }
-
-        // 2. 檢查能否拿取寶石
         const colors = CARD_GEM_ORDER.filter(g => Number(gameState.bank?.[g] || 0) > 0);
-        if (colors.length >= 2) return true;
-        if (CARD_GEM_ORDER.some(g => Number(gameState.bank?.[g] || 0) >= 4)) return true;
+        if (colors.length >= 2 || CARD_GEM_ORDER.some(g => Number(gameState.bank?.[g] || 0) >= 4)) return true;
 
-        // 3. 檢查能否預留市場卡或盲抽牌
-        if ((player.reserved || []).length < 3) {
-            for (const level of [1, 2, 3]) {
-                if ((gameState.market?.[level] || []).some(Boolean)) return true;
-                if ((gameState.decks?.[level] || []).length > 0) return true;
-            }
-        }
+        if ((player.reserved || []).length < 3)
+            for (const level of [1, 2, 3])
+                if ((gameState.market?.[level] || []).some(Boolean) || (gameState.decks?.[level] || []).length > 0) return true;
 
         return false;
     } catch (error) {
