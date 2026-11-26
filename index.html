@@ -1283,6 +1283,7 @@ function clearSelectedGems() {
 }
 
 
+
 function renderSelectedGemsUI() {
     const preview = document.getElementById('selected-gems-preview');
     const btnClear = document.getElementById('btn-clear-gems');
@@ -1311,14 +1312,14 @@ function renderSelectedGemsUI() {
     const unique = new Set(selectedGemsBuffer).size;
     const availableColors = CARD_GEM_ORDER.filter(g => Number(gameState.bank[g] || 0) > 0).length;
     const sameColor = unique === 1 && len === 2;
-    const isValid = (len === 3 && unique === 3) ||
+    const isValid = len === 1 ||
+        (len === 3 && unique === 3) ||
         (len === 2 && unique === 2 && availableColors < 3) ||
         (sameColor && Number(gameState.bank[selectedGemsBuffer[0]] || 0) >= 4);
 
     btnConfirm.disabled = !isValid;
     btnConfirm.title = isValid
-        ? (willExceed ? '確認後請退回多餘的道具，直到剩餘 10 個' : '')
-        : len === 1 ? '⚠️ 至少選擇 2 顆寶石'
+        ? (len < 3 ? `確定只拿 ${len} 顆寶石嗎？` : willExceed ? '確認後請退回多餘的道具，直到剩餘 10 個' : '')
         : '❌ 不符合寶石拿取規則';
 }
 
@@ -1534,14 +1535,18 @@ function playPreparedVisualEvent(prepared) {
 }
 
 async function confirmTakeGems() {
-    if (selectedGemsBuffer.length === 0) return;
+    const len = selectedGemsBuffer.length;
+    if (!len || (len < 3 && !confirm(`確定只拿取 ${len} 顆寶石嗎？`))) return;
+
     const player = gameState.players[myPlayerIndex];
     const visualEvent = createVisualEvent('gems', { gems: [...selectedGemsBuffer] });
     const gemNamesSummary = selectedGemsBuffer.map(g => BANK_ITEMS[g].name).join('、');
+
     selectedGemsBuffer.forEach(gem => {
-        gameState.bank[gem] -= 1;
-        player.gems[gem] += 1;
+        gameState.bank[gem]--;
+        player.gems[gem]++;
     });
+
     addGameLog(`${player.name} 拿取了進化石：${gemNamesSummary}`);
     selectedGemsBuffer = [];
     renderAll();
