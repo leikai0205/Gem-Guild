@@ -684,8 +684,22 @@ html,body{height:100%;overflow:hidden}
             onyx: { name: '紫卡', shortName: '紫', gemKey: 'onyx', bgClass: 'bg-gradient-to-br from-purple-800 via-purple-950 to-black border-purple-500/80', badgeClass: 'bg-purple-950/90 text-purple-200 border-purple-400/60', textClass: 'text-purple-300', scoreClass: 'text-amber-300 drop-shadow' }
         };
 
-        let gameState = null, currentRoomId = null, myPlayerIndex = null;
-        let selectedGemsBuffer = [], activeCardSelection = null, realtimeChannel = null, lastNotifiedPlayerIdx = null;
+let gameState=null,currentRoomId=null,myPlayerIndex=null;
+let selectedGemsBuffer=[],activeCardSelection=null,realtimeChannel=null,lastNotifiedPlayerIdx=null;
+const deviceSessionId=crypto.randomUUID?.()||`device-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+let realtimeReady=false,presenceSyncWaiters=[];
+
+function waitForPresenceSync(timeoutMs=2500){
+    return new Promise(resolve=>{
+        const finish=()=>{
+            clearTimeout(timer);
+            presenceSyncWaiters=presenceSyncWaiters.filter(fn=>fn!==finish);
+            resolve();
+        };
+        const timer=setTimeout(finish,timeoutMs);
+        presenceSyncWaiters.push(finish);
+    });
+}
         const processedVisualEventIds = new Set();
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -859,44 +873,74 @@ async function saveGameState() {
     await supabaseClient.from('rooms').update({ game_state: gameState, updated_at: new Date() }).eq('room_id', currentRoomId);
 }
 
-function subscribeRealtime() {
-    if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
-    realtimeChannel = supabaseClient
-        .channel(`room-${currentRoomId}`)
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `room_id=eq.${currentRoomId}` }, payload => {
-            if (payload.new && payload.new.game_state) {
-                const incomingState = payload.new.game_state;
-                const incomingVisualEvents = Array.isArray(incomingState.visualEvents) ? incomingState.visualEvents : (incomingState.visualEvent ? [incomingState.visualEvent] : []);
-                const preparedVisualEvents = incomingVisualEvents.map(event => prepareVisualEvent(event)).filter(Boolean);
-                gameState = incomingState;
-                normalizeGameState();
-                renderAll();
-                preparedVisualEvents.forEach(playPreparedVisualEvent);
-            }
-        })
-        .subscribe();
+function subscribeRealtime(){
+    if(realtimeChannel)supabaseClient.removeChannel(realtimeChannel);
+    realtimeReady=false;
+
+    const channel=supabaseClient.channel(`room-${currentRoomId}`,{
+        config:{presence:{key:deviceSessionId}}
+    })
+    .on('presence',{event:'sync'},()=>{
+        [...presenceSyncWaiters].forEach(resolve=>resolve());
+    })
+    .on('postgres_changes',{
+        event:'UPDATE',schema:'public',table:'rooms',
+        filter:`room_id=eq.${currentRoomId}`
+    },payload=>{
+        if(!payload.new?.game_state)return;
+        const state=payload.new.game_state;
+        const events=(Array.isArray(state.visualEvents)?state.visualEvents:
+            state.visualEvent?[state.visualEvent]:[])
+            .map(prepareVisualEvent).filter(Boolean);
+
+        gameState=state;
+        normalizeGameState();
+        renderAll();
+        events.forEach(playPreparedVisualEvent);
+    })
+    .subscribe(async status=>{
+        if(status!=='SUBSCRIBED')return;
+        const {error}=await channel.track({
+            playerIndex:myPlayerIndex,
+            playerName:gameState.players[myPlayerIndex].name,
+            deviceId:deviceSessionId
+        });
+        if(error)console.error('裝置在線註冊失敗：',error);
+        else realtimeReady=true;
+    });
+
+    realtimeChannel=channel;
 }
 
-async function backToLobby() {
-    if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
-    if (gameState && currentRoomId !== null && myPlayerIndex !== null) {
-        if (myPlayerIndex === 0) {
-            await supabaseClient.from('rooms').delete().eq('room_id', currentRoomId);
-        } else {
-            gameState.players[myPlayerIndex] = createPlayerObj(myPlayerIndex, `等待玩家 ${myPlayerIndex + 1}...`);
-            const activeCount = gameState.players.filter(p => !p.name.startsWith('等待玩家')).length;
-            if (activeCount === 0) {
-                await supabaseClient.from('rooms').delete().eq('room_id', currentRoomId);
-            } else {
-                await saveGameState();
-            }
+async function backToLobby(){
+    const roomId=currentRoomId,channel=realtimeChannel;
+
+    if(channel&&realtimeReady){
+        const sync=waitForPresenceSync(2500);
+        const {error:untrackError}=await channel.untrack();
+        if(untrackError)console.error('裝置離線註銷失敗：',untrackError);
+        await sync;
+
+        const online=Object.values(channel.presenceState())
+            .some(sessions=>sessions.length>0);
+
+        if(!online&&roomId!==null){
+            const {error}=await supabaseClient.from('rooms')
+                .delete().eq('room_id',roomId);
+            if(error)console.error('房間結束失敗：',error);
         }
     }
-    gameState = null;
-    currentRoomId = null;
-    myPlayerIndex = null;
-    selectedGemsBuffer = [];
-    lastNotifiedPlayerIdx = null;
+
+    if(channel)await supabaseClient.removeChannel(channel);
+
+    realtimeChannel=null;
+    realtimeReady=false;
+    gameState=null;
+    currentRoomId=null;
+    myPlayerIndex=null;
+    selectedGemsBuffer=[];
+    lastNotifiedPlayerIdx=null;
+
     document.getElementById('victory-modal').classList.add('hidden');
     document.getElementById('game-screen').classList.add('hidden');
     document.getElementById('lobby-screen').classList.remove('hidden');
