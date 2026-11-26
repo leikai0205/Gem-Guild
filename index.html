@@ -230,20 +230,9 @@ html,body{font-family:'Noto Sans TC',sans-serif;background:radial-gradient(circl
 #players-container .grid>div:nth-child(6){background:rgba(30,41,59,.62)!important;border-color:rgba(148,163,184,.5)!important}
 }
 
-/* 大廳：電腦版置中 */
-@media(min-width:1024px){
-#lobby-screen:not(.hidden){position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:100dvh!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;overflow-x:hidden!important;overflow-y:auto!important;padding:24px 16px!important;box-sizing:border-box!important}
-#lobby-screen:not(.hidden)>.glass-panel{flex:0 0 auto!important;width:min(100%,448px)!important;margin:auto!important;max-height:none!important;overflow:visible!important;box-sizing:border-box!important}
-}
-
-/* 手機橫式大廳縮放 */
-@media(orientation:landscape) and (max-width:1023px){
-#lobby-screen{position:relative!important;width:100%!important;height:100dvh!important;min-height:0!important;overflow:hidden!important;display:flex!important;justify-content:center!important;align-items:center!important;padding:6px!important;box-sizing:border-box!important}
-#lobby-screen>.glass-panel{width:420px!important;max-width:none!important;height:auto!important;max-height:none!important;flex:0 0 auto!important;margin:0!important;padding:12px!important;overflow:visible!important;box-sizing:border-box!important;transform:scale(min(calc((100vw - 12px)/420),calc((100dvh - 12px)/420)))!important;transform-origin:center center!important}
-#lobby-screen>.glass-panel>.text-center{margin-bottom:10px!important}
-#lobby-screen>.glass-panel>.flex.justify-center.gap-4{margin-bottom:10px!important;gap:10px!important}
-#lobby-screen>.glass-panel>.space-y-3\.5{gap:8px!important}
-}
+/* ===== 大廳：固定比例、依畫面自動縮放 ===== */
+#lobby-screen:not(.hidden){position:fixed!important;inset:0!important;width:100%!important;height:100vh!important;height:100dvh!important;min-height:0!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;box-sizing:border-box!important}
+#lobby-screen:not(.hidden)>.glass-panel{width:448px!important;max-width:448px!important;height:auto!important;max-height:none!important;flex:0 0 auto!important;margin:0!important;overflow:visible!important;box-sizing:border-box!important;transform-origin:center center!important}
 
 /* ===== 卡片圖鑑彈窗：全畫面等比例縮放與置中 ===== */
 #card-action-modal:not(.hidden){position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
@@ -2108,52 +2097,58 @@ async function executeBuyCard() {
 
     function fitLobby() {
         cancelAnimationFrame(frame);
-        frame = requestAnimationFrame(function () {
-            if (lobby.classList.contains('hidden')) return;
-            const vw = document.documentElement.clientWidth || window.innerWidth;
-            const vh = document.documentElement.clientHeight || window.innerHeight;
+
+        frame = requestAnimationFrame(() => {
+            if (lobby.classList.contains('hidden')) {
+                panel.style.transform = '';
+                return;
+            }
+
+            const viewport = window.visualViewport;
+            const vw = viewport?.width || document.documentElement.clientWidth;
+            const vh = viewport?.height || document.documentElement.clientHeight;
+
             if (!vw || !vh) return;
 
-            // 大廳原始設計尺寸
-            const baseW = 448;
-
-            // 取得尚未縮放的內容高度
-            const oldTransform = panel.style.transform;
             panel.style.transform = 'none';
-            const baseH = panel.scrollHeight;
-            panel.style.transform = oldTransform;
-            if (!baseH) return;
+            panel.style.width = '448px';
 
-            // 保留安全空間，讓整個大廳完整顯示
-            const availableW = vw * 0.96;
-            const availableH = vh * 0.94;
-            const scale = Math.min(availableW / baseW, availableH / baseH);
-            lobby.style.setProperty('--lobby-fit-scale', String(scale));
+            const baseW = panel.offsetWidth;
+            const baseH = Math.max(panel.offsetHeight, panel.scrollHeight);
+
+            if (!baseW || !baseH) return;
+
+            const availableW = vw - 24;
+            const availableH = vh - 24;
+
+            const scale = Math.min(
+                availableW / baseW,
+                availableH / baseH
+            );
+
+            panel.style.transform = `scale(${scale})`;
         });
     }
 
-    // 視窗大小變動時即時重新計算
     window.addEventListener('resize', fitLobby, { passive: true });
     window.addEventListener('orientationchange', fitLobby, { passive: true });
+    window.visualViewport?.addEventListener('resize', fitLobby, { passive: true });
 
-    // 監測大廳內容尺寸變化
     if (window.ResizeObserver) {
-        const observer = new ResizeObserver(fitLobby);
-        observer.observe(panel);
+        new ResizeObserver(fitLobby).observe(panel);
     }
 
-    // 字型載入完成後重新計算
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitLobby);
+    if (document.fonts?.ready) {
+        document.fonts.ready.then(fitLobby);
+    }
 
-    // 頁面載入完成後計算
+    new MutationObserver(fitLobby).observe(lobby, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+
     window.addEventListener('load', fitLobby);
-
-    // 初次計算
     fitLobby();
-
-    // 大廳重新顯示時重新計算
-    const lobbyObserver = new MutationObserver(fitLobby);
-    lobbyObserver.observe(lobby, { attributes: true, attributeFilter: ['class'] });
 })();
 </script>
 
