@@ -1254,27 +1254,27 @@ function renderBank() {
     }).join('');
 }
 
+
 function handleSelectBankGem(gem) {
     if (gem === 'gold') return;
-    const alreadyCount = selectedGemsBuffer.filter(g => g === gem).length;
-    const bankStock = gameState.bank[gem];
-    if (bankStock - alreadyCount <= 0) return;
+    const count = selectedGemsBuffer.filter(g => g === gem).length;
+    const stock = Number(gameState.bank[gem] || 0);
+    if (stock - count <= 0) return;
 
-    if (alreadyCount === 1) {
-        if (selectedGemsBuffer.length === 1 && bankStock >= 4) {
-            selectedGemsBuffer.push(gem);
-        } else if (bankStock < 4) {
-            alert(`💡 銀行「${BANK_ITEMS[gem].name}」剩餘 ${bankStock} 顆（需剩餘 4 顆以上才能拿 2 顆同色）！`);
-        } else {
-            alert('💡 已拿取不同色進化石時，不能再拿同色第 2 顆！');
-        }
-    } else if (alreadyCount === 0) {
+    if (count === 1) {
+        if (selectedGemsBuffer.length === 1 && stock >= 4) selectedGemsBuffer.push(gem);
+        else if (stock < 4) alert(`💡 銀行「${BANK_ITEMS[gem].name}」剩餘 ${stock} 顆（需至少 4 顆才能拿 2 顆同色）！`);
+        else alert('💡 已選擇不同色進化石，不能再拿同色第 2 顆！');
+    } else if (count === 0) {
         const hasPair = selectedGemsBuffer.length === 2 && selectedGemsBuffer[0] === selectedGemsBuffer[1];
-        if (!hasPair && selectedGemsBuffer.length < 3) selectedGemsBuffer.push(gem);
+        const maxDifferent = CARD_GEM_ORDER.filter(g => Number(gameState.bank[g] || 0) > 0).length >= 3 ? 3 : 2;
+        if (!hasPair && selectedGemsBuffer.length < maxDifferent) selectedGemsBuffer.push(gem);
     }
+
     renderBank();
     renderSelectedGemsUI();
-}
+}}
+
 
 function clearSelectedGems() {
     selectedGemsBuffer = [];
@@ -1282,57 +1282,44 @@ function clearSelectedGems() {
     renderSelectedGemsUI();
 }
 
+
 function renderSelectedGemsUI() {
     const preview = document.getElementById('selected-gems-preview');
     const btnClear = document.getElementById('btn-clear-gems');
     const btnConfirm = document.getElementById('btn-confirm-gems');
     const countBadge = document.getElementById('selected-count-badge');
     const warningEl = document.getElementById('over-limit-warning');
-    countBadge.textContent = `${selectedGemsBuffer.length}顆`;
+    const len = selectedGemsBuffer.length;
 
-    if (selectedGemsBuffer.length === 0) {
+    countBadge.textContent = `${len}顆`;
+
+    if (!len) {
         preview.innerHTML = `<span class="text-[10px] text-slate-500">未選</span>`;
-        btnClear.disabled = true;
-        btnConfirm.disabled = true;
+        btnClear.disabled = btnConfirm.disabled = true;
         warningEl.classList.add('hidden');
         return;
     }
 
     preview.innerHTML = selectedGemsBuffer.map(g => getGemOrbHTML(g, 'w-4 h-4')).join('');
     btnClear.disabled = false;
+
     const player = gameState.players[myPlayerIndex];
-    const currentTotalGems = ALL_GEMS.reduce((sum, g) => sum + player.gems[g], 0);
-    const willExceed = (currentTotalGems + selectedGemsBuffer.length) > 10;
+    const total = ALL_GEMS.reduce((sum, g) => sum + (player.gems[g] || 0), 0);
+    const willExceed = total + len > 10;
+    warningEl.classList.toggle('hidden', !willExceed);
 
-    if (willExceed) {
-        warningEl.classList.remove('hidden');
-    } else {
-        warningEl.classList.add('hidden');
-    }
+    const unique = new Set(selectedGemsBuffer).size;
+    const availableColors = CARD_GEM_ORDER.filter(g => Number(gameState.bank[g] || 0) > 0).length;
+    const sameColor = unique === 1 && len === 2;
+    const isValid = (len === 3 && unique === 3) ||
+        (len === 2 && unique === 2 && availableColors < 3) ||
+        (sameColor && Number(gameState.bank[selectedGemsBuffer[0]] || 0) >= 4);
 
-    const len = selectedGemsBuffer.length;
-    let isValid = false;
-    let ruleHint = '';
-
-    if (len === 3) {
-        const uniqueSet = new Set(selectedGemsBuffer);
-        if (uniqueSet.size === 3) isValid = true;
-        else ruleHint = '❌ 3顆必須全部不同色！';
-    } else if (len === 2) {
-        if (selectedGemsBuffer[0] === selectedGemsBuffer[1]) isValid = true;
-        else ruleHint = '❌ 2顆必須同色！';
-    } else if (len === 1) {
-        ruleHint = '⚠️ 需選 3 顆不同或 2 顆同色';
-    }
-
-    // 允許先完成正常拿取動作；若超過 10 個，確認後再進入退回道具視窗
-    if (isValid) {
-        btnConfirm.disabled = false;
-        btnConfirm.title = willExceed ? '確認後請退回多餘的道具，直到剩餘 10 個' : '';
-    } else {
-        btnConfirm.disabled = true;
-        btnConfirm.title = ruleHint;
-    }
+    btnConfirm.disabled = !isValid;
+    btnConfirm.title = isValid
+        ? (willExceed ? '確認後請退回多餘的道具，直到剩餘 10 個' : '')
+        : len === 1 ? '⚠️ 至少選擇 2 顆寶石'
+        : '❌ 不符合寶石拿取規則';
 }
 
 // 桌遊式飛行動畫：先擷取來源，再於狀態重繪後飛向玩家面板。
@@ -1620,7 +1607,7 @@ function hasAnyLegalAction(player) {
 
         // 2. 檢查能否拿取寶石
         const colors = CARD_GEM_ORDER.filter(g => Number(gameState.bank?.[g] || 0) > 0);
-        if (colors.length >= 3) return true;
+        if (colors.length >= 2) return true;
         if (CARD_GEM_ORDER.some(g => Number(gameState.bank?.[g] || 0) >= 4)) return true;
 
         // 3. 檢查能否預留市場卡或盲抽牌
